@@ -1,0 +1,14 @@
+Separateur ';'
+Echappement '\'
+
+Des titres de niveau 1 à 5 -> SOMMAIRE  <title;nombre1à5>       <titre\>
+Du texte en gras//souligné/couleur      <bd>                    <bd\>
+italique                                <it>                    <it\>
+souligné                                <ul>                    <ul\>
+couleur                                 <r;g;b>                 <r;g;b\>
+  |                                      <#hexa>                <#hexa\>
+Une insertion d’images                  <img>                   <img\>
+Des liens au sein du document           <link>                  <link\>
+Du code                                 <"key content">         <?\>
+user doc                                <user>                  <user\>
+dev doc                                 <dev>                   <dev\>
