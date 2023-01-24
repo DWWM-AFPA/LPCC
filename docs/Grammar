@@ -6,9 +6,71 @@ Du texte en gras//souligné/couleur      <bd>                    <bd\>
 italique                                <it>                    <it\>
 souligné                                <ul>                    <ul\>
 couleur                                 <r;g;b>                 <r;g;b\>
-  |                                      <#hexa>                <#hexa\>
+  |                                     <#hexa>                <#hexa\>
 Une insertion d’images                  <img>                   <img\>
 Des liens au sein du document           <link>                  <link\>
-Du code                                 <"key content">         <?\>
+
+Du code                                 <"code_key_content">    <code key content\>
 user doc                                <user>                  <user\>
 dev doc                                 <dev>                   <dev\>
+
+
+
+
+                       <Shape>  Ceci est un rectangle   <Shape\>
+
+                       <Shape>  Ceci est un rectangle   <Shape\>
+                       <user;title2;bd>Code qui permet de créer un rectangle : <bd\>
+                       <ul> bla bla<ul\> <user\>
+
+-----------------------------------------------------------------------------------------------------------
+-----------------------------------------------------------------------------------------------------------
+<expr>      := <closedNode> <exprEnd>
+<exprEnd>   :=
+
+<closedNode>  := <mainTag><text><mainTagEnd>
+<mainTag>  := <"code_key_content">
+          := <user>
+          := <dev>
+<mainTagEnd>  := <"code_key_content">+'\'
+              := <user>+'\'
+              := <dev>+'\'
+
+<text>      := <tag><text><tagEnd>
+
+
+<tag>        :=  <title;nombre1à5>
+             :=  <bd>
+             :=  <it>
+             :=  <ul>
+             :=  <r;g;b>
+             :=  <#hexa>
+             :=  <img>
+             :=  <link>
+
+<tagFin>    :=  <title;nombre1à5>+'/'
+            :=  <bd>+'/'
+            :=  <it>+'/'
+            :=  <ul>+'/'
+            :=  <r;g;b>+'/'
+            :=  <#hexa>+'/'
+            :=  <img>+'/'
+            :=  <link>+'/'
+
+<text>      := String
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
