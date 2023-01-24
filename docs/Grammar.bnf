@@ -20,44 +20,53 @@ dev doc                                 <dev>                   <dev\>
                        <Shape>  Ceci est un rectangle   <Shape\>
 
                        <Shape>  Ceci est un rectangle   <Shape\>
-                       <user;title2;bd>Code qui permet de créer un rectangle : <bd\>
+                       <user>;title2;bd>Code qui permet de créer un rectangle : <bd\>
                        <ul> bla bla<ul\> <user\>
 
 -----------------------------------------------------------------------------------------------------------
 -----------------------------------------------------------------------------------------------------------
 <expr>      := <closedNode> <exprEnd>
-<exprEnd>   :=
+<exprEnd>   := <expr>
+            :=
 
 <closedNode>  := <mainTag><text><mainTagEnd>
-<mainTag>  := <"code_key_content">
-          := <user>
-          := <dev>
-<mainTagEnd>  := <"code_key_content">+'\'
-              := <user>+'\'
-              := <dev>+'\'
+<mainTag>  := <tagOpening><mainTag><tagClosing>
+          :=  "code_key_content" | "code_key_content";
+          := user | user;
+          := dev> | <dev;
 
-<text>      := <tag><text><tagEnd>
+<tagOpening> :=       '<'
+<tagClosing> := '>' | ;
 
+<mainTagEnd>  := <tagOpening><mainTagEnd><tagClosing>
+              := "code_key_content"\ | "code_key_content"\;
+              := user\ | user\;
+              := dev\ | dev\;
 
-<tag>        :=  <title;nombre1à5>
-             :=  <bd>
-             :=  <it>
-             :=  <ul>
-             :=  <r;g;b>
-             :=  <#hexa>
-             :=  <img>
-             :=  <link>
+<text>      := <tag><word><tagEnd>
 
-<tagFin>    :=  <title;nombre1à5>+'/'
-            :=  <bd>+'/'
-            :=  <it>+'/'
-            :=  <ul>+'/'
-            :=  <r;g;b>+'/'
-            :=  <#hexa>+'/'
-            :=  <img>+'/'
-            :=  <link>+'/'
+<tag>        :=  <TagOpening><tag><TagClosing>
+             :=  title;nombre1à5 | title;nombre1à5;
+             :=  bd | bd;
+             :=  it | it;
+             :=  ul | ul;
+             :=  r;g;b | r;g;b; | #hexa | #hexa;
+             :=  img | img;
+             :=  link | link;
 
-<text>      := String
+<tagEnd>    :=  <TagOpening><tagEnd><TagClosing>
+            :=  <title;nombre1à5/> | <title;nombre1à5/;
+            :=  <bd/> | <bd/;
+            :=  <it/> | <it/;
+            :=  <ul/> | <ul/;
+            :=  <r;g;b/> | <r;g;b/;
+            :=  <#hexa/> | <#hexa/;
+            :=  <img/> | <img/;
+            :=  <link/> | <link/;
+
+<word>    := <word> + String
+          := String
+
 
 
 
