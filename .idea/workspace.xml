@@ -2,8 +2,23 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="701f4b19-ba71-481c-9599-088ba63d482b" name="Changes" comment="">
+      <change afterPath="$PROJECT_DIR$/src/Export/Code.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/Export/CodeNode.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/Export/CodeasDiagr.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/Export/Compilateur.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/Export/DocumentationNode.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/Export/File.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/Export/FileException.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/Export/LatexDoc.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/Export/Node.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/Export/Visitor.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/User/Graphic.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/User/Menu.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/docs/Grammar" beforeDir="false" afterPath="$PROJECT_DIR$/docs/Grammar" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/README.md" beforeDir="false" afterPath="$PROJECT_DIR$/README.md" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/docs/Grammar.bnf" beforeDir="false" afterPath="$PROJECT_DIR$/docs/Grammar.bnf" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/docs/LPCC.xmi" beforeDir="false" afterPath="$PROJECT_DIR$/docs/LPCC.xmi" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/Export/HTMLdoc.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/Export/HTMLdoc.java" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -14,6 +29,9 @@
     <option name="RECENT_TEMPLATES">
       <list>
         <option value="UML Use Case" />
+        <option value="HTML File" />
+        <option value="Interface" />
+        <option value="Class" />
       </list>
     </option>
   </component>
@@ -29,14 +47,15 @@
     <option name="hideEmptyMiddlePackages" value="true" />
     <option name="showLibraryContents" value="true" />
   </component>
-  <component name="PropertiesComponent">{
-  &quot;keyToString&quot;: {
-    &quot;DefaultPlantUmlFileTemplate&quot;: &quot;UML Use Case&quot;,
-    &quot;RunOnceActivity.OpenProjectViewOnStart&quot;: &quot;true&quot;,
-    &quot;RunOnceActivity.ShowReadmeOnStart&quot;: &quot;true&quot;,
-    &quot;settings.editor.selected.configurable&quot;: &quot;preferences.pluginManager&quot;
+  <component name="PropertiesComponent"><![CDATA[{
+  "keyToString": {
+    "DefaultHtmlFileTemplate": "HTML File",
+    "DefaultPlantUmlFileTemplate": "UML Use Case",
+    "RunOnceActivity.OpenProjectViewOnStart": "true",
+    "RunOnceActivity.ShowReadmeOnStart": "true",
+    "settings.editor.selected.configurable": "terminal"
   }
-}</component>
+}]]></component>
   <component name="RunManager">
     <configuration default="true" type="JetRunConfigurationType">
       <method v="2">
@@ -71,5 +90,9 @@
         </entry>
       </map>
     </option>
+  </component>
+  <component name="XSLT-Support.FileAssociations.UIState">
+    <expand />
+    <select />
   </component>
 </project>

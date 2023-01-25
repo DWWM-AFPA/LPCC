@@ -30,23 +30,23 @@ dev doc                                 <dev>                   <dev\>
             :=
 
 <closedNode>  := <mainTag><text><mainTagEnd>
-<mainTag>  := <tagOpening><mainTag><tagClosing>
-          :=  "code_key_content" | "code_key_content";
-          := user | user;
-          := dev> | <dev;
+<mainTag>    := <tagOpening><mainTag><tagClosing>
+             :=  "code_key_content" | "code_key_content";
+             := user | user;
+             := dev> | <dev;
 
-<tagOpening> :=       '<'
+<tagOpening> := '<'
 <tagClosing> := '>' | ;
 
-<mainTagEnd>  := <tagOpening><mainTagEnd><tagClosing>
-              := "code_key_content"\ | "code_key_content"\;
-              := user\ | user\;
-              := dev\ | dev\;
+<mainTagEnd> := <tagOpening><mainTagEnd><tagClosing>
+             := "code_key_content"\ | "code_key_content"\;
+             := user\ | user\;
+             := dev\ | dev\;
 
-<text>      := <tag><word><tagEnd>
+<text>       := <tag><word><tagEnd>
 
 <tag>        :=  <TagOpening><tag><TagClosing>
-             :=  title;nombre1à5 | title;nombre1à5;
+             :=  <titlenombre1à5 | <titlenombre1à5; | <title nombre1à5 | <title nombre1à5;
              :=  bd | bd;
              :=  it | it;
              :=  ul | ul;
@@ -54,18 +54,18 @@ dev doc                                 <dev>                   <dev\>
              :=  img | img;
              :=  link | link;
 
-<tagEnd>    :=  <TagOpening><tagEnd><TagClosing>
-            :=  <title;nombre1à5/> | <title;nombre1à5/;
-            :=  <bd/> | <bd/;
-            :=  <it/> | <it/;
-            :=  <ul/> | <ul/;
-            :=  <r;g;b/> | <r;g;b/;
-            :=  <#hexa/> | <#hexa/;
-            :=  <img/> | <img/;
-            :=  <link/> | <link/;
+<tagEnd>     :=  <TagOpening><tagEnd><TagClosing>
+             :=  <titlenombre1à5/ | <titlenombre1à5/; | <title nombre1à5/ | <title nombre1à5/;
+             :=  <bd/> | <bd/;
+             :=  <it/> | <it/;
+             :=  <ul/> | <ul/;
+             :=  <r;g;b/> | <r;g;b/;
+             :=  <#hexa/> | <#hexa/;
+             :=  <img/> | <img/;
+             :=  <link/> | <link/;
 
-<word>    := <word> + String
-          := String
+<word>      := <word> + String
+            := String
 
 
 

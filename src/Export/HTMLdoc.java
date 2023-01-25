@@ -1,4 +1,4 @@
 package Export;
 
-public class HTMLdoc {
+public class HTMLdoc implements Visitor{
 }
