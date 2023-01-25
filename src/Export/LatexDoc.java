@@ -1,8 +1,7 @@
 package Export;
 
-import Export.Visitor;
 
-public class LateXDoc implements Visitor,Documentation {
+public class LatexDoc implements Visitor,Documentation {
     @Override
     public void visit() {
 
