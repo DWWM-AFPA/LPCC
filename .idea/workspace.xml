@@ -1,9 +1,16 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="ChangeListManager">
-    <list default="true" id="701f4b19-ba71-481c-9599-088ba63d482b" name="Changes" comment="">
+    <list default="true" id="701f4b19-ba71-481c-9599-088ba63d482b" name="Changes" comment="&quot;test&quot;">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/docs/Grammar" beforeDir="false" afterPath="$PROJECT_DIR$/docs/Grammar" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/Export/Code.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/Export/Code.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/Export/CodeNode.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/Export/CodeNode.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/Export/CodeasDiagr.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/Export/CodeasDiagr.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/Export/DocumentationNode.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/Export/DocumentationNode.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/Export/HTMLDoc.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/Export/HTMLDoc.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/Export/LateXDoc.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/Export/Node.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/Export/Node.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/Export/Visitor.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/Export/Visitor.java" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -18,10 +25,19 @@
     </option>
   </component>
   <component name="Git.Settings">
+    <option name="RECENT_BRANCH_BY_REPOSITORY">
+      <map>
+        <entry key="$PROJECT_DIR$" value="dev" />
+      </map>
+    </option>
     <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
+    <option name="SWAP_SIDES_IN_COMPARE_BRANCHES" value="true" />
   </component>
   <component name="MarkdownSettingsMigration">
     <option name="stateVersion" value="1" />
+  </component>
+  <component name="ProblemsViewState">
+    <option name="selectedTabId" value="CurrentFile" />
   </component>
   <component name="ProjectId" id="2KirSduklADvd6rI7OirUjFwjXJ" />
   <component name="ProjectLevelVcsManager" settingsEditedManually="true" />
@@ -38,17 +54,18 @@
   }
 }</component>
   <component name="RunManager">
-    <configuration default="true" type="JetRunConfigurationType">
+    <configuration name="Main" type="Application" factoryName="Application" temporary="true" nameIsGenerated="true">
+      <option name="MAIN_CLASS_NAME" value="Main" />
+      <module name="LPCC" />
       <method v="2">
         <option name="Make" enabled="true" />
       </method>
     </configuration>
-    <configuration default="true" type="KotlinStandaloneScriptRunConfigurationType">
-      <option name="filePath" />
-      <method v="2">
-        <option name="Make" enabled="true" />
-      </method>
-    </configuration>
+    <recent_temporary>
+      <list>
+        <item itemvalue="Application.Main" />
+      </list>
+    </recent_temporary>
   </component>
   <component name="SpellCheckerSettings" RuntimeDictionaries="0" Folders="0" CustomDictionaries="0" DefaultDictionary="application-level" UseSingleDictionary="true" transferred="true" />
   <component name="TaskManager">
@@ -66,10 +83,26 @@
       <map>
         <entry key="MAIN">
           <value>
-            <State />
+            <State>
+              <option name="FILTERS">
+                <map>
+                  <entry key="branch">
+                    <value>
+                      <list>
+                        <option value="dev" />
+                      </list>
+                    </value>
+                  </entry>
+                </map>
+              </option>
+            </State>
           </value>
         </entry>
       </map>
     </option>
+  </component>
+  <component name="VcsManagerConfiguration">
+    <MESSAGE value="&quot;test&quot;" />
+    <option name="LAST_COMMIT_MESSAGE" value="&quot;test&quot;" />
   </component>
 </project>
