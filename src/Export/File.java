@@ -1,13 +1,18 @@
 package Export;
 
+
 import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
 import java.io.FileReader;
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.Arrays;
 
 public class File {
     protected String path;
     protected String name;
     protected boolean hasBeenRead;
+    private static ArrayList<String> fileList;
 
     public File(String path) {
         this.setPath(path);
@@ -43,13 +48,25 @@ public class File {
     }
 
     public String read() throws IOException {
-    FileReader file= new FileReader(this.getPath());
-    int i;
-    StringBuilder retour = new StringBuilder();
-    while((i= file.read()) != -1)
-        retour.append((char)i);
-    return retour.toString();
+        if (!fileList.contains(this.path)) {
+            fileList.add(path);
+            FileReader file= new FileReader(this.getPath());
+            int i;
+            StringBuilder retour = new StringBuilder();
+            while((i= file.read()) != -1)
+                retour.append((char)i);
+            return retour.toString();}
+        else {
+            System.err.println("Le fichier "+this.getPath()+"semble avoir déjà été parcouru");
+            return null;
+        }
     }
-    //System.out.println("Working Directory = " + System.getProperty("user.dir"));
 
+    public File create(String content, String extension) throws IOException {
+        extension = extension.charAt(1) == '.' ? extension: "."+extension;
+        FileOutputStream outFile = new FileOutputStream(this.getPath() + extension);
+        outFile.write(content.getBytes());
+        outFile.close();
+        return this;
+    }
 }
