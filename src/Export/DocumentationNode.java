@@ -1,5 +1,6 @@
 package Export;
 
 
-public class DocumentationNode {
-}
+public class DocumentationNode extends Node{
+
+    }
