@@ -1,4 +1,12 @@
 package Export;
 
-public class CodeasDiagr implements Visitor{
+
+import Export.Visitor;
+
+public class CodeasDiagr implements Visitor {
+    @Override
+    public void visit() {
+
+    }
+
 }
