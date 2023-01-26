@@ -1,16 +1,14 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="ChangeListManager">
-    <list default="true" id="701f4b19-ba71-481c-9599-088ba63d482b" name="Changes" comment="&quot;test&quot;">
+    <list default="true" id="701f4b19-ba71-481c-9599-088ba63d482b" name="Changes" comment="&quot;node finits, bon avancement sur le visiteur code, tests probablement demains&quot;">
+      <change afterPath="$PROJECT_DIR$/test/Export/CodeTest.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/LPCC.iml" beforeDir="false" afterPath="$PROJECT_DIR$/LPCC.iml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/Export/Code.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/Export/Code.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/Export/CodeNode.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/Export/CodeNode.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/Export/CodeasDiagr.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/Export/CodeasDiagr.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/Export/DocumentationNode.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/Export/DocumentationNode.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/Export/Documentation.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/Export/Documentation.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/Export/HTMLDoc.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/Export/HTMLDoc.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/Export/LateXDoc.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/Export/Node.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/Export/Node.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/Export/Visitor.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/Export/Visitor.java" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -21,6 +19,7 @@
     <option name="RECENT_TEMPLATES">
       <list>
         <option value="UML Use Case" />
+        <option value="JUnit5 Test Class" />
       </list>
     </option>
   </component>
@@ -45,15 +44,29 @@
     <option name="hideEmptyMiddlePackages" value="true" />
     <option name="showLibraryContents" value="true" />
   </component>
-  <component name="PropertiesComponent">{
-  &quot;keyToString&quot;: {
-    &quot;DefaultPlantUmlFileTemplate&quot;: &quot;UML Use Case&quot;,
-    &quot;RunOnceActivity.OpenProjectViewOnStart&quot;: &quot;true&quot;,
-    &quot;RunOnceActivity.ShowReadmeOnStart&quot;: &quot;true&quot;,
-    &quot;settings.editor.selected.configurable&quot;: &quot;preferences.pluginManager&quot;
+  <component name="PropertiesComponent"><![CDATA[{
+  "keyToString": {
+    "DefaultPlantUmlFileTemplate": "UML Use Case",
+    "Downloaded.Files.Path.Enabled": "false",
+    "Repository.Attach.Annotations": "false",
+    "Repository.Attach.JavaDocs": "false",
+    "Repository.Attach.Sources": "false",
+    "RunOnceActivity.OpenProjectViewOnStart": "true",
+    "RunOnceActivity.ShowReadmeOnStart": "true",
+    "com.intellij.testIntegration.createTest.CreateTestDialog.defaultLibrary": "JUnit5",
+    "com.intellij.testIntegration.createTest.CreateTestDialog.defaultLibrarySuperClass.JUnit5": "",
+    "settings.editor.selected.configurable": "preferences.pluginManager"
   }
-}</component>
-  <component name="RunManager">
+}]]></component>
+  <component name="RecentsManager">
+    <key name="CreateTestDialog.Recents.Supers">
+      <recent name="" />
+    </key>
+    <key name="CreateTestDialog.RecentsKey">
+      <recent name="Export" />
+    </key>
+  </component>
+  <component name="RunManager" selected="JUnit.CodeTest">
     <configuration name="Main" type="Application" factoryName="Application" temporary="true" nameIsGenerated="true">
       <option name="MAIN_CLASS_NAME" value="Main" />
       <module name="LPCC" />
@@ -61,8 +74,58 @@
         <option name="Make" enabled="true" />
       </method>
     </configuration>
+    <configuration name="CodeTest" type="JUnit" factoryName="JUnit" temporary="true" nameIsGenerated="true">
+      <module name="LPCC" />
+      <extension name="coverage">
+        <pattern>
+          <option name="PATTERN" value="Export.*" />
+          <option name="ENABLED" value="true" />
+        </pattern>
+      </extension>
+      <option name="PACKAGE_NAME" value="Export" />
+      <option name="MAIN_CLASS_NAME" value="Export.CodeTest" />
+      <option name="TEST_OBJECT" value="class" />
+      <method v="2">
+        <option name="Make" enabled="true" />
+      </method>
+    </configuration>
+    <configuration name="CodeTest.extractcode" type="JUnit" factoryName="JUnit" temporary="true" nameIsGenerated="true">
+      <module name="LPCC" />
+      <extension name="coverage">
+        <pattern>
+          <option name="PATTERN" value="Export.*" />
+          <option name="ENABLED" value="true" />
+        </pattern>
+      </extension>
+      <option name="PACKAGE_NAME" value="Export" />
+      <option name="MAIN_CLASS_NAME" value="Export.CodeTest" />
+      <option name="METHOD_NAME" value="extractcode" />
+      <option name="TEST_OBJECT" value="method" />
+      <method v="2">
+        <option name="Make" enabled="true" />
+      </method>
+    </configuration>
+    <configuration name="CodeTest.visit" type="JUnit" factoryName="JUnit" temporary="true" nameIsGenerated="true">
+      <module name="LPCC" />
+      <extension name="coverage">
+        <pattern>
+          <option name="PATTERN" value="Export.*" />
+          <option name="ENABLED" value="true" />
+        </pattern>
+      </extension>
+      <option name="PACKAGE_NAME" value="Export" />
+      <option name="MAIN_CLASS_NAME" value="Export.CodeTest" />
+      <option name="METHOD_NAME" value="visit" />
+      <option name="TEST_OBJECT" value="method" />
+      <method v="2">
+        <option name="Make" enabled="true" />
+      </method>
+    </configuration>
     <recent_temporary>
       <list>
+        <item itemvalue="JUnit.CodeTest" />
+        <item itemvalue="JUnit.CodeTest.visit" />
+        <item itemvalue="JUnit.CodeTest.extractcode" />
         <item itemvalue="Application.Main" />
       </list>
     </recent_temporary>
@@ -76,6 +139,14 @@
       <option name="presentableId" value="Default" />
       <updated>1674468249327</updated>
     </task>
+    <task id="LOCAL-00001" summary="&quot;node finits, bon avancement sur le visiteur code, tests probablement demains&quot;">
+      <created>1674661983961</created>
+      <option name="number" value="00001" />
+      <option name="presentableId" value="LOCAL-00001" />
+      <option name="project" value="LOCAL" />
+      <updated>1674661983961</updated>
+    </task>
+    <option name="localTasksCounter" value="2" />
     <servers />
   </component>
   <component name="Vcs.Log.Tabs.Properties">
@@ -103,6 +174,7 @@
   </component>
   <component name="VcsManagerConfiguration">
     <MESSAGE value="&quot;test&quot;" />
-    <option name="LAST_COMMIT_MESSAGE" value="&quot;test&quot;" />
+    <MESSAGE value="&quot;node finits, bon avancement sur le visiteur code, tests probablement demains&quot;" />
+    <option name="LAST_COMMIT_MESSAGE" value="&quot;node finits, bon avancement sur le visiteur code, tests probablement demains&quot;" />
   </component>
 </project>

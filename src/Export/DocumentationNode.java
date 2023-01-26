@@ -50,6 +50,11 @@ public class DocumentationNode extends Node{
         return this;
     }
 
+    public DocumentationNode remove(String arg){
+        this.args.remove(arg);
+        return this;
+    }
+
 
 
 
