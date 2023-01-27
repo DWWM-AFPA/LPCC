@@ -1,81 +1,106 @@
 package Export;
 
 import java.util.ArrayList;
-import java.util.Hashtable;
 
 public class Compilator {
-    String openTag;
-    String closeTag;
+    protected String openTag;
+    protected String closeTag;
+    protected static int pos=0;
+    protected static char token='\0';
+
 
     //getters
+    public String getOpenTag () {
+            return openTag;
+        }
+    public String getCloseTag () {
+            return closeTag;
+        }
 
-
-    public String getOpenTag() {
-        return openTag;
+    public static int getPos() {
+        return pos;
     }
 
-    public String getCloseTag() {
-        return closeTag;
+    public static char getToken() {
+        return token;
     }
-
 
     //setters
+    public void setCloseTag (String closeTag){
+            this.closeTag = closeTag;
+        }
+    public void setOpenTag (String openTag){
+            this.openTag = openTag;
+        }
 
-
-    public void setCloseTag(String closeTag) {
-        this.closeTag = closeTag;
+    public static void setPos(int pos) {
+        Compilator.pos = pos;
     }
 
-    public void setOpenTag(String openTag) {
-        this.openTag = openTag;
+    public static void setToken(char token) {
+        Compilator.token = token;
     }
 
     //builders
+    public Compilator() {
+            this.setOpenTag(new String());
+            this.setCloseTag(new String());
+        }
+    public Compilator(String openTag, String closeTag) {
+            this.setCloseTag(closeTag);
+            this.setOpenTag(openTag);
+        }
 
-    public Compilator(){
-        this.setOpenTag(new String());
-        this.setCloseTag(new String());
+    public static void  main(String[] args) {
+        Compilator Comp = new Compilator();
+        cursor("kdjfhfyy <dev> Hello world <dev/>");
+        System.out.println(token);
+        System.out.println(pos);
     }
+    public ArrayList<Node> compile (String file){
 
 
-    public Compilator(String openTag,String closeTag){
-        this.setCloseTag(closeTag);
-        this.setOpenTag(openTag);
-    }
-
-    //méthodes
-
-    public ArrayList<Node> compile(File file){
         return null;
     }
-
-    private Object expr(){
-        return null;
+    protected static void cursor(String doc) {
+        setToken(doc.charAt(getPos()));
     }
-
-    private Object exprend(){
-        return null;
+    public static void next(){
+        pos++;
     }
-
-    private Object mainTag(){
-     return null;
+    public static void previous(){
+        pos--;
     }
-
-    private Object text(){
-        return null;
+    protected static void reset(){
+        pos=0;
     }
+    private Object expr () {
+            return null;
+        }
 
-    private Object tag(){
-        return null;
-    }
+    private Object exprend () {
+            return null;
+        }
 
-    private Object tagEnd(){
-        return null;
-    }
+    private Object mainTag () {
+            return null;
+        }
 
-    private Object word(){
-        return null;
-    }
+    private Object text () {
+            return null;
+        }
 
+    private Object tag () {
+            return null;
+        }
+
+    private Object tagEnd () {
+            return null;
+        }
+
+    private Object word () {
+            return null;
+        }
 
 }
+
