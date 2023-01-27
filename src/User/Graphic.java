@@ -8,6 +8,7 @@ import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.File;
+import java.io.IOException;
 import java.nio.file.Paths;
 
 import static javax.swing.JOptionPane.ERROR_MESSAGE;
@@ -120,11 +121,15 @@ public class Graphic {
     }
     public enum TypeChoose {SAVE,OPEN}
     public static File choose(TypeChoose typeChoose){
-        FileSystemView test= FileSystemView.getFileSystemView();
-        System.err.println(test);
+        File outputName=new File("LPCC");
+        File outputDir=FileSystemView.getFileSystemView().getParentDirectory(outputName);
+        System.out.println(outputDir.getName()+outputDir.getPath());
+        try{
+            FileSystemView.getFileSystemView().createNewFolder(outputDir);}
+        catch (IOException e) {
+            e.printStackTrace(System.out);}
         JFileChooser choose=new JFileChooser(
-                FileSystemView.getFileSystemView()
-
+                outputDir
                     //    .getHomeDirectory()
         );
         choose.setBackground(Color.BLUE);
