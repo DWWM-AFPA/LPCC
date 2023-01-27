@@ -8,16 +8,26 @@ public class LateXDoc implements Documentation,Visitor{
         String retour="";
         for (DocumentationNode doc:n) {
             doc.remove("user");
-            String node=doc.getText();
-            while(!doc.getArgs().isEmpty()){
-                switch (doc.getArgs().get(0)){
-                    case("bd"): node="\textbd{"+node+"}";
-                                break;
-                    case("it"):node="\textit"+node+"}";
-                                break;
-                    default: return;
+            String node;
+            if(doc.getArgs().contains("title1")) {
+                doc.remove("title1");
+                node=this.nodeTosring(doc);
+            node="\\part{"+node+"}";
+            }
+            else {
+                if(doc.getArgs().contains("title2")) {
+                    doc.remove("title2");
+                    node = this.nodeTosring(doc);
+                    node="\\chapter{"+node+"}";
+                }
+                else {
+                    if(doc.getArgs().contains("title3")){
+                        doc.remove("title3");
+                        node = this.nodeTosring(doc);
+                        node="\\section{"+node+"}";
                     }
                 }
+            }
             retour=node+retour;
             }
         System.out.println(retour);
@@ -44,5 +54,28 @@ public class LateXDoc implements Documentation,Visitor{
         }
         this.user(user);
         this.dev(dev);
+    }
+
+    public String nodeTosring(DocumentationNode doc){
+        String node=doc.getText();
+        while(!doc.getArgs().isEmpty()){
+            switch (doc.getArgs().get(0)) {
+                case ("bd"):
+                    node = "\\textbd{" + node + "}";
+                    doc.remove("bd");
+                    break;
+                case ("it"):
+                    node = "\\textit{" + node + "}";
+                    doc.remove("it");
+                    break;
+                case("ul"):
+                    node="\\underline{"+node+"}";
+                    doc.remove("ul");
+                    break;
+                default:
+                    return null;
+            }
+        }
+        return node;
     }
 }
