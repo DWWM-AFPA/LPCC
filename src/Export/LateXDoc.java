@@ -9,24 +9,35 @@ public class LateXDoc implements Documentation,Visitor{
         for (DocumentationNode doc:n) {
             doc.remove("user");
             String node;
-            if(doc.getArgs().contains("title1")) {
-                doc.remove("title1");
-                node=this.nodeTosring(doc);
-            node="\\part{"+node+"}";
+            int titleindex=0;
+            for (int i = 1; i < 6; i++) {
+                if(doc.getArgs().contains("title"+i))
+                    titleindex=i;
             }
-            else {
-                if(doc.getArgs().contains("title2")) {
-                    doc.remove("title2");
-                    node = this.nodeTosring(doc);
-                    node="\\chapter{"+node+"}";
-                }
-                else {
-                    if(doc.getArgs().contains("title3")){
-                        doc.remove("title3");
-                        node = this.nodeTosring(doc);
+            switch (titleindex){
+                case 0: node=this.nodeTosring(doc);
+                        break;
+                case 1: doc.remove("title1");
+                        node=this.nodeTosring(doc);
+                        node="\\part{"+node+"}";
+                        break;
+                case 2:doc.remove("title2");
+                        node=this.nodeTosring(doc);
+                        node="\\chapter{"+node+"}";
+                        break;
+                case 3:doc.remove("title3");
+                        node=this.nodeTosring(doc);
                         node="\\section{"+node+"}";
-                    }
-                }
+                        break;
+                case 4:doc.remove("title4");
+                        node=this.nodeTosring(doc);
+                        node="\\subsection{"+node+"}";
+                        break;
+                case 5:doc.remove("title5");
+                        node=this.nodeTosring(doc);
+                        node="\\subsubsection{"+node+"}";
+                        break;
+                default:return;
             }
             retour=node+retour;
             }
@@ -56,7 +67,7 @@ public class LateXDoc implements Documentation,Visitor{
         this.dev(dev);
     }
 
-    public String nodeTosring(DocumentationNode doc){
+    private String nodeTosring(DocumentationNode doc){
         String node=doc.getText();
         while(!doc.getArgs().isEmpty()){
             switch (doc.getArgs().get(0)) {
@@ -71,6 +82,14 @@ public class LateXDoc implements Documentation,Visitor{
                 case("ul"):
                     node="\\underline{"+node+"}";
                     doc.remove("ul");
+                    break;
+                case("img"):
+                    node="\\begin{figure}"+'\n'+"\\centering"+'\n'+"\\includegraphics{"+node+"}"+'\n'+"\\end{figure}";
+                    doc.remove("img");
+                    break;
+                case("link"):
+                    node="\\url{"+node+"}";
+                    doc.remove("link");
                     break;
                 default:
                     return null;
