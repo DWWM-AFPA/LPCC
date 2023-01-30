@@ -1,5 +1,6 @@
 package Export;
 
+import java.util.ArrayList;
 
 public class LateXDoc implements Documentation,Visitor{
     @Override
