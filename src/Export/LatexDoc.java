@@ -1,7 +1,7 @@
 package Export;
 
 
-public class LatexDoc implements Visitor,Documentation {
+public class LateXDoc implements Visitor,Documentation {
     @Override
     public void visit() {
 
