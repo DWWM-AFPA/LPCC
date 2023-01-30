@@ -57,11 +57,6 @@ public class Compilator {
         System.out.println(token);
         System.out.println(pos);
     }
-    public ArrayList<Node> compile (String file){
-
-
-        return null;
-    }
     protected static void cursor(String doc) {
         setToken(doc.charAt(getPos()));
     }
@@ -74,31 +69,36 @@ public class Compilator {
     protected static void reset(){
         pos=0;
     }
-    private Object expr () {
+
+    public ArrayList<Node> compile (String file){
+
+        return null;//expr();
+    }
+    private Node expr () {
             return null;
         }
 
-    private Object exprend () {
+    private Node exprend () {
             return null;
         }
 
-    private Object mainTag () {
+    private Node mainTag () {
             return null;
         }
 
-    private Object text () {
+    private Node text () {
             return null;
         }
 
-    private Object tag () {
+    private Node tag () {
             return null;
         }
 
-    private Object tagEnd () {
+    private Node tagEnd () {
             return null;
         }
 
-    private Object word () {
+    private Node word () {
             return null;
         }
 
