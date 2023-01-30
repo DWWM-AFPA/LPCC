@@ -1,6 +1,7 @@
 package Export;
 
-public interface Visitor {
+import java.util.ArrayList;
 
-    public void visit();
+public interface Visitor {
+    public void visit(ArrayList<Node> compilation);
 }
