@@ -1,5 +1,6 @@
 package Export;
 
+
 import Export.Visitor;
 
 import java.util.ArrayList;
@@ -9,4 +10,5 @@ public class CodeasDiagr implements Visitor {
     public void visit(ArrayList<Node> compilation) {
 
     }
+
 }

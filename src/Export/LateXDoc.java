@@ -5,7 +5,7 @@ import java.util.ArrayList;
 public class LateXDoc implements Documentation,Visitor{
     @Override
     public void user(ArrayList<DocumentationNode> n) {
-        String retour="";
+        StringBuilder retour= new StringBuilder();
         for (DocumentationNode doc:n) {
             doc.remove("user");
             String node;
@@ -39,14 +39,50 @@ public class LateXDoc implements Documentation,Visitor{
                         break;
                 default:return;
             }
-            retour=node+retour;
+            retour.insert(0,node);
             }
         System.out.println(retour);
         }
 
     @Override
     public void dev(ArrayList<DocumentationNode> n) {
-
+        StringBuilder retour= new StringBuilder();
+        for (DocumentationNode doc:n) {
+            doc.remove("user");
+            String node;
+            int titleindex=0;
+            for (int i = 1; i < 6; i++) {
+                if(doc.getArgs().contains("title"+i))
+                    titleindex=i;
+            }
+            switch (titleindex){
+                case 0: node=this.nodeTosring(doc);
+                    break;
+                case 1: doc.remove("title1");
+                    node=this.nodeTosring(doc);
+                    node="\\part{"+node+"}";
+                    break;
+                case 2:doc.remove("title2");
+                    node=this.nodeTosring(doc);
+                    node="\\chapter{"+node+"}";
+                    break;
+                case 3:doc.remove("title3");
+                    node=this.nodeTosring(doc);
+                    node="\\section{"+node+"}";
+                    break;
+                case 4:doc.remove("title4");
+                    node=this.nodeTosring(doc);
+                    node="\\subsection{"+node+"}";
+                    break;
+                case 5:doc.remove("title5");
+                    node=this.nodeTosring(doc);
+                    node="\\subsubsection{"+node+"}";
+                    break;
+                default:return;
+            }
+            retour.insert(0, node);
+        }
+        System.out.println(retour);
     }
 
     @Override
@@ -68,33 +104,40 @@ public class LateXDoc implements Documentation,Visitor{
     }
 
     private String nodeTosring(DocumentationNode doc){
-        String node=doc.getText();
+        StringBuilder node= new StringBuilder(doc.getText());
         while(!doc.getArgs().isEmpty()){
-            switch (doc.getArgs().get(0)) {
-                case ("bd"):
-                    node = "\\textbd{" + node + "}";
-                    doc.remove("bd");
-                    break;
-                case ("it"):
-                    node = "\\textit{" + node + "}";
-                    doc.remove("it");
-                    break;
-                case("ul"):
-                    node="\\underline{"+node+"}";
-                    doc.remove("ul");
-                    break;
-                case("img"):
-                    node="\\begin{figure}"+'\n'+"\\centering"+'\n'+"\\includegraphics{"+node+"}"+'\n'+"\\end{figure}";
-                    doc.remove("img");
-                    break;
-                case("link"):
-                    node="\\url{"+node+"}";
-                    doc.remove("link");
-                    break;
-                default:
-                    return null;
+            if(doc.getArgs().get(0).length()>4&&doc.getArgs().get(0).substring(0,5).equals("color")){
+                String colorvalue=doc.getArgs().get(0).substring(6);
+                node = new StringBuilder("\\textcolor{" + colorvalue + "}" + "{" + node + "}");
+                doc.remove(doc.getArgs().get(0));
+            }
+            else {
+                switch (doc.getArgs().get(0)) {
+                    case ("bd"):
+                        node = new StringBuilder("\\textbd{" + node + "}");
+                        doc.remove("bd");
+                        break;
+                    case ("it"):
+                        node = new StringBuilder("\\textit{" + node + "}");
+                        doc.remove("it");
+                        break;
+                    case ("ul"):
+                        node = new StringBuilder("\\underline{" + node + "}");
+                        doc.remove("ul");
+                        break;
+                    case ("img"):
+                        node = new StringBuilder("\\begin{figure}" + '\n' + "\\centering" + '\n' + "\\includegraphics{" + node + "}" + '\n' + "\\end{figure}");
+                        doc.remove("img");
+                        break;
+                    case ("link"):
+                        node = new StringBuilder("\\url{" + node + "}");
+                        doc.remove("link");
+                        break;
+                    default:
+                        return null;
+                }
             }
         }
-        return node;
+        return node.toString();
     }
 }
