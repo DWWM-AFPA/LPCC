@@ -9,8 +9,14 @@ public class CodeNode extends Node {
     protected boolean start;
     protected String name;
 
+    protected String extension;
+
     //getters
 
+
+    public String getExtension() {
+        return extension;
+    }
 
     public Hashtable<Integer, String> getAppelCode() {
         return appelCode;
@@ -37,6 +43,9 @@ public class CodeNode extends Node {
         this.name = name;
     }
 
+    public void setExtension(String extension) {
+        this.extension = extension;
+    }
 
     //builders
 
@@ -44,20 +53,23 @@ public class CodeNode extends Node {
         this.setText("");
         this.setStart(true);
         this.setAppelCode(new Hashtable<>());
+        this.setExtension(".java");
     }
 
-    public CodeNode(String text,Hashtable<Integer,String> appelCode,String name){
+    public CodeNode(String text,Hashtable<Integer,String> appelCode,String name,String extension){
         this.setText(text);
         this.setAppelCode(appelCode);
         this.setStart(true);
         this.setName(name);
+        this.setExtension(extension);
     }
 
-    public CodeNode(String text,Hashtable<Integer,String> appelCode,boolean start,String name){
+    public CodeNode(String text,Hashtable<Integer,String> appelCode,boolean start,String name,String extension){
         this.setText(text);
         this.setStart(start);
         this.setAppelCode(appelCode);
         this.setName(name);
+        this.setExtension(extension);
     }
 
     //methodes

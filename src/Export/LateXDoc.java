@@ -82,6 +82,7 @@ public class LateXDoc implements Documentation,Visitor{
             }
             retour.insert(0, node);
         }
+        //File f=new File()
         System.out.println(retour);
     }
 

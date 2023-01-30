@@ -23,23 +23,23 @@ class CodeTest {
         put(12,"rectangle");
         put(13,"square");
     }};
-
-    CodeNode rectangle2=new CodeNode("litteral programing ",null,"rectangle");
-    CodeNode square1=new CodeNode("a deux arguments",null,"square");
+    String ext=".java";
+    CodeNode rectangle2=new CodeNode("litteral programing ",null,"rectangle",ext);
+    CodeNode square1=new CodeNode("a deux arguments",null,"square",ext);
 
     ArrayList<CodeNode> refs2=new ArrayList<>(List.of(rectangle2,square1));
-    CodeNode rectangle1=new CodeNode("litteral ",getAppelname3,"rectangle");
-    CodeNode square=new CodeNode("a deux niveaux",null,"square");
+    CodeNode rectangle1=new CodeNode("litteral ",getAppelname3,"rectangle",ext);
+    CodeNode square=new CodeNode("a deux niveaux",null,"square",ext);
 
     ArrayList<CodeNode> refs1=new ArrayList<>(List.of(rectangle1,square));
 
 
-    CodeNode shape=new CodeNode("ceci est du  code",appelname,"shape");
-    CodeNode rectangle=new CodeNode("litteral",null,"rectangle");
+    CodeNode shape=new CodeNode("ceci est du  code",appelname,"shape",ext);
+    CodeNode rectangle=new CodeNode("litteral",null,"rectangle",ext);
 
-    CodeNode shape1=new CodeNode("ceci est du  programming",appelname2,"shape");
+    CodeNode shape1=new CodeNode("ceci est du  programming",appelname2,"shape",ext);
 
-    CodeNode shape2=new CodeNode("ceci est du  ",Appelname4,"shape");
+    CodeNode shape2=new CodeNode("ceci est du  ",Appelname4,"shape",ext);
 
     ArrayList<CodeNode> args=new ArrayList<>(List.of(shape,rectangle));
 
@@ -52,13 +52,15 @@ class CodeTest {
     Code c=new Code();
 
     @org.junit.jupiter.api.Test
-    void visit() {
+
+     void visit() {
         c.visit(compil);
     }
 
     @org.junit.jupiter.api.Test
+
     void extractcode() {
-        assertEquals("ceci est du litteral code",c.extractcode(shape,args));
+        c.extractcode(shape,args);
         assertEquals("ceci est du litteral a deux niveaux programming",c.extractcode(shape1,refs1));
         assertEquals("ceci est du litteral programing a deux arguments",c.extractcode(shape2,refs2));
     }

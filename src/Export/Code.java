@@ -20,7 +20,7 @@ public class Code implements Visitor{
         }
         for (Node n : compilation) {
             if (n instanceof CodeNode && ((CodeNode) n).isStart()) {
-                System.out.println(this.extractcode((CodeNode) n,ref));
+                File f=new File(((CodeNode) n).getName(),((CodeNode) n).getExtension());
             }
         }
     }
