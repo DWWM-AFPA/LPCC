@@ -1,0 +1,168 @@
+Index: src/Export/LateXDoc.java
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/src/Export/LateXDoc.java b/src/Export/LateXDoc.java
+--- a/src/Export/LateXDoc.java	
++++ b/src/Export/LateXDoc.java	
+@@ -8,16 +8,30 @@
+         String retour="";
+         for (DocumentationNode doc:n) {
+             doc.remove("user");
+-            String node=doc.getText();
+-            while(!doc.getArgs().isEmpty()){
+-                switch (doc.getArgs().get(0)){
+-                    case("bd"): node="\textbd{"+node+"}";
+-                                break;
+-                    case("it"):node="\textit"+node+"}";
+-                                break;
+-                    default: return;
++            String node;
++            if(doc.getArgs().contains("title1")) {
++                doc.remove("title1");
++                node=this.nodeTosring(doc);
++            node="\\part{"+node+"}";
++            }
++            else {
++                if(doc.getArgs().contains("title2")) {
++                    doc.remove("title2");
++                    node = this.nodeTosring(doc);
++                    node="\\chapter{"+node+"}";
++                }
++                else {
++                    if(doc.getArgs().contains("title3")){
++                        doc.remove("title3");
++                        node = this.nodeTosring(doc);
++                        node="\\section{"+node+"}";
++                    } else {
++                        if(doc.getArgs().contains("title3")){
++                            
++                        }
+                     }
+                 }
++            }
+             retour=node+retour;
+             }
+         System.out.println(retour);
+@@ -45,4 +59,27 @@
+         this.user(user);
+         this.dev(dev);
+     }
++
++    public String nodeTosring(DocumentationNode doc){
++        String node=doc.getText();
++        while(!doc.getArgs().isEmpty()){
++            switch (doc.getArgs().get(0)) {
++                case ("bd"):
++                    node = "\\textbd{" + node + "}";
++                    doc.remove("bd");
++                    break;
++                case ("it"):
++                    node = "\\textit{" + node + "}";
++                    doc.remove("it");
++                    break;
++                case("ul"):
++                    node="\\underline{"+node+"}";
++                    doc.remove("ul");
++                    break;
++                default:
++                    return null;
++            }
++        }
++        return node;
++    }
+ }
+Index: .idea/workspace.xml
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/.idea/workspace.xml b/.idea/workspace.xml
+--- a/.idea/workspace.xml	
++++ b/.idea/workspace.xml	
+@@ -2,13 +2,9 @@
+ <project version="4">
+   <component name="ChangeListManager">
+     <list default="true" id="701f4b19-ba71-481c-9599-088ba63d482b" name="Changes" comment="&quot;node finits, bon avancement sur le visiteur code, tests probablement demains&quot;">
+-      <change afterPath="$PROJECT_DIR$/test/Export/CodeTest.java" afterDir="false" />
+       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+-      <change beforePath="$PROJECT_DIR$/LPCC.iml" beforeDir="false" afterPath="$PROJECT_DIR$/LPCC.iml" afterDir="false" />
+-      <change beforePath="$PROJECT_DIR$/src/Export/Code.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/Export/Code.java" afterDir="false" />
+-      <change beforePath="$PROJECT_DIR$/src/Export/CodeNode.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/Export/CodeNode.java" afterDir="false" />
+-      <change beforePath="$PROJECT_DIR$/src/Export/Documentation.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/Export/Documentation.java" afterDir="false" />
+-      <change beforePath="$PROJECT_DIR$/src/Export/HTMLDoc.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/Export/HTMLDoc.java" afterDir="false" />
++      <change beforePath="$PROJECT_DIR$/src/Export/LateXDoc.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/Export/LateXDoc.java" afterDir="false" />
++      <change beforePath="$PROJECT_DIR$/test/Export/LateXDocTest.java" beforeDir="false" afterPath="$PROJECT_DIR$/test/Export/LateXDocTest.java" afterDir="false" />
+     </list>
+     <option name="SHOW_DIALOG" value="false" />
+     <option name="HIGHLIGHT_CONFLICTS" value="true" />
+@@ -44,20 +40,20 @@
+     <option name="hideEmptyMiddlePackages" value="true" />
+     <option name="showLibraryContents" value="true" />
+   </component>
+-  <component name="PropertiesComponent"><![CDATA[{
+-  "keyToString": {
+-    "DefaultPlantUmlFileTemplate": "UML Use Case",
+-    "Downloaded.Files.Path.Enabled": "false",
+-    "Repository.Attach.Annotations": "false",
+-    "Repository.Attach.JavaDocs": "false",
+-    "Repository.Attach.Sources": "false",
+-    "RunOnceActivity.OpenProjectViewOnStart": "true",
+-    "RunOnceActivity.ShowReadmeOnStart": "true",
+-    "com.intellij.testIntegration.createTest.CreateTestDialog.defaultLibrary": "JUnit5",
+-    "com.intellij.testIntegration.createTest.CreateTestDialog.defaultLibrarySuperClass.JUnit5": "",
+-    "settings.editor.selected.configurable": "preferences.pluginManager"
++  <component name="PropertiesComponent">{
++  &quot;keyToString&quot;: {
++    &quot;DefaultPlantUmlFileTemplate&quot;: &quot;UML Use Case&quot;,
++    &quot;Downloaded.Files.Path.Enabled&quot;: &quot;false&quot;,
++    &quot;Repository.Attach.Annotations&quot;: &quot;false&quot;,
++    &quot;Repository.Attach.JavaDocs&quot;: &quot;false&quot;,
++    &quot;Repository.Attach.Sources&quot;: &quot;false&quot;,
++    &quot;RunOnceActivity.OpenProjectViewOnStart&quot;: &quot;true&quot;,
++    &quot;RunOnceActivity.ShowReadmeOnStart&quot;: &quot;true&quot;,
++    &quot;com.intellij.testIntegration.createTest.CreateTestDialog.defaultLibrary&quot;: &quot;JUnit5&quot;,
++    &quot;com.intellij.testIntegration.createTest.CreateTestDialog.defaultLibrarySuperClass.JUnit5&quot;: &quot;&quot;,
++    &quot;settings.editor.selected.configurable&quot;: &quot;preferences.pluginManager&quot;
+   }
+-}]]></component>
++}</component>
+   <component name="RecentsManager">
+     <key name="CreateTestDialog.Recents.Supers">
+       <recent name="" />
+@@ -66,7 +62,7 @@
+       <recent name="Export" />
+     </key>
+   </component>
+-  <component name="RunManager" selected="JUnit.CodeTest">
++  <component name="RunManager" selected="JUnit.LateXDocTest.user">
+     <configuration name="Main" type="Application" factoryName="Application" temporary="true" nameIsGenerated="true">
+       <option name="MAIN_CLASS_NAME" value="Main" />
+       <module name="LPCC" />
+@@ -121,8 +117,25 @@
+         <option name="Make" enabled="true" />
+       </method>
+     </configuration>
++    <configuration name="LateXDocTest.user" type="JUnit" factoryName="JUnit" temporary="true" nameIsGenerated="true">
++      <module name="LPCC" />
++      <extension name="coverage">
++        <pattern>
++          <option name="PATTERN" value="Export.*" />
++          <option name="ENABLED" value="true" />
++        </pattern>
++      </extension>
++      <option name="PACKAGE_NAME" value="Export" />
++      <option name="MAIN_CLASS_NAME" value="Export.LateXDocTest" />
++      <option name="METHOD_NAME" value="user" />
++      <option name="TEST_OBJECT" value="method" />
++      <method v="2">
++        <option name="Make" enabled="true" />
++      </method>
++    </configuration>
+     <recent_temporary>
+       <list>
++        <item itemvalue="JUnit.LateXDocTest.user" />
+         <item itemvalue="JUnit.CodeTest" />
+         <item itemvalue="JUnit.CodeTest.visit" />
+         <item itemvalue="JUnit.CodeTest.extractcode" />
