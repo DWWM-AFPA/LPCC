@@ -23,7 +23,8 @@ public class File {
         this.setExtension(extension);
         this.setFullPath(this.getPath()+this.getName()+this.getExtension());
         this.setHasBeenRead(false);
-    }    public File(String path,String name,String extension) {
+    }
+    public File(String path,String name,String extension) {
         this.setPath(path);
         this.setName(name);
         this.setExtension(extension);
@@ -34,6 +35,7 @@ public class File {
         this.setPath(path);
         this.setPath(name);
         this.setExtension(extension);
+        this.setFullPath(this.getPath()+this.getName()+this.getExtension());
         this.setHasBeenRead(hasBeenRead);
     }
 
@@ -58,7 +60,7 @@ public class File {
     }
 
     public void setExtension(String extension) {
-        extension = extension.charAt(1) == '.' ? extension: "."+extension;
+        extension = extension.charAt(0) == '.' ? extension: "."+extension;
         this.extension = extension;
     }
 
@@ -78,7 +80,7 @@ public class File {
         this.hasBeenRead = hasBeenRead;
     }
 
-    public String read() throws IOException {
+    public String read() throws IOException, FileException {
         if (!fileList.contains(this.getFullPath())) {
             fileList.add(this.getFullPath());
             FileReader file= new FileReader(this.getFullPath());
@@ -88,14 +90,15 @@ public class File {
                 retour.append((char)i);
             return retour.toString();}
         else {
-            System.err.println("Le fichier "+this.getPath()+" semble avoir déjà été parcouru");
-            return null;
+            throw new FileException().alreadyRead(this);
+            //System.err.println("Le fichier "+this.getPath()+" semble avoir déjà été parcouru");
+
         }
     }
 
     public File create(String content) throws IOException {
         //FileOutputStream outFile = new FileOutputStream(this.getPath() + extension);
-        FileOutputStream outFile = new FileOutputStream(this.getPath() + extension);
+        FileOutputStream outFile = new FileOutputStream(this.getFullPath());
 
         outFile.write(content.getBytes());
         outFile.close();
