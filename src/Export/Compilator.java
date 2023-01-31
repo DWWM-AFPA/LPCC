@@ -116,7 +116,7 @@ public class Compilator {
         return this.getToken();
     }
 
-    public ArrayList<Node> compile(){
+    public ArrayList<Node> compile() throws Exception {
         this.reset();
         ArrayList<Node> retour=new ArrayList<>();
         cursor();
@@ -127,17 +127,24 @@ public class Compilator {
                     retour.add(this.getCodeNode());
                 } else {
                     this.previous();
-                    retour.add(this.getDocNode());
+                    DocumentationNode ajout=this.getDocNode();
+                    if(ajout!=null) {
+                        System.out.println("ajout args=" +ajout.getArgs());
+                        retour.add(ajout);
+                    }
                 }
             }
         }
+        if(!args.isEmpty())
+            throw new LPCSyntaxException("Erreur sur les balises");
         return retour;
     }
 
     private String getarg(){
         String arg="";
-        while(!Objects.equals(this.next(), closeTag)){
+        while(!Objects.equals(this.getToken(), closeTag)){
             arg=arg+getToken();
+            this.next();
         }
         this.next();
         System.out.println("arg= "+arg);
@@ -173,9 +180,12 @@ public class Compilator {
 
     private DocumentationNode getDocNode(){
         String txt="";
-        while(Objects.equals(this.next(),openTag)||Objects.equals(this.getToken(),"/")){
-            if(Objects.equals(this.getToken(), "/"))
+        while(Objects.equals(this.token,openTag)){
+            this.next();
+            if(Objects.equals(this.getToken(), "/")) {
+                this.next();
                 this.args.remove(getarg());
+            }
             else {
                 this.args.add(getarg());
             }
@@ -183,14 +193,20 @@ public class Compilator {
             System.out.println("pos= "+this.getPos());
         }
         System.out.println("la position a la sortie de arg est "+this.getPos());
-        txt=txt+this.getToken();
-        while (!Objects.equals(this.getToken(),"/")){
-            txt=txt+this.next();
+        if(args.isEmpty()){
+            return null;
+        }
+        while (!Objects.equals(this.getToken(),this.getOpenTag())){
+            txt=txt+this.getToken();
+            this.next();
             System.out.println("texte= "+txt);
             System.out.println("pos= "+this.getPos());
             System.out.println("token= "+this.getToken());
         }
-        return new DocumentationNode(false,txt,this.getArgs());
+        System.out.println(this.getArgs());
+        ArrayList<String> argnode=new ArrayList<>(this.getArgs());
+        System.out.println("argnode= "+argnode);
+        return new DocumentationNode(false,txt,argnode);
     }
 
 /*
