@@ -1,6 +1,7 @@
 package Export;
 
 
+import javax.swing.*;
 import javax.swing.filechooser.FileSystemView;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
@@ -23,8 +24,12 @@ public class File {
     public File(String name,String extension) {
         //path = mes documents
         this.setPath(documentsPath+"\\LPCC\\");
-        if (new java.io.File(documentsPath+"\\LPCC").mkdir())
-            System.out.println("Dossier créé dans : "+documentsPath+"\\LPCC");
+        java.io.File file= new java.io.File(desktopPath+"\\Projet\\LPCC");
+        if (file.mkdir())
+            System.out.println("Dossier créé dans : "+ file);
+        else if (                !file.isDirectory()     &&                (JOptionPane.showConfirmDialog(null,"Voulez vous créer l'arborescence dossier "+file,"Création dossiers",JOptionPane.YES_NO_OPTION)==JOptionPane.YES_OPTION))
+            file.mkdirs();
+
         this.setName(name);
         this.setExtension(extension);
         this.setFullPath(this.getPath()+this.getName()+this.getExtension());
