@@ -22,7 +22,7 @@ public class File {
 
     public File(String name,String extension) {
         //path = mes documents
-        this.setPath(documentsPath);
+        this.setPath(documentsPath+"\\LPCC\\");
         if (new java.io.File(documentsPath+"\\LPCC").mkdir())
             System.out.println("Dossier créé dans : "+documentsPath+"\\LPCC");
         this.setName(name);
@@ -39,10 +39,12 @@ public class File {
     }
     public File(String path,String name,String extension,boolean hasBeenRead) {
         this.setPath(path);
-        this.setPath(name);
+        this.setName(name);
         this.setExtension(extension);
         this.setFullPath(this.getPath()+this.getName()+this.getExtension());
         this.setHasBeenRead(hasBeenRead);
+        if(!hasBeenRead)
+            fileList.remove(this.getFullPath());
     }
 
     public String getPath() {

@@ -10,11 +10,28 @@ import static org.junit.jupiter.api.Assertions.*;
 
 class FileTest {
     @Test
+    void testConstructor(){
+        String path = File.desktopPath+"\\Projet\\LPCC"+"\\";
+        String name = "testCreate";
+        String extension ="html";
+        String content = "testCreate";
+        assertEquals("C:\\Users\\CDA-11\\Documents\\LPCC\\testCreate.html",new File(name,extension).getFullPath());
+        assertEquals("C:\\Users\\CDA-11\\Documents\\LPCC\\test.html",new File("test","html").getFullPath());
+        assertEquals("C:\\Users\\CDA-11\\Desktop\\Projet\\LPCC\\testCreate.html",new File(path,name,extension).getFullPath());
+        assertEquals("C:\\Users\\CDA-11\\Desktop\\Projet\\LPCC\\testCreate.html",new File(path,name,extension,false).getFullPath());
+        assertEquals("C:\\Users\\CDA-11\\Desktop\\Projet\\LPCC\\testCreate.html",new File(path,name,extension,true).getFullPath());
+
+    }
+
+    @Test
     void testCreate() throws Exception {
         String path = File.desktopPath+"\\Projet\\LPCC"+"\\";
         String name = "testCreate";
         String extension ="html";
         String content = "testCreate";
+
+
+
         assertEquals(new File(name,extension).create(content).read(),content);
         assertEquals(new File(path,name,extension).create(content).read(),content);
         assertEquals(new File(path,name,extension,false).create(content).read(),content);
