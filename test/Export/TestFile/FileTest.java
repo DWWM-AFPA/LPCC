@@ -1,10 +1,10 @@
 package Export.TestFile;
 
 import Export.File;
+import Export.FileException;
 import org.junit.jupiter.api.Test;
 
 import java.io.FileNotFoundException;
-import java.sql.SQLException;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -15,7 +15,11 @@ class FileTest {
         String name = "testCreate";
         String extension ="html";
         String content = "testCreate";
+        assertEquals(new File(name,extension).create(content).read(),content);
         assertEquals(new File(path,name,extension).create(content).read(),content);
+        assertEquals(new File(path,name,extension,false).create(content).read(),content);
+    //    assertEquals(new File(path,name,extension,true).create(content).read(),"");
+        assertThrowsExactly(Export.FileException.class, new File(path,name,extension,true).create(content)::read,"Le fichier testCreate semble avoir déjà été parcouru");
 
         assertThrows(FileNotFoundException.class, () -> {
             new File("C:\\Users\\CDA-11\\Desktop\\Projet\\LPCC"+"\\","testCreated","html").read();});
@@ -29,9 +33,7 @@ class FileTest {
         File test=new File(path,name,extension);
         String content = "testCreate";
         // assertEquals(test.read(),content);
-
       //    assertThrowsExactly(Export.FileException.class, test::read,"Le fichier "+test.getFullPath()+" semble avoir déjà été parcouru");
-
         assertThrowsExactly(FileNotFoundException.class, test::read);
             }
 }
