@@ -6,7 +6,7 @@ import java.util.Objects;
 public class Compilator {
     protected String openTag;
     protected String closeTag;
-    protected static int pos=0;
+    protected int pos=0;
     protected String token= new String();
     protected String doc=new String();
 
@@ -19,8 +19,8 @@ public class Compilator {
         return closeTag;
     }
 
-    public static int getPos() {
-        return pos;
+    public int getPos() {
+        return this.pos;
     }
     public String getToken() {
         return token;

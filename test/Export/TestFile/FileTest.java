@@ -22,7 +22,7 @@ class FileTest {
         assertThrowsExactly(Export.FileException.class, new File(path,name,extension,true).create(content)::read,"Le fichier testCreate semble avoir déjà été parcouru");
 
         assertThrows(FileNotFoundException.class, () -> {
-            new File("C:\\Users\\CDA-11\\Desktop\\Projet\\LPCC"+"\\","testCreated","html").read();});
+            new File("C:\\Users\\CDA-11\\Desktop\\Projet\\LPCC"+"\\","testCreate","html").read();});
 
     }
     @Test
