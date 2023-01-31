@@ -11,6 +11,9 @@ public class Compilator {
     protected String token;
     protected String doc;
 
+    protected String codeopen;
+
+    protected String codeclose;
     protected ArrayList<String> args;
 
 
@@ -36,7 +39,25 @@ public class Compilator {
         return doc;
     }
 
+    public String getCodeclose() {
+        return codeclose;
+    }
+
+    public String getCodeopen() {
+        return codeopen;
+    }
+
     //setters
+
+
+    public void setCodeclose(String codeclose) {
+        this.codeclose = codeclose;
+    }
+
+    public void setCodeopen(String codeopen) {
+        this.codeopen = codeopen;
+    }
+
     public void setCloseTag(String closeTag) {
         this.closeTag = closeTag;
     }
@@ -61,11 +82,15 @@ public class Compilator {
     public Compilator() {
         this.setOpenTag("<");
         this.setCloseTag(">");
+        this.setCodeclose("$");
+        this.setCodeopen("$");
         this.setArgs(new ArrayList<>());
     }
     public Compilator(String textToCompile) {
         this.setOpenTag("<");
         this.setCloseTag(">");
+        this.setCodeclose("$");
+        this.setCodeopen("$");
         this.setDoc(textToCompile);
         this.setArgs(new ArrayList<>());
     }
@@ -113,6 +138,11 @@ public class Compilator {
     protected String reset(){
         this.pos=0;
         this.cursor();
+        while (!(Objects.equals(this.getToken(), openTag) || Objects.equals(this.getToken(), codeopen)) ) {
+            System.out.println("token ="+this.getToken());
+            this.next();
+        }
+        this.cursor();
         return this.getToken();
     }
 
@@ -121,17 +151,16 @@ public class Compilator {
         ArrayList<Node> retour=new ArrayList<>();
         cursor();
         while (pos<doc.length()-1) {
-            if(Objects.equals(this.getToken(), openTag)) {
-                if (Objects.equals(next(), openTag)) {
-                    this.previous();
-                    retour.add(this.getCodeNode());
-                } else {
-                    this.previous();
-                    DocumentationNode ajout=this.getDocNode();
-                    if(ajout!=null) {
-                        System.out.println("ajout args=" +ajout.getArgs());
-                        retour.add(ajout);
-                    }
+            if(Objects.equals(this.getToken(), codeopen)) {
+                retour.add(this.getCodeNode());
+                System.out.println("j'ajoute bien un codenode ");
+                System.out.println("le token a la sortie du codenode est "+ this.getToken());
+            }
+            else {
+                DocumentationNode ajout = this.getDocNode();
+                if (ajout != null) {
+                    System.out.println("ajout args=" + ajout.getArgs());
+                    retour.add(ajout);
                 }
             }
         }
@@ -156,22 +185,27 @@ public class Compilator {
         String code="";
         int posrel=0;
         Hashtable<Integer,String> callcode=new Hashtable<>();
-        while(!Objects.equals(this.next(), "/")){
+        while(!Objects.equals(this.token, "/")){
+            this.next();
             posrel++;
-            if(Objects.equals(this.token, openTag)){
+            System.out.println("je passe bien par la boucle principal de codenode");
+            if(Objects.equals(this.token, codeopen)){
                 String callname=this.getName();
+                System.out.println("je sors bien de getname");
                 callcode.put(posrel,callname);
             }
             else {
                 code+=this.getToken();
             }
         }
+        this.next();
+        this.getName();
         return new CodeNode(code,callcode,name,".java");
     }
 
     private String getName(){
         String name="";
-        while (!Objects.equals(this.next(),closeTag)){
+        while (!Objects.equals(this.next(),codeclose)){
             name=name+this.getToken();
         }
         this.next();
@@ -192,11 +226,9 @@ public class Compilator {
             System.out.println("token= "+this.getToken());
             System.out.println("pos= "+this.getPos());
         }
-        System.out.println("la position a la sortie de arg est "+this.getPos());
-        if(args.isEmpty()){
+        if(Objects.equals(token, codeopen) ||args.isEmpty())
             return null;
-        }
-        while (!Objects.equals(this.getToken(),this.getOpenTag())){
+        while (!Objects.equals(this.getToken(),this.getOpenTag())&&!Objects.equals(this.getToken(),codeopen)){
             txt=txt+this.getToken();
             this.next();
             System.out.println("texte= "+txt);
