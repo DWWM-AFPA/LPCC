@@ -17,9 +17,14 @@ public class File {
     protected boolean hasBeenRead;
     private static final ArrayList<String> fileList = new ArrayList<>();
 
+    public static final String desktopPath = FileSystemView.getFileSystemView().getHomeDirectory().getPath();
+    public static final String documentsPath = FileSystemView.getFileSystemView().getDefaultDirectory().getPath();
+
     public File(String name,String extension) {
         //path = mes documents
-        this.setPath(FileSystemView.getFileSystemView().toString());
+        this.setPath(documentsPath);
+        if (new java.io.File(documentsPath+"\\LPCC").mkdir())
+            System.out.println("Dossier créé dans : "+documentsPath+"\\LPCC");
         this.setName(name);
         this.setExtension(extension);
         this.setFullPath(this.getPath()+this.getName()+this.getExtension());
@@ -100,6 +105,7 @@ public class File {
     public File create(String content) throws IOException {
         //FileOutputStream outFile = new FileOutputStream(this.getPath() + extension);
         FileOutputStream outFile = new FileOutputStream(this.getFullPath());
+      //  System.out.println(this.getFullPath());
 
         outFile.write(content.getBytes());
         outFile.close();
