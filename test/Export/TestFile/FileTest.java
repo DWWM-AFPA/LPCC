@@ -11,7 +11,7 @@ import static org.junit.jupiter.api.Assertions.*;
 class FileTest {
     @Test
     void testCreate() throws Exception {
-        String path = "C:\\Users\\CDA-11\\Desktop\\Projet\\LPCC"+"\\";
+        String path = "C:\\Users\\CDA-03\\Desktop\\LPCC"+"\\";
         String name = "testCreate";
         String extension ="html";
         String content = "testCreate";
@@ -22,12 +22,12 @@ class FileTest {
         assertThrowsExactly(Export.FileException.class, new File(path,name,extension,true).create(content)::read,"Le fichier testCreate semble avoir déjà été parcouru");
 
         assertThrows(FileNotFoundException.class, () -> {
-            new File("C:\\Users\\CDA-11\\Desktop\\Projet\\LPCC"+"\\","testCreated","html").read();});
+            new File("C:\\Users\\CDA-03\\Desktop\\LPCC"+"\\","testCreated","html").read();});
 
     }
     @Test
     void testRead() throws Exception {
-        String path = "C:\\Users\\CDA-11\\Desktop\\Projet\\LPCC"+"\\";
+        String path = "C:\\Users\\CDA-03\\Desktop\\LPCC"+"\\";
         String name = "testCreated";
         String extension ="html";
         File test=new File(path,name,extension);

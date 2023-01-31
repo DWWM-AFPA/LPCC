@@ -2,20 +2,11 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="233049b2-cae0-4f48-8228-25faaf1bf76f" name="Changes" comment="&quot;commit pre_merge&quot;">
-      <change beforePath="$PROJECT_DIR$/.idea/misc.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/misc.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/shelf/Changes.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/shelf/Changes.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/shelf/Uncommitted_changes_before_Checkout_at_25_01_2023_14_29__Changes_.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/shelf/Uncommitted_changes_before_Checkout_at_25_01_2023_14_29__Changes_.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/shelf/Uncommitted_changes_before_Checkout_at_25_01_2023_14_36__Changes_.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/shelf/Uncommitted_changes_before_Checkout_at_25_01_2023_14_36__Changes_.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/shelf/Uncommitted_changes_before_Checkout_at_27_01_2023_11_55__Changes_.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/shelf/Uncommitted_changes_before_Checkout_at_27_01_2023_11_55__Changes_.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/shelf/Uncommitted_changes_before_Checkout_at_27_01_2023_11_56__Changes_.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/shelf/Uncommitted_changes_before_Checkout_at_27_01_2023_11_56__Changes_.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/shelf/Uncommitted_changes_before_Checkout_at_30_01_2023_11_03__Changes_.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/shelf/Uncommitted_changes_before_Checkout_at_30_01_2023_11_03__Changes_.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/vcs.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/vcs.xml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/test/Export/CompilatorTest.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/Export/Code.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/Export/Code.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/Export/CodeNode.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/Export/CodeNode.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/Export/LateXDoc.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/Export/LateXDoc.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/Export/LatexDoc.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/test/Export/CodeTest.java" beforeDir="false" afterPath="$PROJECT_DIR$/test/Export/CodeTest.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/Export/Compilator.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/Export/Compilator.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/Export/File.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/Export/File.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/test/Export/TestFile/FileTest.java" beforeDir="false" afterPath="$PROJECT_DIR$/test/Export/TestFile/FileTest.java" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -73,8 +64,8 @@
       <recent name="Export" />
     </key>
   </component>
-  <component name="RunManager" selected="JUnit.LateXDocTest">
-    <configuration name="CodeTest" type="JUnit" factoryName="JUnit" temporary="true" nameIsGenerated="true">
+  <component name="RunManager" selected="JUnit.CompilatorTest.compile">
+    <configuration name="CompilatorTest.compile" type="JUnit" factoryName="JUnit" temporary="true" nameIsGenerated="true">
       <module name="LPCC" />
       <extension name="coverage">
         <pattern>
@@ -83,39 +74,39 @@
         </pattern>
       </extension>
       <option name="PACKAGE_NAME" value="Export" />
-      <option name="MAIN_CLASS_NAME" value="Export.CodeTest" />
-      <option name="TEST_OBJECT" value="class" />
-      <method v="2">
-        <option name="Make" enabled="true" />
-      </method>
-    </configuration>
-    <configuration name="CodeTest.extractcode" type="JUnit" factoryName="JUnit" temporary="true" nameIsGenerated="true">
-      <module name="LPCC" />
-      <extension name="coverage">
-        <pattern>
-          <option name="PATTERN" value="Export.*" />
-          <option name="ENABLED" value="true" />
-        </pattern>
-      </extension>
-      <option name="PACKAGE_NAME" value="Export" />
-      <option name="MAIN_CLASS_NAME" value="Export.CodeTest" />
-      <option name="METHOD_NAME" value="extractcode" />
+      <option name="MAIN_CLASS_NAME" value="Export.CompilatorTest" />
+      <option name="METHOD_NAME" value="compile" />
       <option name="TEST_OBJECT" value="method" />
       <method v="2">
         <option name="Make" enabled="true" />
       </method>
     </configuration>
-    <configuration name="CodeTest.visit" type="JUnit" factoryName="JUnit" temporary="true" nameIsGenerated="true">
+    <configuration name="FileTest" type="JUnit" factoryName="JUnit" temporary="true" nameIsGenerated="true">
       <module name="LPCC" />
       <extension name="coverage">
         <pattern>
-          <option name="PATTERN" value="Export.*" />
+          <option name="PATTERN" value="Export.TestFile.*" />
           <option name="ENABLED" value="true" />
         </pattern>
       </extension>
-      <option name="PACKAGE_NAME" value="Export" />
-      <option name="MAIN_CLASS_NAME" value="Export.CodeTest" />
-      <option name="METHOD_NAME" value="visit" />
+      <option name="PACKAGE_NAME" value="Export.TestFile" />
+      <option name="MAIN_CLASS_NAME" value="Export.TestFile.FileTest" />
+      <option name="TEST_OBJECT" value="class" />
+      <method v="2">
+        <option name="Make" enabled="true" />
+      </method>
+    </configuration>
+    <configuration name="FileTest.testCreate" type="JUnit" factoryName="JUnit" temporary="true" nameIsGenerated="true">
+      <module name="LPCC" />
+      <extension name="coverage">
+        <pattern>
+          <option name="PATTERN" value="Export.TestFile.*" />
+          <option name="ENABLED" value="true" />
+        </pattern>
+      </extension>
+      <option name="PACKAGE_NAME" value="Export.TestFile" />
+      <option name="MAIN_CLASS_NAME" value="Export.TestFile.FileTest" />
+      <option name="METHOD_NAME" value="testCreate" />
       <option name="TEST_OBJECT" value="method" />
       <method v="2">
         <option name="Make" enabled="true" />
@@ -136,15 +127,14 @@
         <option name="Make" enabled="true" />
       </method>
     </configuration>
-    <configuration name="LateXDocTest.user" type="JUnit" factoryName="JUnit" temporary="true" nameIsGenerated="true">
+    <configuration name="LateXDocTest.user (1)" type="JUnit" factoryName="JUnit" temporary="true" nameIsGenerated="true">
+      <module name="LPCC" />
       <extension name="coverage">
         <pattern>
           <option name="PATTERN" value="Export.*" />
           <option name="ENABLED" value="true" />
         </pattern>
       </extension>
-      <option name="ALTERNATIVE_JRE_PATH_ENABLED" value="true" />
-      <option name="ALTERNATIVE_JRE_PATH" value="19" />
       <option name="PACKAGE_NAME" value="Export" />
       <option name="MAIN_CLASS_NAME" value="Export.LateXDocTest" />
       <option name="METHOD_NAME" value="user" />
@@ -155,11 +145,11 @@
     </configuration>
     <recent_temporary>
       <list>
+        <item itemvalue="JUnit.CompilatorTest.compile" />
+        <item itemvalue="JUnit.FileTest" />
+        <item itemvalue="JUnit.FileTest.testCreate" />
+        <item itemvalue="JUnit.LateXDocTest.user (1)" />
         <item itemvalue="JUnit.LateXDocTest" />
-        <item itemvalue="JUnit.LateXDocTest.user" />
-        <item itemvalue="JUnit.CodeTest.visit" />
-        <item itemvalue="JUnit.CodeTest.extractcode" />
-        <item itemvalue="JUnit.CodeTest" />
       </list>
     </recent_temporary>
   </component>
@@ -209,5 +199,20 @@
     <MESSAGE value="&quot;test&quot;" />
     <MESSAGE value="&quot;node finits, bon avancement sur le visiteur code, tests probablement demains&quot;" />
     <option name="LAST_COMMIT_MESSAGE" value="&quot;node finits, bon avancement sur le visiteur code, tests probablement demains&quot;" />
+  </component>
+  <component name="XDebuggerManager">
+    <breakpoint-manager>
+      <breakpoints>
+        <line-breakpoint enabled="true" type="java-line">
+          <url>file://$PROJECT_DIR$/src/Export/Compilator.java</url>
+          <line>189</line>
+          <option name="timeStamp" value="4" />
+        </line-breakpoint>
+      </breakpoints>
+    </breakpoint-manager>
+  </component>
+  <component name="XSLT-Support.FileAssociations.UIState">
+    <expand />
+    <select />
   </component>
 </project>

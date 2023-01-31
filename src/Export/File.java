@@ -99,7 +99,6 @@ public class File {
     public File create(String content) throws IOException {
         //FileOutputStream outFile = new FileOutputStream(this.getPath() + extension);
         FileOutputStream outFile = new FileOutputStream(this.getFullPath());
-
         outFile.write(content.getBytes());
         outFile.close();
         return this;

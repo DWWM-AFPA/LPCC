@@ -1,14 +1,19 @@
 package Export;
 
 import java.util.ArrayList;
+import java.util.Hashtable;
 import java.util.Objects;
 
 public class Compilator {
     protected String openTag;
     protected String closeTag;
-    protected static int pos=0;
-    protected String token= new String();
-    protected String doc=new String();
+    protected  int pos=0;
+    protected String token;
+    protected String doc;
+
+    protected ArrayList<String> args;
+
+
 
 
     //getters
@@ -18,8 +23,11 @@ public class Compilator {
     public String getCloseTag () {
         return closeTag;
     }
+    public ArrayList<String> getArgs() {
+        return args;
+    }
 
-    public static int getPos() {
+    public  int getPos() {
         return pos;
     }
     public String getToken() {
@@ -45,15 +53,21 @@ public class Compilator {
         this.doc = doc;
     }
 
+    public void setArgs(ArrayList<String> args) {
+        this.args = args;
+    }
+
     //builders
     public Compilator() {
         this.setOpenTag("<");
         this.setCloseTag(">");
+        this.setArgs(new ArrayList<>());
     }
     public Compilator(String textToCompile) {
         this.setOpenTag("<");
         this.setCloseTag(">");
         this.setDoc(textToCompile);
+        this.setArgs(new ArrayList<>());
     }
     public Compilator(String openTag, String closeTag) {
         this.setCloseTag(closeTag);
@@ -78,24 +92,18 @@ public class Compilator {
         }
     }
 
-    //main pour fatih
-    public static void  main(String[] args) {
-        //   Compilator comp = new Compilator("kdjfhfyy <dev> Hello world <dev/>");
-        //  debug(false);
-        //   comp.compile(comp.getDoc());
-        Compilator code = new Compilator("kdjfhfyy <code> Hello world <code/>");
-        debug(true);
-        code.compile(code.getDoc());
-    }
-
 
     protected String cursor() {
         return setToken(String.valueOf(doc.charAt(getPos())));
     }
     public String next(){
-        this.pos++;
-        //retourne this.token
-        return this.cursor().toLowerCase();
+        if (pos<doc.length()-1) {
+            this.pos++;
+            return this.cursor().toLowerCase();
+        }
+        else {
+            return this.cursor().toLowerCase();
+        }
     }
     public String previous(){
         this.pos--;
@@ -108,30 +116,89 @@ public class Compilator {
         return this.getToken();
     }
 
-    public /*ArrayList<Node>*/Node compile (String file){
+    public ArrayList<Node> compile(){
+        this.reset();
+        ArrayList<Node> retour=new ArrayList<>();
         cursor();
-        while (!Objects.equals(this.getToken(), this.getOpenTag())) {
-            debug(token);
-            next();
+        while (pos<doc.length()-1) {
+            if(Objects.equals(this.getToken(), openTag)) {
+                if (Objects.equals(next(), openTag)) {
+                    this.previous();
+                    retour.add(this.getCodeNode());
+                } else {
+                    this.previous();
+                    retour.add(this.getDocNode());
+                }
+            }
         }
-
-        return expr( this.doc.substring(pos));
-    }
-    private Node expr (String expr) {
-        if (next().equals("c")) {
-            System.out.print(this.doc.substring(pos-1,pos+"code>".length()));
-            return new CodeNode();
-        }
-        if (next().equals("u")||next().equals("d"))
-            return new DocumentationNode();
-        debug(token);
-        return null;
+        return retour;
     }
 
+    private String getarg(){
+        String arg="";
+        while(!Objects.equals(this.next(), closeTag)){
+            arg=arg+getToken();
+        }
+        this.next();
+        System.out.println("arg= "+arg);
+        return arg;
+    }
 
+    private CodeNode getCodeNode(){
+        String name=this.getName();
+        String code="";
+        int posrel=0;
+        Hashtable<Integer,String> callcode=new Hashtable<>();
+        while(!Objects.equals(this.next(), "/")){
+            posrel++;
+            if(Objects.equals(this.token, openTag)){
+                String callname=this.getName();
+                callcode.put(posrel,callname);
+            }
+            else {
+                code+=this.getToken();
+            }
+        }
+        return new CodeNode(code,callcode,name,".java");
+    }
+
+    private String getName(){
+        String name="";
+        while (!Objects.equals(this.next(),closeTag)){
+            name=name+this.getToken();
+        }
+        this.next();
+        return name;
+    }
+
+    private DocumentationNode getDocNode(){
+        String txt="";
+        while(Objects.equals(this.next(),openTag)||Objects.equals(this.getToken(),"/")){
+            if(Objects.equals(this.getToken(), "/"))
+                this.args.remove(getarg());
+            else {
+                this.args.add(getarg());
+            }
+            System.out.println("token= "+this.getToken());
+            System.out.println("pos= "+this.getPos());
+        }
+        System.out.println("la position a la sortie de arg est "+this.getPos());
+        txt=txt+this.getToken();
+        while (!Objects.equals(this.getToken(),"/")){
+            txt=txt+this.next();
+            System.out.println("texte= "+txt);
+            System.out.println("pos= "+this.getPos());
+            System.out.println("token= "+this.getToken());
+        }
+        return new DocumentationNode(false,txt,this.getArgs());
+    }
+
+/*
     private Node exprend () {
         return null;
     }
+
+    private Node closednode (){return null;}
 
     private Node mainTag () {
         return null;
@@ -152,6 +219,6 @@ public class Compilator {
     private Node word () {
         return null;
     }
-
+*/
 }
 
