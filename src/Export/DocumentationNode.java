@@ -37,10 +37,15 @@ public class DocumentationNode extends Node{
         this.setText("");
     }
 
-    public DocumentationNode(boolean dev,String text,ArrayList<String> args){
+    public DocumentationNode(boolean dev,String text/*,ArrayList<String> args*/){
         this.setText(text);
-        this.setArgs(args);
+  //      this.setArgs(args);
         this.setDev(dev);
+    }
+    public DocumentationNode(String text/*,ArrayList<String> args*/){
+        this.setText(text);
+   //     this.setArgs(args);
+        this.setDev(false);
     }
 
     //methodes

@@ -40,25 +40,17 @@ public class CodeNode extends Node {
 
     //builders
 
-    public CodeNode(){
+
+    public CodeNode(String content,String name){
+        this.setName(name);
+        this.setText(content);
+    }
+    public CodeNode(String name){
+        this.setName(name);
         this.setText("");
-        this.setStart(true);
-        this.setAppelCode(new Hashtable<>());
     }
 
-    public CodeNode(String text,Hashtable<Integer,String> appelCode,String name){
-        this.setText(text);
-        this.setAppelCode(appelCode);
-        this.setStart(true);
-        this.setName(name);
-    }
 
-    public CodeNode(String text,Hashtable<Integer,String> appelCode,boolean start,String name){
-        this.setText(text);
-        this.setStart(start);
-        this.setAppelCode(appelCode);
-        this.setName(name);
-    }
 
     //methodes
 

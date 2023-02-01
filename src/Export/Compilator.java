@@ -1,14 +1,23 @@
 package Export;
 
-import java.util.ArrayList;
+import java.sql.SQLOutput;
 import java.util.Objects;
 
 public class Compilator {
     protected String openTag;
     protected String closeTag;
+
+    // ot1  tag1    ft1 content  ot2 tag2   ft2
+    // <    code    >   text      < code    />
     protected int pos=0;
-    protected int firstTag;
-    protected String contentTag;
+    protected int ot1;
+    protected int ft1;
+    protected int ot2;
+    protected int ft2;
+    protected String tag1;
+    protected String tag2;
+    protected String content;
+    protected String tagContent;
     protected String token= new String();
     protected String doc=new String();
 
@@ -25,6 +34,39 @@ public class Compilator {
     public int getPos() {
         return this.pos;
     }
+
+    public int getOt1() {
+        return ot1;
+    }
+
+    public int getFt1() {
+        return ft1;
+    }
+
+    public int getOt2() {
+        return ot2;
+    }
+
+    public int getFt2() {
+        return ft2;
+    }
+
+    public String getTag1() {
+        return tag1;
+    }
+
+    public String getTag2() {
+        return tag2;
+    }
+
+    public String getContent() {
+        return content;
+    }
+
+    public String getTagContent() {
+        return tagContent;
+    }
+
     public String getToken() {
         return token;
     }
@@ -49,6 +91,35 @@ public class Compilator {
     public void setPos(int pos) {
         this.pos = pos;
     }
+
+    public void setOt1(int ot1) {
+        this.ot1 = ot1;
+    }
+
+    public void setFt1(int ft1) {
+        this.ft1 = ft1;
+    }
+
+    public void setOt2(int ot2) {
+        this.ot2 = ot2;
+    }
+
+    public void setFt2(int ft2) {
+        this.ft2 = ft2;
+    }
+
+    public void setTag1(String tag1) {
+        this.tag1 = tag1;
+    }
+
+    public void setTag2(String tag2) {
+        this.tag2 = tag2;
+    }
+
+    public void setContent(String content) {
+        this.content = content;
+    }
+
     public String setToken(String token) {
         return this.token = token;
     }
@@ -102,7 +173,7 @@ public class Compilator {
         //   comp.compile(comp.getDoc());
         Compilator code = new Compilator("kdjfhfyy <code> Hello world <code/>");
         code.setDebug(true);
-        code.compile(code.getDoc());
+        code.compile();
     }
 
 
@@ -135,50 +206,50 @@ public class Compilator {
         return retour;
     }
 
-    private String getTagContent(){
+    private String findTextContent(){
+        return this.getDoc().substring(ft1+1,ot2-1).trim();
+    }  
+    private String findTagContent(){
         StringBuilder retour=new StringBuilder();
+        pos--;
         while (!Objects.equals(next(), this.getCloseTag()))
             retour.append(getToken());
-        return retour.toString();
+        return retour.toString().trim();
     }
     private void findOpenTag(){
         while (!Objects.equals(this.getToken(), this.getOpenTag())) {
-            debug();
             next();
         }
         next();
     }
     private void findCloseTag(){
         while (!Objects.equals(this.getToken(), this.getCloseTag())) {
-            debug();
             next();
         }
     }
 
-    public /*ArrayList<Node>*/Node compile (String file){
+    public /*ArrayList<Node>*/Node compile (){
         this.findOpenTag();
         this.setDoc(this.doc.substring(pos));
         return expr( this.getDoc());
     }
     private Node expr (String expr) {
-        int firstPos=pos;
-        debug();
-        String next =this.getTagContent();
+        this.setOt1(getPos());
+        String next =this.findTagContent();
         if (next.equals("user")){
-            pos+="user>".length()-1;
-            return exprend();//new DocumentationNode();
+            ft1 = getPos();
+            return exprEnd();//new DocumentationNode();
         }
         else if (next.equals("dev")) {
-
-                pos+="dev>".length()-1;
-                return exprend();//new DocumentationNode();
+            ft1 = getPos();
+                return exprEnd();//new DocumentationNode();
             }
         //TODO check next ligne
         else if (!next.equals("")) {
-         //   next();
-            firstPos = getPos();
-            System.out.println("Nom balise code  : " + next);
-            return exprend();//new CodeNode();
+            debug();
+            ft1 = getPos();
+            tagContent =next;
+            return exprEnd();//new CodeNode();
             }
 
         else if (!endOfString()) {
@@ -189,15 +260,32 @@ public class Compilator {
     }
 
 
-    private Node exprend () {
-        debug();
+    private Node exprEnd () {
         this.findOpenTag();
-        this.getTagContent();
-        if (this.getToken()==">")
-            next();
-        //if()
-        debug();
-        return new CodeNode();
+        String end = this.findTagContent();
+
+        if (end.equals("user/")) {
+            this.setOt2(pos-5);
+            return new DocumentationNode(findTextContent());
+        }
+        else if (end.equals("dev/")) {
+            this.setOt2(pos-4);
+            return new DocumentationNode(true,findTextContent());
+        }
+        else if (end.equals(this.tagContent + "/")) {
+            this.setOt2(pos-this.getTagContent().length()-1);
+            debug();
+            System.out.println(findTextContent()+"  "+tagContent);
+            return new CodeNode(findTextContent(),tagContent);
+        }
+        else {
+            if (this.getToken() == ">") {
+                next();
+            }
+            //if()
+            debug();
+        }
+        return null;
     }
 
     private Node mainTag () {
