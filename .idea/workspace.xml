@@ -2,11 +2,10 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="233049b2-cae0-4f48-8228-25faaf1bf76f" name="Changes" comment="&quot;commit pre_merge&quot;">
-      <change afterPath="$PROJECT_DIR$/test/Export/CompilatorTest.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/Export/Code.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/Export/Code.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/Export/Compilator.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/Export/Compilator.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/Export/File.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/Export/File.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/test/Export/TestFile/FileTest.java" beforeDir="false" afterPath="$PROJECT_DIR$/test/Export/TestFile/FileTest.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/test/Export/CompilatorTest.java" beforeDir="false" afterPath="$PROJECT_DIR$/test/Export/CompilatorTest.java" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -199,17 +198,6 @@
     <MESSAGE value="&quot;test&quot;" />
     <MESSAGE value="&quot;node finits, bon avancement sur le visiteur code, tests probablement demains&quot;" />
     <option name="LAST_COMMIT_MESSAGE" value="&quot;node finits, bon avancement sur le visiteur code, tests probablement demains&quot;" />
-  </component>
-  <component name="XDebuggerManager">
-    <breakpoint-manager>
-      <breakpoints>
-        <line-breakpoint enabled="true" type="java-line">
-          <url>file://$PROJECT_DIR$/src/Export/Compilator.java</url>
-          <line>189</line>
-          <option name="timeStamp" value="4" />
-        </line-breakpoint>
-      </breakpoints>
-    </breakpoint-manager>
   </component>
   <component name="XSLT-Support.FileAssociations.UIState">
     <expand />

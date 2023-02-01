@@ -117,7 +117,6 @@ public class Compilator {
         }
     }
 
-
     protected String cursor() {
         return setToken(String.valueOf(doc.charAt(getPos())));
     }
@@ -186,9 +185,6 @@ public class Compilator {
         int posrel=0;
         Hashtable<Integer,String> callcode=new Hashtable<>();
         while(!Objects.equals(this.token, "/")){
-            this.next();
-            posrel++;
-            System.out.println("je passe bien par la boucle principal de codenode");
             if(Objects.equals(this.token, codeopen)){
                 String callname=this.getName();
                 System.out.println("je sors bien de getname");
@@ -196,10 +192,14 @@ public class Compilator {
             }
             else {
                 code+=this.getToken();
+                this.next();
+                posrel++;
             }
         }
         this.next();
         this.getName();
+        if(callcode.isEmpty())
+            return new CodeNode(code,null,name,".java");
         return new CodeNode(code,callcode,name,".java");
     }
 
@@ -241,32 +241,5 @@ public class Compilator {
         return new DocumentationNode(false,txt,argnode);
     }
 
-/*
-    private Node exprend () {
-        return null;
-    }
-
-    private Node closednode (){return null;}
-
-    private Node mainTag () {
-        return null;
-    }
-
-    private Node text () {
-        return null;
-    }
-
-    private Node tag () {
-        return null;
-    }
-
-    private Node tagEnd () {
-        return null;
-    }
-
-    private Node word () {
-        return null;
-    }
-*/
 }
 
