@@ -13,6 +13,7 @@ public class Compilator {
     protected String doc=new String();
 
 
+
     //getters
     public String getOpenTag () {
         return openTag;

@@ -1,0 +1,85 @@
+Separateur ';'
+Echappement '\'
+
+Des titres de niveau 1 à 5 -> SOMMAIRE  <title;nombre1à5>       <titre\>
+Du texte en gras//souligné/couleur      <bd>                    <bd\>
+italique                                <it>                    <it\>
+souligné                                <ul>                    <ul\>
+couleur                                 <r;g;b>                 <r;g;b\>
+  |                                     <#hexa>                <#hexa\>
+Une insertion d’images                  <img>                   <img\>
+Des liens au sein du document           <link>                  <link\>
+
+Du code                                 <"code_key_content">    <code key content\>
+user doc                                <user>                  <user\>
+dev doc                                 <dev>                   <dev\>
+
+
+
+
+                       <Shape>  Ceci est un rectangle   <Shape\>
+
+                       <Shape>  Ceci est un rectangle   <Shape\>
+                       <user>;title2;bd>Code qui permet de créer un rectangle : <bd\>
+                       <ul> bla bla<ul\> <user\>
+
+-----------------------------------------------------------------------------------------------------------
+-----------------------------------------------------------------------------------------------------------
+<expr>      := <closedNode> <exprEnd>
+<exprEnd>   := <expr>
+            :=
+
+<closedNode>  := <mainTag><text><mainTagEnd>
+<mainTag>    := <tagOpening><mainTag><tagClosing>
+             :=  "code_key_content" | "code_key_content";
+             := user | user;
+             := dev> | <dev;
+
+<tagOpening> := '<'
+<tagClosing> := '>' | ;
+
+<mainTagEnd> := <tagOpening><mainTagEnd><tagClosing>
+             := "code_key_content"\ | "code_key_content"\;
+             := user\ | user\;
+             := dev\ | dev\;
+
+<text>       := <tag><word><tagEnd>
+
+<tag>        :=  <TagOpening><tag><TagClosing>
+             :=  <titlenombre1à5 | <titlenombre1à5; | <title nombre1à5 | <title nombre1à5;
+             :=  bd | bd;
+             :=  it | it;
+             :=  ul | ul;
+             :=  r;g;b | r;g;b; | #hexa | #hexa;
+             :=  img | img;
+             :=  link | link;
+
+<tagEnd>     :=  <TagOpening><tagEnd><TagClosing>
+             :=  <titlenombre1à5/ | <titlenombre1à5/; | <title nombre1à5/ | <title nombre1à5/;
+             :=  <bd/> | <bd/;
+             :=  <it/> | <it/;
+             :=  <ul/> | <ul/;
+             :=  <r;g;b/> | <r;g;b/;
+             :=  <#hexa/> | <#hexa/;
+             :=  <img/> | <img/;
+             :=  <link/> | <link/;
+
+<word>      := <word> + String
+            := String
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
