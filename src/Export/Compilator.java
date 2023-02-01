@@ -7,6 +7,8 @@ public class Compilator {
     protected String openTag;
     protected String closeTag;
     protected int pos=0;
+    protected int firstTag;
+    protected String contentTag;
     protected String token= new String();
     protected String doc=new String();
 
@@ -24,8 +26,16 @@ public class Compilator {
     }
     public String getToken() {
         return token;
-    }    public String getDoc() {
+    }
+    public String getToken(int pos) {
+        return String.valueOf(this.doc.charAt(pos));
+    }
+    public String getDoc() {
         return doc;
+    }
+
+    public boolean getDebug() {
+        return debug;
     }
 
     //setters
@@ -43,6 +53,11 @@ public class Compilator {
     }
     public void setDoc(String doc) {
         this.doc = doc;
+        reset();
+    }
+
+    public void setDebug(boolean debug) {
+        this.debug = debug;
     }
 
     //builders
@@ -66,15 +81,16 @@ public class Compilator {
     }
 
     //debug
-    public static boolean debug=false;
-    public static void debug(Boolean debug){
-        Compilator.debug=debug;
+    public  boolean debug=false;
+    public  void debug(Boolean debug){
+        this.setDebug(debug);
     }
-    public static void debug(String expr) {
-        if (Compilator.debug) {
+    public  void debug(/*String expr*/) {
+        if (this.getDebug()) {
+            String expr = Thread.currentThread().getStackTrace()[2].getMethodName();
             String ls = System.lineSeparator();
             String dash = "-".repeat(26);
-            System.err.printf("%s%s%s%s%s",ls, dash, expr, dash, ls);
+            System.err.printf("%s loc : %s %s token : %s    pos : %s %s remaining : %s%s%S",ls,expr,ls+dash+ls, getToken(),getPos(), ls+dash+ls,this.getDoc().substring(getPos()),ls+dash, ls);
         }
     }
 
@@ -84,53 +100,103 @@ public class Compilator {
         //  debug(false);
         //   comp.compile(comp.getDoc());
         Compilator code = new Compilator("kdjfhfyy <code> Hello world <code/>");
-        debug(true);
+        code.setDebug(true);
         code.compile(code.getDoc());
     }
 
 
-    protected String cursor() {
-        return setToken(String.valueOf(doc.charAt(getPos())));
+    protected String cursor(int pos) {
+        String retour = String.valueOf(doc.charAt(getPos()));
+        retour = retour != " "? String.valueOf(doc.charAt(getPos())):next();
+        return setToken(retour.toLowerCase());
     }
     public String next(){
         this.pos++;
         //retourne this.token
-        return this.cursor().toLowerCase();
+        return this.cursor(this.getPos());
     }
     public String previous(){
         this.pos--;
-        this.cursor();
-        return this.getToken();
+        return this.cursor(this.getPos());
     }
     protected String reset(){
         this.pos=0;
-        this.cursor();
-        return this.getToken();
+        return this.cursor(this.getPos());
+    }
+
+    protected boolean endOfString(){
+        boolean retour = false;
+        try {
+            next();
+        } catch (StringIndexOutOfBoundsException e){
+            retour= true;
+        }
+        return retour;
+    }
+
+    private String getTagContent(){
+        StringBuilder retour=new StringBuilder();
+        while (!Objects.equals(next(), this.getCloseTag()))
+            retour.append(getToken());
+        return retour.toString();
+    }
+    private void findOpenTag(){
+        while (!Objects.equals(this.getToken(), this.getOpenTag())) {
+            debug();
+            next();
+        }
+        next();
+    }
+    private void findCloseTag(){
+        while (!Objects.equals(this.getToken(), this.getCloseTag())) {
+            debug();
+            next();
+        }
     }
 
     public /*ArrayList<Node>*/Node compile (String file){
-        cursor();
-        while (!Objects.equals(this.getToken(), this.getOpenTag())) {
-            debug(token);
-            next();
-        }
-
-        return expr( this.doc.substring(pos));
+        this.findOpenTag();
+        this.setDoc(this.doc.substring(pos));
+        return expr( this.getDoc());
     }
     private Node expr (String expr) {
-        if (next().equals("c")) {
-            System.out.print(this.doc.substring(pos-1,pos+"code>".length()));
-            return new CodeNode();
+        int firstPos=pos;
+        debug();
+        String next =this.getTagContent();
+        if (next.equals("user")){
+            pos+="user>".length()-1;
+            return exprend();//new DocumentationNode();
         }
-        if (next().equals("u")||next().equals("d"))
-            return new DocumentationNode();
-        debug(token);
+        else if (next.equals("dev")) {
+
+                pos+="dev>".length()-1;
+                return exprend();//new DocumentationNode();
+            }
+        //TODO check next ligne
+        else if (!next.equals("")) {
+         //   next();
+            firstPos = getPos();
+            System.out.println("Nom balise code  : " + next);
+            return exprend();//new CodeNode();
+            }
+
+        else if (!endOfString()) {
+            expr(getDoc());
+        }
+        debug();
         return null;
     }
 
 
     private Node exprend () {
-        return null;
+        debug();
+        this.findOpenTag();
+        this.getTagContent();
+        if (this.getToken()==">")
+            next();
+        //if()
+        debug();
+        return new CodeNode();
     }
 
     private Node mainTag () {
