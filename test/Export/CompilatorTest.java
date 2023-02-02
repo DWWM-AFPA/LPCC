@@ -16,6 +16,8 @@ class CompilatorTest {
     Compilator c0=new Compilator("<it> texte it <bd> texte it et bold $code$ ceci est du code /$code$ </it></bd>");
     Compilator c1=new Compilator("  $code$ ceci est du code $shape$ qui appelle un autre code /$code$$shape$ litteral prog /$shape$ ");
     Code test=new Code();
+
+    Compilator c2=new Compilator(" <it> texte it \\<bd> texte pas bold </it>");
     @Test
     void compile() throws Exception {
         DocumentationNode doc= (DocumentationNode) c.compile().get(0);
@@ -33,5 +35,7 @@ class CompilatorTest {
         assertEquals(" ",doc1.getText());
         assertEquals(" ceci est du code  qui appelle un autre code ",c1.compile().get(0).getText());
         assertEquals(" ceci est du code  litteral prog  qui appelle un autre code ",test.extractcode(doc2,args));
+        assertEquals(1,c2.compile().size());
+        assertEquals(" texte it <bd> texte pas bold ",c2.compile().get(0).getText());
     }
 }

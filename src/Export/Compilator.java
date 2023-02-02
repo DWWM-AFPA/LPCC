@@ -2,6 +2,7 @@ package Export;
 
 import java.util.ArrayList;
 import java.util.Hashtable;
+import java.util.List;
 import java.util.Objects;
 
 public class Compilator {
@@ -15,6 +16,10 @@ public class Compilator {
 
     protected String codeclose;
     protected ArrayList<String> args;
+
+    protected String excapch;
+
+    private ArrayList<String> specialchar;
 
 
 
@@ -45,6 +50,10 @@ public class Compilator {
 
     public String getCodeopen() {
         return codeopen;
+    }
+
+    public String getExcapch() {
+        return excapch;
     }
 
     //setters
@@ -78,21 +87,31 @@ public class Compilator {
         this.args = args;
     }
 
+    public void setExcapch(String excapch) {
+        this.excapch = excapch;
+    }
+
     //builders
     public Compilator() {
         this.setOpenTag("<");
         this.setCloseTag(">");
         this.setCodeclose("$");
         this.setCodeopen("$");
+        this.setExcapch("\\");
         this.setArgs(new ArrayList<>());
+        this.specialchar=new ArrayList<>();
+        this.specialchar.addAll(List.of(this.codeopen,this.closeTag,this.openTag,this.excapch,this.closeTag,"/"));
     }
     public Compilator(String textToCompile) {
         this.setOpenTag("<");
         this.setCloseTag(">");
         this.setCodeclose("$");
         this.setCodeopen("$");
+        this.setExcapch("\\");
         this.setDoc(textToCompile);
         this.setArgs(new ArrayList<>());
+        this.specialchar=new ArrayList<>();
+        this.specialchar.addAll(List.of(this.codeopen,this.closeTag,this.openTag,this.excapch,this.closeTag,"/"));
     }
     public Compilator(String openTag, String closeTag) {
         this.setCloseTag(closeTag);
@@ -168,9 +187,21 @@ public class Compilator {
         return retour;
     }
 
+
+    private void excape(){
+        if(Objects.equals(this.getToken(), this.excapch))
+            if(this.specialchar.contains(this.next())) {
+                this.getToken();
+            }
+            else{
+                this.previous();
+            }
+    }
+
     private String getarg(){
         String arg="";
         while(!Objects.equals(this.getToken(), closeTag)){
+            this.excape();
             arg=arg+getToken();
             this.next();
         }
@@ -185,6 +216,7 @@ public class Compilator {
         int posrel=0;
         Hashtable<Integer,String> callcode=new Hashtable<>();
         while(!Objects.equals(this.token, "/")){
+            this.excape();
             if(Objects.equals(this.token, codeopen)){
                 String callname=this.getName();
                 System.out.println("je sors bien de getname");
@@ -206,6 +238,7 @@ public class Compilator {
     private String getName(){
         String name="";
         while (!Objects.equals(this.next(),codeclose)){
+            this.excape();
             name=name+this.getToken();
         }
         this.next();
@@ -215,6 +248,7 @@ public class Compilator {
     private DocumentationNode getDocNode(){
         String txt="";
         while(Objects.equals(this.token,openTag)){
+            this.excape();
             this.next();
             if(Objects.equals(this.getToken(), "/")) {
                 this.next();
@@ -229,6 +263,7 @@ public class Compilator {
         if(Objects.equals(token, codeopen) ||args.isEmpty())
             return null;
         while (!Objects.equals(this.getToken(),this.getOpenTag())&&!Objects.equals(this.getToken(),codeopen)){
+            this.excape();
             txt=txt+this.getToken();
             this.next();
             System.out.println("texte= "+txt);
