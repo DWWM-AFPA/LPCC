@@ -2,18 +2,20 @@ package Export;
 
 import Export.Visitor;
 
+import java.util.HashMap;
 import java.util.Hashtable;
 
 public class CodeNode extends Node {
-    protected Hashtable<Integer,String> appelCode;
+    protected HashMap<String,CodeNode> codeTable = new HashMap<>();
+
     protected boolean start;
     protected String name;
 
     //getters
 
 
-    public Hashtable<Integer, String> getAppelCode() {
-        return appelCode;
+    public HashMap<String, CodeNode> getCodeTable() {
+        return codeTable;
     }
 
     public boolean isStart() {
@@ -25,8 +27,8 @@ public class CodeNode extends Node {
     //setters
 
 
-    public void setAppelCode(Hashtable<Integer, String> appelCode) {
-        this.appelCode = appelCode;
+    public void setCodeTable(HashMap<String, CodeNode> codeTable) {
+        this.codeTable = codeTable;
     }
 
     public void setStart(boolean start) {
@@ -40,22 +42,21 @@ public class CodeNode extends Node {
 
     //builders
 
-
-    public CodeNode(String content,String name){
-        this.setName(name);
-        this.setText(content);
-    }
     public CodeNode(String name){
         this.setName(name);
         this.setText("");
     }
 
-
-
-    //methodes
-
-    public CodeNode add(String c,Integer pos){
-        this.appelCode.put(pos,c);
-        return this;
+    public CodeNode(String content,String name){
+        this.setName(name);
+        this.setText(content);
     }
+    public CodeNode(String content, String name, HashMap codeTable){
+        this.setName(name);
+        this.setText(content);
+        this.setCodeTable(codeTable);
+
+    }
+
+
 }

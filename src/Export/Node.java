@@ -1,11 +1,21 @@
 package Export;
 
+import java.util.ArrayList;
+
 public abstract class Node {
     protected String text;
+    protected static ArrayList<Node> nodeList= new ArrayList<>();
 
     //getters
 
+public static void getAllNodes(){
+    for(Node name:nodeList) {
+        System.out.println("-".repeat(20));
+        System.out.println(((CodeNode) name).getName());
+        System.out.println(name.getText());
 
+    }
+}
     public String getText() {
         return text;
     }
@@ -20,6 +30,7 @@ public abstract class Node {
     //builder
 
     public Node(){
+        nodeList.add(this);
         this.setText("");
     }
 

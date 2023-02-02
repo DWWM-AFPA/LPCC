@@ -1,7 +1,7 @@
 package Export;
 
 import java.sql.SQLOutput;
-import java.util.Objects;
+import java.util.*;
 
 public class Compilator {
     protected String openTag;
@@ -20,8 +20,8 @@ public class Compilator {
     protected String tagContent;
     protected String token= new String();
     protected String doc=new String();
-
-
+    protected HashMap<String,CodeNode> codeBuffer = new HashMap<>();
+    protected HashMap<String,CodeNode> unusedCodeNode = new HashMap<>();
 
     //getters
     public String getOpenTag () {
@@ -166,17 +166,6 @@ public class Compilator {
         }
     }
 
-    //main pour fatih
-    public static void  main(String[] args) {
-        //   Compilator comp = new Compilator("kdjfhfyy <dev> Hello world <dev/>");
-        //  debug(false);
-        //   comp.compile(comp.getDoc());
-        Compilator code = new Compilator("kdjfhfyy <code> Hello world <code/>");
-        code.setDebug(true);
-        code.compile();
-    }
-
-
     protected String cursor(int pos) {
         String retour = String.valueOf(doc.charAt(getPos()));
         retour = retour != " "? String.valueOf(doc.charAt(getPos())):next();
@@ -205,35 +194,59 @@ public class Compilator {
         }
         return retour;
     }
+    public String eraseTagSpaces() {
+        try {
+            while (this.getPos() < this.getDoc().length() - 2) {
+                findOpenTag();
+
+                while (!this.getToken().equals(">"))
+                    if (next().equals(" ")) {
+                        this.setDoc(this.getDoc().substring(0, pos) + this.getDoc().substring(pos + 1));
+                    }
+            }
+        }
+        catch (StringIndexOutOfBoundsException e){
+            System.err.println("Closing tag missing near "+pos);
+            System.exit(-1);
+        }
+        return this.getDoc();
+    }
 
     private String findTextContent(){
         return this.getDoc().substring(ft1+1,ot2-1).trim();
     }  
     private String findTagContent(){
         StringBuilder retour=new StringBuilder();
-        pos--;
-        while (!Objects.equals(next(), this.getCloseTag()))
+        while (!Objects.equals(next(), this.getCloseTag())) {
             retour.append(getToken());
+        }
         return retour.toString().trim();
     }
-    private void findOpenTag(){
+    private String findOpenTag(){
         while (!Objects.equals(this.getToken(), this.getOpenTag())) {
             next();
         }
-        next();
+        return this.getToken();
     }
-    private void findCloseTag(){
+    private String findCloseTag(){
         while (!Objects.equals(this.getToken(), this.getCloseTag())) {
             next();
         }
+        return this.getToken();
     }
 
-    public /*ArrayList<Node>*/Node compile (){
+    public Node compile () {
+        debug(true);
+        debug();
+        eraseTagSpaces();
+        reset();
         this.findOpenTag();
         this.setDoc(this.doc.substring(pos));
-        return expr( this.getDoc());
+        reset();
+        return expr();
     }
-    private Node expr (String expr) {
+    private Node expr () {
+        debug();
         this.setOt1(getPos());
         String next =this.findTagContent();
         if (next.equals("user")){
@@ -246,14 +259,13 @@ public class Compilator {
             }
         //TODO check next ligne
         else if (!next.equals("")) {
-            debug();
             ft1 = getPos();
             tagContent =next;
             return exprEnd();//new CodeNode();
             }
 
         else if (!endOfString()) {
-            expr(getDoc());
+            expr();
         }
         debug();
         return null;
@@ -261,6 +273,7 @@ public class Compilator {
 
 
     private Node exprEnd () {
+        debug();
         this.findOpenTag();
         String end = this.findTagContent();
 
@@ -272,20 +285,24 @@ public class Compilator {
             this.setOt2(pos-4);
             return new DocumentationNode(true,findTextContent());
         }
-        else if (end.equals(this.tagContent + "/")) {
+        else if (end.equals(this.tagContent + "/") || unusedCodeNode.containsKey(end)) {
             this.setOt2(pos-this.getTagContent().length()-1);
-            debug();
             System.out.println(findTextContent()+"  "+tagContent);
-            return new CodeNode(findTextContent(),tagContent);
+            HashMap<String,CodeNode> codeMap= codeBuffer;
+                if (!codeBuffer.isEmpty()){
+                    unusedCodeNode.putAll(codeBuffer);
+                    codeBuffer.clear();
+                }
+            return new CodeNode(findTextContent(),tagContent,codeMap);
         }
+        //il a trouvé la balise, mais ce n'est pas le code qui l'a ouvert
         else {
-            if (this.getToken() == ">") {
-                next();
-            }
+            CodeNode node = new CodeNode(end);
+            codeBuffer.put(end,node);
+            //new CodeNode(end);
             //if()
-            debug();
         }
-        return null;
+        return exprEnd();
     }
 
     private Node mainTag () {
