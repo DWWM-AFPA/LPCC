@@ -3,11 +3,10 @@ import User.Graphic;
 
 public class Main {
     public static void main(String[] args) {
-        Compilator compTest = new Compilator("< code > Hello < test  > World <code/>");
+        Compilator compTest = new Compilator("< user > Hello  <it> test it <it/><user/>");
         compTest.compile();
-        Node.getAllNodes();
+       // Node.getAllNodes();
 
-    //System.out.println(Graphic.choose(Graphic.TypeChoose.OPEN).getName());
 
     }
 }

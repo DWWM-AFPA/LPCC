@@ -1,6 +1,7 @@
 package Export;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 
 public abstract class Node {
     protected String text;
@@ -13,7 +14,15 @@ public static void getAllNodes(){
         System.out.println("-".repeat(20));
         System.out.println(((CodeNode) name).getName());
         System.out.println(name.getText());
+     //   try {
+        CodeNode node = (CodeNode) name;
+        HashMap<String, int[]> map = node.getCodeLocation();
+        System.out.println(map);
 
+       /* catch (NullPointerException e){
+            System.out.println();
+        }
+*/
     }
 }
     public String getText() {
@@ -38,4 +47,10 @@ public static void getAllNodes(){
         this.setText(text);
     }
 
+    /*public boolean nodeExists(String name){
+    return nodeList.contains()
+    }*/
+
 }
+
+

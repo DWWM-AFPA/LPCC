@@ -1,12 +1,9 @@
 package Export;
 
-import Export.Visitor;
-
 import java.util.HashMap;
-import java.util.Hashtable;
 
 public class CodeNode extends Node {
-    protected HashMap<String,CodeNode> codeTable = new HashMap<>();
+    protected HashMap<String,int[]> codeLocation = new HashMap<>();
 
     protected boolean start;
     protected String name;
@@ -14,8 +11,9 @@ public class CodeNode extends Node {
     //getters
 
 
-    public HashMap<String, CodeNode> getCodeTable() {
-        return codeTable;
+
+    public HashMap<String,int[]> getCodeLocation() {
+        return codeLocation;
     }
 
     public boolean isStart() {
@@ -27,8 +25,9 @@ public class CodeNode extends Node {
     //setters
 
 
-    public void setCodeTable(HashMap<String, CodeNode> codeTable) {
-        this.codeTable = codeTable;
+
+    public void setCodeLocation(HashMap<String, int[]> codeLocation) {
+        this.codeLocation = codeLocation;
     }
 
     public void setStart(boolean start) {
@@ -47,15 +46,19 @@ public class CodeNode extends Node {
         this.setText("");
     }
 
-    public CodeNode(String content,String name){
+    public CodeNode(String name, String content){
         this.setName(name);
         this.setText(content);
     }
-    public CodeNode(String content, String name, HashMap codeTable){
+    public CodeNode(String name, String codeTableName, int pos1, int pos2){
         this.setName(name);
-        this.setText(content);
-        this.setCodeTable(codeTable);
+        this.setText("");
+        this.addCodeLocation(codeTableName,pos1,pos2);
+    }
 
+    protected void addCodeLocation(String name,int pos1,int pos2){
+        int[] tbl = {pos1,pos2};
+        codeLocation.put(name,tbl);
     }
 
 

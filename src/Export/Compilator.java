@@ -20,8 +20,7 @@ public class Compilator {
     protected String tagContent;
     protected String token= new String();
     protected String doc=new String();
-    protected HashMap<String,CodeNode> codeBuffer = new HashMap<>();
-    protected HashMap<String,CodeNode> unusedCodeNode = new HashMap<>();
+    //protected ArrayList<String> containedCode = new HashMap<>();
 
     //getters
     public String getOpenTag () {
@@ -285,27 +284,29 @@ public class Compilator {
             this.setOt2(pos-4);
             return new DocumentationNode(true,findTextContent());
         }
-        else if (end.equals(this.tagContent + "/") || unusedCodeNode.containsKey(end)) {
+        else if (end.equals(this.tagContent + "/")) {
             this.setOt2(pos-this.getTagContent().length()-1);
-            System.out.println(findTextContent()+"  "+tagContent);
-            HashMap<String,CodeNode> codeMap= codeBuffer;
-                if (!codeBuffer.isEmpty()){
-                    unusedCodeNode.putAll(codeBuffer);
-                    codeBuffer.clear();
-                }
-            return new CodeNode(findTextContent(),tagContent,codeMap);
+      //      System.out.println(findTextContent()+"  "+tagContent);
+
+            return new CodeNode(findTextContent(),tagContent);
         }
         //il a trouvé la balise, mais ce n'est pas le code qui l'a ouvert
         else {
-            CodeNode node = new CodeNode(end);
-            codeBuffer.put(end,node);
-            //new CodeNode(end);
-            //if()
+            //position relative dans le codeNode
+            int deb=pos-end.length()-1-tagContent.length()-3;
+            int fin=deb+end.length()+1;
+            //TODO singleton for the code nodes
+            CodeNode node = new CodeNode(end,this.getTagContent(),deb,fin);
         }
         return exprEnd();
     }
 
     private Node mainTag () {
+        debug();
+        findOpenTag();
+        String end = this.findTagContent();
+        System.out.println(end);
+
         return null;
     }
 
