@@ -179,6 +179,10 @@ public class Compilator {
         return arg;
     }
 
+    private Hashtable<DocumentationNode,ArrayList<CodeNode>> getdevdoc(){
+
+    }
+
     private CodeNode getCodeNode(){
         String name=this.getName();
         String code="";
