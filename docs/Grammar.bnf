@@ -68,6 +68,21 @@ dev doc                                 <dev>                   <dev\>
             := String
 
 
+-----------------------------------------------------------------------------------------------------------
+-----------------------------------------------------------------------------------------------------------
+
+<user> <title1> Sum <title/1> Permet de calculer une somme de <it>deux nombres<it/>. <user/>
+<dev> methode sum param a et b int  <dev/>
+<sum>   public int sum(int a, int b){ return a+b;}<sum/>
+<main>  public class Main {
+<sum> public static void(String[] args){int a=2; int b=3; System.out.println(sum(a,b);}
+}<main/>
+
+
+
+
+
+
 
 
 

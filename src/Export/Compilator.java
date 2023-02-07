@@ -249,16 +249,18 @@ public class Compilator {
         this.setOt1(getPos());
         String next =this.findTagContent();
         if (next.equals("user")){
-            ft1 = getPos();
-            return exprEnd();//new DocumentationNode();
+            setFt1(getPos());
+            tagContent =next;
+            return tag();//new DocumentationNode();
         }
         else if (next.equals("dev")) {
-            ft1 = getPos();
-                return exprEnd();//new DocumentationNode();
+            setFt1(getPos());
+            tagContent =next;
+                return tag();//new DocumentationNode();
             }
         //TODO check next ligne
         else if (!next.equals("")) {
-            ft1 = getPos();
+            setFt1(getPos());
             tagContent =next;
             return exprEnd();//new CodeNode();
             }
@@ -286,8 +288,6 @@ public class Compilator {
         }
         else if (end.equals(this.tagContent + "/")) {
             this.setOt2(pos-this.getTagContent().length()-1);
-      //      System.out.println(findTextContent()+"  "+tagContent);
-
             return new CodeNode(findTextContent(),tagContent);
         }
         //il a trouvé la balise, mais ce n'est pas le code qui l'a ouvert
@@ -301,30 +301,35 @@ public class Compilator {
         return exprEnd();
     }
 
-    private Node mainTag () {
+    private Node tag () {
         debug();
         findOpenTag();
         String end = this.findTagContent();
-        System.out.println(end);
-
-        return null;
-    }
-
-    private Node text () {
-        return null;
-    }
-
-    private Node tag () {
+        if (end.equals("it") || end.contains("title") || end.equals("bd") || end.equals("ul") || end.equals("img") || end.equals("link")) {
+            System.out.println("contenu");
+            return tagEnd();
+        }
+        else if (end.contains(";")||end.contains("#")) {
+            System.out.println("couleur");
+            return tagEnd();
+        }
         return null;
     }
 
     private Node tagEnd () {
-        return null;
+        debug();
+        this.findOpenTag();
+        String end = this.findTagContent();
+        return text();
     }
 
-    private Node word () {
-        return null;
+    private Node text () {
+        this.findOpenTag();
+        String end = this.findTagContent();
+        System.out.println(end);
+        return exprEnd();
     }
+
 
 }
 
