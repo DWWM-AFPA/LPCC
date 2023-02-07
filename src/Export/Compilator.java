@@ -2,6 +2,7 @@ package Export;
 
 import java.util.ArrayList;
 import java.util.Hashtable;
+import java.util.List;
 import java.util.Objects;
 
 public class Compilator {
@@ -16,7 +17,11 @@ public class Compilator {
     protected String codeclose;
     protected ArrayList<String> args;
 
+    protected String excapch;
 
+    private ArrayList<String> specialchar;
+
+    private ArrayList<Node> compiledfile;
 
 
     //getters
@@ -43,8 +48,13 @@ public class Compilator {
         return codeclose;
     }
 
+
     public String getCodeopen() {
         return codeopen;
+    }
+
+    public String getExcapch() {
+        return excapch;
     }
 
     //setters
@@ -78,30 +88,45 @@ public class Compilator {
         this.args = args;
     }
 
+    public void setExcapch(String excapch) {
+        this.excapch = excapch;
+    }
+
+
     //builders
     public Compilator() {
         this.setOpenTag("<");
         this.setCloseTag(">");
         this.setCodeclose("$");
         this.setCodeopen("$");
+        this.setExcapch("\\");
+        this.compiledfile=new ArrayList<>();
         this.setArgs(new ArrayList<>());
+        this.specialchar=new ArrayList<>();
+        this.specialchar.addAll(List.of(this.codeopen,this.closeTag,this.openTag,this.excapch,this.closeTag,"/"));
     }
     public Compilator(String textToCompile) {
         this.setOpenTag("<");
         this.setCloseTag(">");
         this.setCodeclose("$");
         this.setCodeopen("$");
+        this.setExcapch("\\");
+        this.compiledfile=new ArrayList<>();
         this.setDoc(textToCompile);
         this.setArgs(new ArrayList<>());
+        this.specialchar=new ArrayList<>();
+        this.specialchar.addAll(List.of(this.codeopen,this.closeTag,this.openTag,this.excapch,this.closeTag,"/"));
     }
     public Compilator(String openTag, String closeTag) {
         this.setCloseTag(closeTag);
         this.setOpenTag(openTag);
+        this.compiledfile=new ArrayList<>();
     }
     public Compilator(String openTag, String closeTag,String textToCompile) {
         this.setCloseTag(closeTag);
         this.setOpenTag(openTag);
         this.setDoc(textToCompile);
+        this.compiledfile=new ArrayList<>();
     }
 
     //debug
@@ -137,6 +162,7 @@ public class Compilator {
     protected String reset(){
         this.pos=0;
         this.cursor();
+        this.compiledfile=new ArrayList<>();
         while (!(Objects.equals(this.getToken(), openTag) || Objects.equals(this.getToken(), codeopen)) ) {
             System.out.println("token ="+this.getToken());
             this.next();
@@ -147,30 +173,37 @@ public class Compilator {
 
     public ArrayList<Node> compile() throws Exception {
         this.reset();
-        ArrayList<Node> retour=new ArrayList<>();
         cursor();
         while (pos<doc.length()-1) {
             if(Objects.equals(this.getToken(), codeopen)) {
-                retour.add(this.getCodeNode());
+                this.getCodeNode();
                 System.out.println("j'ajoute bien un codenode ");
                 System.out.println("le token a la sortie du codenode est "+ this.getToken());
             }
             else {
-                DocumentationNode ajout = this.getDocNode();
-                if (ajout != null) {
-                    System.out.println("ajout args=" + ajout.getArgs());
-                    retour.add(ajout);
-                }
+                this.getDocNode();
             }
         }
         if(!args.isEmpty())
             throw new LPCSyntaxException("Erreur sur les balises");
-        return retour;
+        return this.compiledfile;
+    }
+
+
+    private void excape(){
+        if(Objects.equals(this.getToken(), this.excapch))
+            if(this.specialchar.contains(this.next())) {
+                this.getToken();
+            }
+            else{
+                this.previous();
+            }
     }
 
     private String getarg(){
         String arg="";
         while(!Objects.equals(this.getToken(), closeTag)){
+            this.excape();
             arg=arg+getToken();
             this.next();
         }
@@ -179,16 +212,13 @@ public class Compilator {
         return arg;
     }
 
-    private Hashtable<DocumentationNode,ArrayList<CodeNode>> getdevdoc(){
-
-    }
-
-    private CodeNode getCodeNode(){
+    private void getCodeNode(){
         String name=this.getName();
         String code="";
         int posrel=0;
         Hashtable<Integer,String> callcode=new Hashtable<>();
         while(!Objects.equals(this.token, "/")){
+            this.excape();
             if(Objects.equals(this.token, codeopen)){
                 String callname=this.getName();
                 System.out.println("je sors bien de getname");
@@ -202,23 +232,27 @@ public class Compilator {
         }
         this.next();
         this.getName();
-        if(callcode.isEmpty())
-            return new CodeNode(code,null,name,".java");
-        return new CodeNode(code,callcode,name,".java");
+        if(callcode.isEmpty()) {
+            compiledfile.add(new CodeNode(code, null, name, ".java"));
+            return ;
+        }
+        compiledfile.add(new CodeNode(code,callcode,name,".java"));
     }
 
     private String getName(){
         String name="";
         while (!Objects.equals(this.next(),codeclose)){
+            this.excape();
             name=name+this.getToken();
         }
         this.next();
         return name;
     }
 
-    private DocumentationNode getDocNode(){
+    private void getDocNode(){
         String txt="";
         while(Objects.equals(this.token,openTag)){
+            this.excape();
             this.next();
             if(Objects.equals(this.getToken(), "/")) {
                 this.next();
@@ -230,9 +264,14 @@ public class Compilator {
             System.out.println("token= "+this.getToken());
             System.out.println("pos= "+this.getPos());
         }
+        if(args.contains("dev")) {
+            this.devdoc();
+            return ;
+        }
         if(Objects.equals(token, codeopen) ||args.isEmpty())
-            return null;
+            return ;
         while (!Objects.equals(this.getToken(),this.getOpenTag())&&!Objects.equals(this.getToken(),codeopen)){
+            this.excape();
             txt=txt+this.getToken();
             this.next();
             System.out.println("texte= "+txt);
@@ -242,7 +281,28 @@ public class Compilator {
         System.out.println(this.getArgs());
         ArrayList<String> argnode=new ArrayList<>(this.getArgs());
         System.out.println("argnode= "+argnode);
-        return new DocumentationNode(false,txt,argnode);
+        compiledfile.add(new DocumentationNode(false,txt,argnode));
+    }
+
+    private void devdoc(){
+        String txt="";
+        int posdeb=this.getPos();
+        int posfin=this.getPos();
+        while (!Objects.equals(this.getToken(), openTag)){
+            this.excape();
+            if(Objects.equals(this.getToken(), codeopen)){
+                posdeb=this.getPos();
+                this.getCodeNode();
+                posfin=this.getPos();
+                txt+=this.getDoc().substring(posdeb,posfin);
+            }
+            else {
+                txt+=this.getToken();
+                this.next();
+            }
+        }
+        ArrayList<String> argnode=new ArrayList<>(this.getArgs());
+        compiledfile.add(new DocumentationNode(true,txt,argnode));
     }
 
 }
