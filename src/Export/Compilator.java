@@ -266,6 +266,7 @@ public class Compilator {
             }
 
         else if (!endOfString()) {
+            System.out.println("continue !!!!!!!!!!!!");
             expr();
         }
         debug();
@@ -297,8 +298,10 @@ public class Compilator {
             int fin=deb+end.length()+1;
             //TODO singleton for the code nodes
             CodeNode node = new CodeNode(end,this.getTagContent(),deb,fin);
+            System.out.println("expr ENd "+end);
+            return exprEnd();
         }
-        return exprEnd();
+       // return expr();
     }
 
     private Node tag () {
@@ -320,6 +323,10 @@ public class Compilator {
         debug();
         this.findOpenTag();
         String end = this.findTagContent();
+        if (end.equals("it/") || end.contains("title/") || end.equals("bd/") || end.equals("ul/") || end.equals("img/") || end.equals("link/")) {
+            System.out.println("contenu");
+            return exprEnd();
+        }
         return text();
     }
 
