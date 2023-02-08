@@ -1,5 +1,5 @@
 import Export.*;
-import User.Graphic;
+import User.Config;
 
 import java.io.IOException;
 
@@ -10,7 +10,9 @@ public class Main {
         Compilator compTest = new Compilator(file.read());
         compTest.compile();
        // Node.getAllNodes();
-
+        Config matt= new Config("matt",new File("matt","config"));
+     //   matt.createConfig();
+        matt.loadConfig();
 
     }
 }

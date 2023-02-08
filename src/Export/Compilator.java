@@ -18,6 +18,7 @@ public class Compilator {
     protected String tag2;
     protected String content;
     protected String tagContent;
+    protected static ArrayList<String> tagList = new ArrayList<>(List.of("it","bd","ul"));
     protected String token= new String();
     protected String doc=new String();
     //protected ArrayList<String> containedCode = new HashMap<>();
@@ -308,7 +309,7 @@ public class Compilator {
         debug();
         findOpenTag();
         String end = this.findTagContent();
-        if (end.equals("it") || end.contains("title") || end.equals("bd") || end.equals("ul") || end.equals("img") || end.equals("link")) {
+        if (tagList.contains(end)) {
             System.out.println("contenu");
             return tagEnd();
         }
