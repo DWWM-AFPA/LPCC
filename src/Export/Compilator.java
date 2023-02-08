@@ -24,6 +24,8 @@ public class Compilator {
     private ArrayList<Node> compiledfile;
 
 
+
+
     //getters
     public String getOpenTag () {
         return openTag;

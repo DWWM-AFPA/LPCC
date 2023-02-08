@@ -2,9 +2,24 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="233049b2-cae0-4f48-8228-25faaf1bf76f" name="Changes" comment="&quot;caractére d'echapemment rajouté&quot;">
+      <change afterPath="$PROJECT_DIR$/defaultlatex.config" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/shelf/Uncommitted_changes_before_Checkout_at_27_01_2023_11_39__Changes_1.xml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/shelf/Uncommitted_changes_before_Checkout_at_27_01_2023_11_55__Changes_.xml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/shelf/Uncommitted_changes_before_Checkout_at_27_01_2023_11_56__Changes_.xml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/shelf/Uncommitted_changes_before_Checkout_at_30_01_2023_11_12_[Changes]/shelved.patch" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/shelf/Uncommitted_changes_before_Checkout_at_30_01_2023_11_12__Changes_.xml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/shelf/Uncommitted_changes_before_Checkout_at_30_01_2023_11_17_[Changes]/shelved.patch" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/shelf/Uncommitted_changes_before_Checkout_at_30_01_2023_11_17__Changes_.xml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/shelf/Uncommitted_changes_before_Checkout_at_30_01_2023_13_39_[Changes]/shelved.patch" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/shelf/Uncommitted_changes_before_Checkout_at_30_01_2023_13_39__Changes_.xml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/shelf/Uncommitted_changes_before_Checkout_at_30_01_2023_13_41_[Changes]/shelved.patch" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/shelf/Uncommitted_changes_before_Checkout_at_30_01_2023_13_41__Changes_.xml" beforeDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/Export/Compilator.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/Export/Compilator.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/test/Export/CompilatorTest.java" beforeDir="false" afterPath="$PROJECT_DIR$/test/Export/CompilatorTest.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/Export/Documentation.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/Export/HTMLDoc.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/Export/HTMLDoc.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/Export/LateXDoc.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/Export/LateXDoc.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/test/Export/LateXDocTest.java" beforeDir="false" afterPath="$PROJECT_DIR$/test/Export/LateXDocTest.java" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -62,7 +77,7 @@
       <recent name="Export" />
     </key>
   </component>
-  <component name="RunManager" selected="JUnit.CompilatorTest.compile">
+  <component name="RunManager" selected="JUnit.LateXDocTest">
     <configuration name="CompilatorTest.compile" type="JUnit" factoryName="JUnit" temporary="true" nameIsGenerated="true">
       <module name="LPCC" />
       <extension name="coverage">
@@ -143,11 +158,11 @@
     </configuration>
     <recent_temporary>
       <list>
+        <item itemvalue="JUnit.LateXDocTest" />
+        <item itemvalue="JUnit.LateXDocTest.user (1)" />
         <item itemvalue="JUnit.CompilatorTest.compile" />
         <item itemvalue="JUnit.FileTest" />
         <item itemvalue="JUnit.FileTest.testCreate" />
-        <item itemvalue="JUnit.LateXDocTest.user (1)" />
-        <item itemvalue="JUnit.LateXDocTest" />
       </list>
     </recent_temporary>
   </component>

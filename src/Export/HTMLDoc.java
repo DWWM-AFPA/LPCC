@@ -4,7 +4,7 @@ import Export.Visitor;
 
 import java.util.ArrayList;
 
-public class HTMLDoc implements Visitor,Documentation{
+public class HTMLDoc implements Visitor{
     @Override
     public void visit(ArrayList<Node> compilation) {
         ArrayList<DocumentationNode> dev=new ArrayList<>();
@@ -23,12 +23,12 @@ public class HTMLDoc implements Visitor,Documentation{
         this.dev(dev);
     }
 
-    @Override
+
     public void user(ArrayList<DocumentationNode> n) {
 
     }
 
-    @Override
+
     public void dev(ArrayList<DocumentationNode> n) {
 
     }

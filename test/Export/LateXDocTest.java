@@ -2,6 +2,7 @@ package Export;
 
 import org.junit.jupiter.api.Test;
 
+import java.io.FileNotFoundException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -15,7 +16,18 @@ class LateXDocTest {
     DocumentationNode title=new DocumentationNode(false,"titre",new ArrayList<>(List.of("title1")));
 
     DocumentationNode bdit=new DocumentationNode(false,"texte en italique et bold",new ArrayList<>(List.of("it","bd")));
-    LateXDoc l=new LateXDoc();
+    LateXDoc l;
+
+
+    {
+        try {
+            l = new LateXDoc();
+        } catch (FileNotFoundException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+
     @Test
     void user() {
         l.user(new ArrayList<>(List.of(it,bold)));

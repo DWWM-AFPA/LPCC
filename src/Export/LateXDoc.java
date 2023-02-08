@@ -1,9 +1,56 @@
 package Export;
-
+import java.io.File;
+import java.io.FileNotFoundException;
 import java.util.ArrayList;
+import java.util.Hashtable;
+import java.util.Scanner;
 
-public class LateXDoc implements Documentation,Visitor{
-    @Override
+public class LateXDoc implements Visitor{
+
+    protected  Hashtable<String,String> corresbal;
+
+    //getters
+
+    public void setCorresbal(Hashtable<String,String> corresbal0){
+       corresbal=corresbal0;
+    }
+
+
+
+    public LateXDoc() throws FileNotFoundException {
+        Hashtable<String,String> corresdefault=new Hashtable<>();
+        java.io.File in=new File("defaultlatex.config");
+        String line;
+        String[] part;
+        Scanner sc=new Scanner(in);
+        while (sc.hasNextLine()){
+            line= sc.nextLine();
+            part=line.split(";");
+            corresdefault.put(part[0],part[1]);
+        }
+
+        /*corresdefault.put("it","\\textit{");
+        corresdefault.put("bd","\\textbd{");
+        corresdefault.put("ul","\\underline{");
+        corresdefault.put("link","\\url{");*/
+        setCorresbal(corresdefault);
+
+    }
+
+    public LateXDoc(String configname) throws FileNotFoundException {
+        java.io.File in=new File(configname);
+        String [] parts;
+        Scanner sc = new Scanner(in);
+        String line;
+        Hashtable<String,String> corresdefault = new Hashtable<>();
+        while (sc.hasNextLine()){
+            line=sc.nextLine();
+            parts = line.split(";");
+            corresdefault.put(parts[0],parts[1]);
+        }
+        setCorresbal(corresdefault);
+    }
+
     public void user(ArrayList<DocumentationNode> n) {
         StringBuilder retour= new StringBuilder();
         for (DocumentationNode doc:n) {
@@ -44,7 +91,6 @@ public class LateXDoc implements Documentation,Visitor{
         System.out.println(retour);
         }
 
-    @Override
     public void dev(ArrayList<DocumentationNode> n) {
         StringBuilder retour= new StringBuilder();
         for (DocumentationNode doc:n) {
@@ -114,28 +160,13 @@ public class LateXDoc implements Documentation,Visitor{
             }
             else {
                 switch (doc.getArgs().get(0)) {
-                    case ("bd"):
-                        node = new StringBuilder("\\textbd{" + node + "}");
-                        doc.remove("bd");
-                        break;
-                    case ("it"):
-                        node = new StringBuilder("\\textit{" + node + "}");
-                        doc.remove("it");
-                        break;
-                    case ("ul"):
-                        node = new StringBuilder("\\underline{" + node + "}");
-                        doc.remove("ul");
-                        break;
                     case ("img"):
                         node = new StringBuilder("\\begin{figure}" + '\n' + "\\centering" + '\n' + "\\includegraphics{" + node + "}" + '\n' + "\\end{figure}");
                         doc.remove("img");
                         break;
-                    case ("link"):
-                        node = new StringBuilder("\\url{" + node + "}");
-                        doc.remove("link");
-                        break;
                     default:
-                        return null;
+                        node=new StringBuilder(this.corresbal.get(doc.getArgs().get(0))+node+"}");
+                        doc.remove(doc.getArgs().get(0));
                 }
             }
         }
