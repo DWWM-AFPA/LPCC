@@ -9,11 +9,12 @@ import static org.junit.jupiter.api.Assertions.*;
 
 class CompilatorTest {
 
+
     Compilator c=new Compilator("<it> texte </it>");
     DocumentationNode ref=new DocumentationNode(false," texte ",new ArrayList<>(List.of("it")));
     DocumentationNode refit=new DocumentationNode(false," texte it ",new ArrayList<>(List.of("it")));
     DocumentationNode refbdit=new DocumentationNode(false," texte it et bold ",new ArrayList<>(List.of("it","bd")));
-    Compilator c0=new Compilator("<it> texte it <bd> texte it et bold $code$ ceci est du code /$code$ </it></bd>");
+    Compilator c0=new Compilator("<it> texte it <bd> texte it et bold $code$ ceci est du code /$code$ </it> </bd> textecide");
     Compilator c1=new Compilator("  $code$ ceci est du code $shape$ qui appelle un autre code /$code$$shape$ litteral prog /$shape$ ");
     Compilator c3=new Compilator("<dev> ceci est de la $doc$ dev /$doc$ </dev>");
     Code test=new Code();
@@ -36,7 +37,7 @@ class CompilatorTest {
         assertEquals(" ",doc1.getText());
         assertEquals(" ceci est du code  qui appelle un autre code ",c1.compile().get(0).getText());
         assertEquals(" ceci est du code  litteral prog  qui appelle un autre code ",test.extractcode(doc2,args));
-        assertEquals(1,c2.compile().size());
+        assertEquals(2,c2.compile().size());
         assertEquals(" texte it <bd> texte pas bold ",c2.compile().get(0).getText());
         assertEquals(" ceci est de la $doc$ dev /$doc$ ",c3.compile().get(1).getText());
     }

@@ -12,6 +12,8 @@ public class Compilator {
     protected String token;
     protected String doc;
 
+
+
     protected String codeopen;
 
     protected String codeclose;
@@ -95,6 +97,8 @@ public class Compilator {
     }
 
 
+
+
     //builders
     public Compilator() {
         this.setOpenTag("<");
@@ -132,6 +136,11 @@ public class Compilator {
     }
 
     //debug
+
+    private int countLines(){
+        String[] lines = doc.substring(0,pos).split("\r\n|\r|\n");
+        return  lines.length;
+    }
     public static boolean debug=false;
     public static void debug(Boolean debug){
         Compilator.debug=debug;
@@ -179,19 +188,19 @@ public class Compilator {
         while (pos<doc.length()-1) {
             if(Objects.equals(this.getToken(), codeopen)) {
                 this.getCodeNode();
-                System.out.println("j'ajoute bien un codenode ");
-                System.out.println("le token a la sortie du codenode est "+ this.getToken());
             }
             else {
                 this.getDocNode();
             }
         }
+
+
         if(!args.isEmpty())
-            throw new LPCSyntaxException("Erreur sur les balises");
+            throw new LPCSyntaxException("Erreur sur les balises a la ligne "+countLines()+" a proximité de "+"\""+doc.substring(Math.max(0,pos-10),Math.min(doc.length(),pos+10)) +"\"");
         return this.compiledfile;
     }
 
-
+    //gestion du caractere d'echappement
     private void excape(){
         if(Objects.equals(this.getToken(), this.excapch))
             if(this.specialchar.contains(this.next())) {
@@ -201,6 +210,8 @@ public class Compilator {
                 this.previous();
             }
     }
+
+    //récupére l'argument contenu dans une balise
 
     private String getarg(){
         String arg="";
@@ -214,12 +225,14 @@ public class Compilator {
         return arg;
     }
 
+    //fonction qui recupére un code node
+
     private void getCodeNode(){
         String name=this.getName();
         String code="";
         int posrel=0;
         Hashtable<Integer,String> callcode=new Hashtable<>();
-        while(!Objects.equals(this.token, "/")){
+        while(!Objects.equals(this.token, "/")&&pos<doc.length()-1){
             this.excape();
             if(Objects.equals(this.token, codeopen)){
                 String callname=this.getName();
@@ -251,28 +264,35 @@ public class Compilator {
         return name;
     }
 
-    private void getDocNode(){
+    // Methode qui extrait un doc node (independament de dev/user)
+
+    private void getDocNode() throws LPCSyntaxException {
         String txt="";
+        //on determine ici les effets de style qui s'apliques au docnode
         while(Objects.equals(this.token,openTag)){
             this.excape();
             this.next();
             if(Objects.equals(this.getToken(), "/")) {
                 this.next();
+                int ref=args.size();
                 this.args.remove(getarg());
+                if(ref<=args.size())
+                    throw new LPCSyntaxException("Erreur sur les balises a la ligne "+countLines()+"a proximité de "+doc.substring(Math.max(0,pos-10),Math.min(doc.length(),pos+10)));
             }
             else {
                 this.args.add(getarg());
             }
-            System.out.println("token= "+this.getToken());
-            System.out.println("pos= "+this.getPos());
         }
+        //on recupere le texte en mode docdev
         if(args.contains("dev")) {
             this.devdoc();
             return ;
         }
-        if(Objects.equals(token, codeopen) ||args.isEmpty())
+        //on gere ici le cas ou a la sortie des balises on passe directement a un noeud de code pour eviter de renvoyer des doc nodes dont le texte est vide
+        if(Objects.equals(token, codeopen))
             return ;
-        while (!Objects.equals(this.getToken(),this.getOpenTag())&&!Objects.equals(this.getToken(),codeopen)){
+        //on recupere le texte du docnode
+        while (!Objects.equals(this.getToken(),this.getOpenTag())&&!Objects.equals(this.getToken(),codeopen)&&pos<doc.length()-1){
             this.excape();
             txt=txt+this.getToken();
             this.next();
@@ -290,7 +310,7 @@ public class Compilator {
         String txt="";
         int posdeb=this.getPos();
         int posfin=this.getPos();
-        while (!Objects.equals(this.getToken(), openTag)){
+        while (!Objects.equals(this.getToken(), openTag)&&pos<doc.length()-1){
             this.excape();
             if(Objects.equals(this.getToken(), codeopen)){
                 posdeb=this.getPos();
