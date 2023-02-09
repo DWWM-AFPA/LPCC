@@ -1,5 +1,7 @@
 package Export;
 
+
+import javax.swing.*;
 import javax.swing.filechooser.FileSystemView;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
@@ -16,9 +18,18 @@ public class File {
     protected boolean hasBeenRead;
     private static final ArrayList<String> fileList = new ArrayList<>();
 
+    public static final String desktopPath = FileSystemView.getFileSystemView().getHomeDirectory().getPath();
+    public static final String documentsPath = FileSystemView.getFileSystemView().getDefaultDirectory().getPath();
+
     public File(String name,String extension) {
         //path = mes documents
-        this.setPath(FileSystemView.getFileSystemView().toString());
+        this.setPath(documentsPath+"\\LPCC\\");
+        java.io.File file= new java.io.File(desktopPath+"\\Projet\\LPCC");
+        if (file.mkdir())
+            System.out.println("Dossier créé dans : "+ file);
+        else if (                !file.isDirectory()     &&                (JOptionPane.showConfirmDialog(null,"Voulez vous créer l'arborescence dossier "+file,"Création dossiers",JOptionPane.YES_NO_OPTION)==JOptionPane.YES_OPTION))
+            file.mkdirs();
+
         this.setName(name);
         this.setExtension(extension);
         this.setFullPath(this.getPath()+this.getName()+this.getExtension());
@@ -33,10 +44,12 @@ public class File {
     }
     public File(String path,String name,String extension,boolean hasBeenRead) {
         this.setPath(path);
-        this.setPath(name);
+        this.setName(name);
         this.setExtension(extension);
         this.setFullPath(this.getPath()+this.getName()+this.getExtension());
         this.setHasBeenRead(hasBeenRead);
+        if(!hasBeenRead)
+            fileList.remove(this.getFullPath());
     }
 
     public String getPath() {
@@ -99,6 +112,8 @@ public class File {
     public File create(String content) throws IOException {
         //FileOutputStream outFile = new FileOutputStream(this.getPath() + extension);
         FileOutputStream outFile = new FileOutputStream(this.getFullPath());
+      //  System.out.println(this.getFullPath());
+
         outFile.write(content.getBytes());
         outFile.close();
         return this;

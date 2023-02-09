@@ -121,12 +121,7 @@ public class Graphic {
     public enum TypeChoose {SAVE,OPEN}
     public static File choose(TypeChoose typeChoose){
         File outputName=new File("LPCC");
-        File outputDir=FileSystemView.getFileSystemView().getParentDirectory(outputName);
-        System.out.println(outputDir.getName()+outputDir.getPath());
-        try{
-            FileSystemView.getFileSystemView().createNewFolder(outputDir);}
-        catch (IOException e) {
-            e.printStackTrace(System.out);}
+        String outputDir=Export.File.desktopPath+"\\Projet\\LPCC";
         JFileChooser choose=new JFileChooser(
                 outputDir
                     //    .getHomeDirectory()
