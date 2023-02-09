@@ -1,0 +1,11 @@
+@startuml
+'https://plantuml.com/use-case-diagram
+User->Controller
+Controller->Config
+View->Compile
+Compile->Config
+Config -> View
+View -> User
+
+
+@enduml
