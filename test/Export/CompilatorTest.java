@@ -19,7 +19,7 @@ class CompilatorTest {
     Compilator c3=new Compilator("<dev> ceci est de la $doc$ dev /$doc$ </dev>");
     Code test=new Code();
 
-    Compilator c2=new Compilator(" <it> texte it \\<bd> texte pas bold </it>");
+    Compilator c2=new Compilator(" <it> texte it \\< texte pas bold </it>");
     @Test
     void compile() throws Exception {
         DocumentationNode doc= (DocumentationNode) c.compile().get(0);
@@ -38,7 +38,7 @@ class CompilatorTest {
         assertEquals(" ceci est du code  qui appelle un autre code ",c1.compile().get(0).getText());
         assertEquals(" ceci est du code  litteral prog  qui appelle un autre code ",test.extractcode(doc2,args));
         assertEquals(2,c2.compile().size());
-        assertEquals(" texte it <bd> texte pas bold ",c2.compile().get(0).getText());
+        assertEquals(" texte it < texte pas bold ",c2.compile().get(0).getText());
         assertEquals(" ceci est de la $doc$ dev /$doc$ ",c3.compile().get(1).getText());
     }
 }

@@ -28,13 +28,7 @@ public class LateXDoc implements Visitor{
             part=line.split(";");
             corresdefault.put(part[0],part[1]);
         }
-
-        /*corresdefault.put("it","\\textit{");
-        corresdefault.put("bd","\\textbd{");
-        corresdefault.put("ul","\\underline{");
-        corresdefault.put("link","\\url{");*/
         setCorresbal(corresdefault);
-
     }
 
     public LateXDoc(String configname) throws FileNotFoundException {

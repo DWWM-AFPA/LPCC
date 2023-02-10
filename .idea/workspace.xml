@@ -1,0 +1,232 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="ChangeListManager">
+    <list default="true" id="233049b2-cae0-4f48-8228-25faaf1bf76f" name="Changes" comment="&quot;caractére d'echapemment rajouté&quot;">
+      <change beforePath="$PROJECT_DIR$/docs/SequenceDiagram.puml" beforeDir="false" afterPath="$PROJECT_DIR$/docs/SequenceDiagram.puml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/test/Export/CompilatorTest.java" beforeDir="false" afterPath="$PROJECT_DIR$/test/Export/CompilatorTest.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/userdoc.tex" beforeDir="false" afterPath="$PROJECT_DIR$/userdoc.tex" afterDir="false" />
+    </list>
+    <option name="SHOW_DIALOG" value="false" />
+    <option name="HIGHLIGHT_CONFLICTS" value="true" />
+    <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
+    <option name="LAST_RESOLUTION" value="IGNORE" />
+  </component>
+  <component name="FileTemplateManagerImpl">
+    <option name="RECENT_TEMPLATES">
+      <list>
+        <option value="JUnit5 Test Class" />
+        <option value="UML Use Case" />
+      </list>
+    </option>
+  </component>
+  <component name="Git.Merge.Settings">
+    <option name="BRANCH" value="LPCC/matt" />
+  </component>
+  <component name="Git.Settings">
+    <option name="RECENT_BRANCH_BY_REPOSITORY">
+      <map>
+        <entry key="$PROJECT_DIR$" value="dev" />
+      </map>
+    </option>
+    <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
+    <option name="SWAP_SIDES_IN_COMPARE_BRANCHES" value="true" />
+  </component>
+  <component name="MarkdownSettingsMigration">
+    <option name="stateVersion" value="1" />
+  </component>
+  <component name="ProblemsViewState">
+    <option name="proportion" value="0.43367076" />
+    <option name="selectedTabId" value="CurrentFile" />
+    <option name="showPreview" value="true" />
+  </component>
+  <component name="ProjectId" id="2KirSduklADvd6rI7OirUjFwjXJ" />
+  <component name="ProjectLevelVcsManager" settingsEditedManually="true" />
+  <component name="ProjectViewState">
+    <option name="hideEmptyMiddlePackages" value="true" />
+    <option name="showLibraryContents" value="true" />
+  </component>
+  <component name="PropertiesComponent">{
+  &quot;keyToString&quot;: {
+    &quot;DefaultPlantUmlFileTemplate&quot;: &quot;UML Use Case&quot;,
+    &quot;Downloaded.Files.Path.Enabled&quot;: &quot;false&quot;,
+    &quot;Repository.Attach.Annotations&quot;: &quot;false&quot;,
+    &quot;Repository.Attach.JavaDocs&quot;: &quot;false&quot;,
+    &quot;Repository.Attach.Sources&quot;: &quot;false&quot;,
+    &quot;RunOnceActivity.OpenProjectViewOnStart&quot;: &quot;true&quot;,
+    &quot;RunOnceActivity.ShowReadmeOnStart&quot;: &quot;true&quot;,
+    &quot;com.intellij.testIntegration.createTest.CreateTestDialog.defaultLibrary&quot;: &quot;JUnit5&quot;,
+    &quot;com.intellij.testIntegration.createTest.CreateTestDialog.defaultLibrarySuperClass.JUnit5&quot;: &quot;&quot;,
+    &quot;last_opened_file_path&quot;: &quot;C:/Users/CDA-03/Desktop/LPCC/docs&quot;,
+    &quot;settings.editor.selected.configurable&quot;: &quot;preferences.pluginManager&quot;
+  }
+}</component>
+  <component name="RecentsManager">
+    <key name="CreateTestDialog.Recents.Supers">
+      <recent name="" />
+    </key>
+    <key name="CreateTestDialog.RecentsKey">
+      <recent name="Export" />
+    </key>
+  </component>
+  <component name="RunManager" selected="JUnit.CompilatorTest.compile">
+    <configuration name="CompilatorTest.compile" type="JUnit" factoryName="JUnit" temporary="true" nameIsGenerated="true">
+      <module name="LPCC" />
+      <extension name="coverage">
+        <pattern>
+          <option name="PATTERN" value="Export.*" />
+          <option name="ENABLED" value="true" />
+        </pattern>
+      </extension>
+      <option name="PACKAGE_NAME" value="Export" />
+      <option name="MAIN_CLASS_NAME" value="Export.CompilatorTest" />
+      <option name="METHOD_NAME" value="compile" />
+      <option name="TEST_OBJECT" value="method" />
+      <method v="2">
+        <option name="Make" enabled="true" />
+      </method>
+    </configuration>
+    <configuration name="FileTest" type="JUnit" factoryName="JUnit" temporary="true" nameIsGenerated="true">
+      <module name="LPCC" />
+      <extension name="coverage">
+        <pattern>
+          <option name="PATTERN" value="Export.TestFile.*" />
+          <option name="ENABLED" value="true" />
+        </pattern>
+      </extension>
+      <option name="PACKAGE_NAME" value="Export.TestFile" />
+      <option name="MAIN_CLASS_NAME" value="Export.TestFile.FileTest" />
+      <option name="TEST_OBJECT" value="class" />
+      <method v="2">
+        <option name="Make" enabled="true" />
+      </method>
+    </configuration>
+    <configuration name="LateXDocTest" type="JUnit" factoryName="JUnit" temporary="true" nameIsGenerated="true">
+      <module name="LPCC" />
+      <extension name="coverage">
+        <pattern>
+          <option name="PATTERN" value="Export.*" />
+          <option name="ENABLED" value="true" />
+        </pattern>
+      </extension>
+      <option name="PACKAGE_NAME" value="Export" />
+      <option name="MAIN_CLASS_NAME" value="Export.LateXDocTest" />
+      <option name="TEST_OBJECT" value="class" />
+      <method v="2">
+        <option name="Make" enabled="true" />
+      </method>
+    </configuration>
+    <configuration name="LateXDocTest.user (1)" type="JUnit" factoryName="JUnit" temporary="true" nameIsGenerated="true">
+      <module name="LPCC" />
+      <extension name="coverage">
+        <pattern>
+          <option name="PATTERN" value="Export.*" />
+          <option name="ENABLED" value="true" />
+        </pattern>
+      </extension>
+      <option name="PACKAGE_NAME" value="Export" />
+      <option name="MAIN_CLASS_NAME" value="Export.LateXDocTest" />
+      <option name="METHOD_NAME" value="user" />
+      <option name="TEST_OBJECT" value="method" />
+      <method v="2">
+        <option name="Make" enabled="true" />
+      </method>
+    </configuration>
+    <configuration name="userdoc" type="LATEX_RUN_CONFIGURATION" factoryName="LaTeX configuration factory" temporary="true">
+      <texify>
+        <compiler>PDFLATEX</compiler>
+        <compiler-path />
+        <sumatra-path />
+        <pdf-viewer>SUMATRA</pdf-viewer>
+        <viewer-command />
+        <compiler-arguments />
+        <envs />
+        <main-file>$PROJECT_DIR$/userdoc.tex</main-file>
+        <output-path>$PROJECT_DIR$/out</output-path>
+        <auxil-path>{projectDir}/auxil</auxil-path>
+        <compile-twice>false</compile-twice>
+        <output-format>PDF</output-format>
+        <latex-distribution>TEXLIVE</latex-distribution>
+        <has-been-run>false</has-been-run>
+        <bib-run-config>[]</bib-run-config>
+        <makeindex-run-config>[]</makeindex-run-config>
+      </texify>
+      <method v="2" />
+    </configuration>
+    <recent_temporary>
+      <list>
+        <item itemvalue="JUnit.CompilatorTest.compile" />
+        <item itemvalue="LaTeX.userdoc" />
+        <item itemvalue="JUnit.LateXDocTest" />
+        <item itemvalue="JUnit.LateXDocTest.user (1)" />
+        <item itemvalue="JUnit.FileTest" />
+      </list>
+    </recent_temporary>
+  </component>
+  <component name="SpellCheckerSettings" RuntimeDictionaries="0" Folders="0" CustomDictionaries="0" DefaultDictionary="application-level" UseSingleDictionary="true" transferred="true" />
+  <component name="TaskManager">
+    <task active="true" id="Default" summary="Default task">
+      <changelist id="233049b2-cae0-4f48-8228-25faaf1bf76f" name="Changes" comment="&quot;node finits, bon avancement sur le visiteur code, tests probablement demains&quot;" />
+      <created>1674468249327</created>
+      <option name="number" value="Default" />
+      <option name="presentableId" value="Default" />
+      <updated>1674468249327</updated>
+    </task>
+    <task id="LOCAL-00001" summary="&quot;node finits, bon avancement sur le visiteur code, tests probablement demains&quot;">
+      <created>1674661983961</created>
+      <option name="number" value="00001" />
+      <option name="presentableId" value="LOCAL-00001" />
+      <option name="project" value="LOCAL" />
+      <updated>1674661983961</updated>
+    </task>
+    <task id="LOCAL-00002" summary="&quot;commit maj 01/02/2023, le compilateur est testé et validé, il reste le rajout de caractére d'échapemment et la devdoc a traiter&quot;">
+      <created>1675265815257</created>
+      <option name="number" value="00002" />
+      <option name="presentableId" value="LOCAL-00002" />
+      <option name="project" value="LOCAL" />
+      <updated>1675265815257</updated>
+    </task>
+    <task id="LOCAL-00003" summary="&quot;caractére d'echapemment rajouté&quot;">
+      <created>1675353505823</created>
+      <option name="number" value="00003" />
+      <option name="presentableId" value="LOCAL-00003" />
+      <option name="project" value="LOCAL" />
+      <updated>1675353505823</updated>
+    </task>
+    <option name="localTasksCounter" value="4" />
+    <servers />
+  </component>
+  <component name="Vcs.Log.Tabs.Properties">
+    <option name="TAB_STATES">
+      <map>
+        <entry key="MAIN">
+          <value>
+            <State>
+              <option name="FILTERS">
+                <map>
+                  <entry key="branch">
+                    <value>
+                      <list>
+                        <option value="dev" />
+                      </list>
+                    </value>
+                  </entry>
+                </map>
+              </option>
+            </State>
+          </value>
+        </entry>
+      </map>
+    </option>
+  </component>
+  <component name="VcsManagerConfiguration">
+    <MESSAGE value="&quot;test&quot;" />
+    <MESSAGE value="&quot;node finits, bon avancement sur le visiteur code, tests probablement demains&quot;" />
+    <MESSAGE value="&quot;commit maj 01/02/2023, le compilateur est testé et validé, il reste le rajout de caractére d'échapemment et la devdoc a traiter&quot;" />
+    <MESSAGE value="&quot;caractére d'echapemment rajouté&quot;" />
+    <option name="LAST_COMMIT_MESSAGE" value="&quot;caractére d'echapemment rajouté&quot;" />
+  </component>
+  <component name="XSLT-Support.FileAssociations.UIState">
+    <expand />
+    <select />
+  </component>
+</project>

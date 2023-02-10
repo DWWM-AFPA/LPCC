@@ -1,11 +1,17 @@
 @startuml
 'https://plantuml.com/use-case-diagram
-User->Controller
-Controller->Config
-View->Compile
-Compile->Config
-Config -> View
-View -> User
 
+
+
+
+USER -> View : Affiche option Config
+View -> Controler : Demande de configuration
+Controler -> Config : Charge config
+Config -> Compilator : update config
+USER -> View : Affiche fichier à charger
+View -> Controler : Demande chargement de fichier
+Controler -> Compilator : Complie le fichier
+Compilator -> Controler : Transfert fichier compilé
+Controler -> View : Affiche le résultat de la compilation
 
 @enduml
