@@ -132,22 +132,22 @@ public class Graphic {
 
         int res = -1;
         switch (typeChoose) {
-            case SAVE ->  res = choose.showSaveDialog(null);
-            case OPEN -> {
+            case SAVE ->
+                    res = choose.showSaveDialog(null);
+
+            case OPEN ->
                 res = choose.showOpenDialog(null);
-                System.out.println(res);
-            }
+
         }
 
         if(res == JFileChooser.APPROVE_OPTION)
         {
             if(choose.getSelectedFile().isFile())
-            {
                 System.out.println("Vous avez selectionne le repertoire: "+ choose.getSelectedFile());
-            } else {
+            else
                 JOptionPane.showMessageDialog(null, "Veuillez selectionner un fichier");
-            }
-        return choose.getSelectedFile();
+
+            return choose.getSelectedFile();
         }
         return null;
     }
