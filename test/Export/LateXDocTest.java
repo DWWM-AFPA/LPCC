@@ -29,7 +29,7 @@ class LateXDocTest {
 
 
     @Test
-    void user() {
+    void user() throws LPCSyntaxException {
         l.user(new ArrayList<>(List.of(it,bold)));
         l.user(new ArrayList<>(List.of(bdit,title)));
     }

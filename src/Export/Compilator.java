@@ -1,5 +1,6 @@
 package Export;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Hashtable;
 import java.util.List;
@@ -12,7 +13,11 @@ public class Compilator {
     protected String token;
     protected String doc;
 
+    protected File source;
 
+    protected String chapteropen;
+
+    protected String chapterclose;
 
     protected String codeopen;
 
@@ -61,8 +66,24 @@ public class Compilator {
         return excapch;
     }
 
+    public String getChapterclose() {
+        return chapterclose;
+    }
+
+    public String getChapteropen() {
+        return chapteropen;
+    }
+
     //setters
 
+
+    public void setChapteropen(String chapteropen) {
+        this.chapteropen = chapteropen;
+    }
+
+    public void setChapterclose(String chapterclose) {
+        this.chapterclose = chapterclose;
+    }
 
     public void setCodeclose(String codeclose) {
         this.codeclose = codeclose;
@@ -96,8 +117,9 @@ public class Compilator {
         this.excapch = excapch;
     }
 
-
-
+    public void setCompiledfile(ArrayList<Node> compiledfile) {
+        this.compiledfile = compiledfile;
+    }
 
     //builders
     public Compilator() {
@@ -106,22 +128,40 @@ public class Compilator {
         this.setCodeclose("$");
         this.setCodeopen("$");
         this.setExcapch("\\");
+        this.setChapteropen("¤");
+        this.setChapterclose("¤");
         this.compiledfile=new ArrayList<>();
         this.setArgs(new ArrayList<>());
         this.specialchar=new ArrayList<>();
-        this.specialchar.addAll(List.of(this.codeopen,this.closeTag,this.openTag,this.excapch,this.closeTag,"/"));
+        this.specialchar.addAll(List.of(this.codeopen
+                ,this.closeTag
+                ,this.openTag
+                ,this.excapch
+                ,this.closeTag
+                ,this.chapterclose
+                ,this.chapteropen
+                ,"/"));
     }
-    public Compilator(String textToCompile) {
+    public Compilator(File source) throws FileException, IOException {
         this.setOpenTag("<");
         this.setCloseTag(">");
         this.setCodeclose("$");
         this.setCodeopen("$");
         this.setExcapch("\\");
+        this.setChapteropen("¤");
+        this.setChapterclose("¤");
         this.compiledfile=new ArrayList<>();
-        this.setDoc(textToCompile);
+        this.setDoc(source.read());
         this.setArgs(new ArrayList<>());
         this.specialchar=new ArrayList<>();
-        this.specialchar.addAll(List.of(this.codeopen,this.closeTag,this.openTag,this.excapch,this.closeTag,"/"));
+        this.specialchar.addAll(List.of(this.codeopen
+                ,this.closeTag
+                ,this.openTag
+                ,this.excapch
+                ,this.closeTag
+                ,this.chapterclose
+                ,this.chapteropen
+                ,"/"));
     }
     public Compilator(String openTag, String closeTag) {
         this.setCloseTag(closeTag);
@@ -236,7 +276,6 @@ public class Compilator {
             this.excape();
             if(Objects.equals(this.token, codeopen)){
                 String callname=this.getName();
-                System.out.println("je sors bien de getname");
                 callcode.put(posrel,callname);
             }
             else {
@@ -266,7 +305,7 @@ public class Compilator {
 
     // Methode qui extrait un doc node (independament de dev/user)
 
-    private void getDocNode() throws LPCSyntaxException {
+    private void getDocNode() throws Exception {
         String txt="";
         //on determine ici les effets de style qui s'apliques au docnode
         while(Objects.equals(this.token,openTag)){
@@ -306,12 +345,29 @@ public class Compilator {
         compiledfile.add(new DocumentationNode(false,txt,argnode));
     }
 
-    private void devdoc(){
+
+    private String getChapterName(){
+        StringBuilder retour=new StringBuilder();
+        while (!this.getToken().equals(chapterclose)) {
+            this.excape();
+            retour.append(this.getToken());
+        }
+        return retour.toString();
+        }
+
+
+    private void devdoc() throws Exception {
         String txt="";
         int posdeb=this.getPos();
         int posfin=this.getPos();
         while (!Objects.equals(this.getToken(), openTag)&&pos<doc.length()-1){
             this.excape();
+            if(this.getToken().equals(chapteropen)) {
+                String chaptername = this.getChapterName();
+                File chaptersource=new File()
+                Compilator chapter=new Compilator(); //placeholder, en réaliter il faudra passer par la classe File
+                compiledfile.addAll(chapter.compile());
+            }
             if(Objects.equals(this.getToken(), codeopen)){
                 posdeb=this.getPos();
                 this.getCodeNode();

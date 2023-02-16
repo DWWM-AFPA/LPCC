@@ -1,4 +1,5 @@
 package Export;
+import javax.swing.*;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.util.ArrayList;
@@ -45,15 +46,21 @@ public class LateXDoc implements Visitor{
         setCorresbal(corresdefault);
     }
 
-    public void user(ArrayList<DocumentationNode> n) {
+    public void user(ArrayList<DocumentationNode> n) throws LPCSyntaxException {
         StringBuilder retour= new StringBuilder();
+        retour.append("\\begin{document}");
         for (DocumentationNode doc:n) {
             doc.remove("user");
             String node;
             int titleindex=0;
             for (int i = 1; i < 6; i++) {
-                if(doc.getArgs().contains("title"+i))
-                    titleindex=i;
+                if(doc.getArgs().contains("title"+i)) {
+                    if(titleindex == 0)
+                        titleindex = i;
+                    else
+                        throw new LPCSyntaxException("Un titre doit être d'un seul type");
+                }
+
             }
             switch (titleindex){
                 case 0: node=this.nodeTosring(doc);
@@ -82,10 +89,11 @@ public class LateXDoc implements Visitor{
             }
             retour.insert(0,node);
             }
+        retour.append("\\end{document}");
         System.out.println(retour);
         }
 
-    public void dev(ArrayList<DocumentationNode> n) {
+    public void dev(ArrayList<DocumentationNode> n) throws LPCSyntaxException {
         StringBuilder retour= new StringBuilder();
         for (DocumentationNode doc:n) {
             doc.remove("user");
@@ -94,6 +102,8 @@ public class LateXDoc implements Visitor{
             for (int i = 1; i < 6; i++) {
                 if(doc.getArgs().contains("title"+i))
                     titleindex=i;
+                else
+                    throw new LPCSyntaxException("Un titre doit être d'un seul type");
             }
             switch (titleindex){
                 case 0: node=this.nodeTosring(doc);
@@ -140,8 +150,18 @@ public class LateXDoc implements Visitor{
                 }
             }
         }
-        this.user(user);
-        this.dev(dev);
+        try {
+            this.user(user);
+        } catch (LPCSyntaxException e) {
+            //TODO message renvoyé
+            new JOptionPane(e.getMessage());
+        }
+        try {
+            this.dev(dev);
+        } catch (LPCSyntaxException e) {
+            //TODO message renvoyé
+            new JOptionPane(e.getMessage());
+        }
     }
 
     private String nodeTosring(DocumentationNode doc){
@@ -153,7 +173,8 @@ public class LateXDoc implements Visitor{
                 doc.remove(doc.getArgs().get(0));
             }
             else {
-                switch (doc.getArgs().get(0)) {
+                String firstarg=doc.getArgs().get(0);
+                switch (firstarg) {
                     case ("img"):
                         node = new StringBuilder("\\begin{figure}" + '\n' + "\\centering" + '\n' + "\\includegraphics{" + node + "}" + '\n' + "\\end{figure}");
                         doc.remove("img");

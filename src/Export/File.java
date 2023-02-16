@@ -94,13 +94,13 @@ public class File {
 
     public String read() throws IOException, FileException {
         if (!fileList.contains(this.getFullPath())) {
-            fileList.add(this.getFullPath());
-            FileReader file= new FileReader(this.getFullPath());
-            int i;
-            StringBuilder retour = new StringBuilder();
-            while((i= file.read()) != -1)
-                retour.append((char)i);
-            return retour.toString();}
+                fileList.add(this.getFullPath());
+                FileReader file= new FileReader(this.getFullPath());
+                int i;
+                StringBuilder retour = new StringBuilder();
+                while((i= file.read()) != -1)
+                    retour.append((char)i);
+                return retour.toString();}
         else {
             throw new FileException().alreadyRead(this);
             //System.err.println("Le fichier "+this.getPath()+" semble avoir déjà été parcouru");
