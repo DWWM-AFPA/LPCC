@@ -24,7 +24,7 @@ end note
  (Work) <|.- (compile)
  note right of (compile)
  confirm the language of compilation
- it gives the type of extension for each file
+ it gives the type of extension for each LPCFile
  end note
 
 package Compilation{

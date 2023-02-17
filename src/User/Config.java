@@ -1,6 +1,6 @@
 package User;
 
-import Export.File;
+import Export.LPCFile;
 import Export.FileException;
 
 import java.io.IOException;
@@ -8,7 +8,8 @@ import java.util.Scanner;
 
 public class Config {
     protected String name;
-    protected File file;
+    protected LPCFile LPCFile;
+    protected static String mainInputFile;
 
     public String getName() {
         return name;
@@ -18,30 +19,34 @@ public class Config {
         this.name = name;
     }
 
-    public File getFile() {
-        return file;
+    public LPCFile getFile() {
+        return LPCFile;
     }
 
-    public void setFile(File file) {
-        this.file = file;
+    public void setFile(LPCFile LPCFile) {
+        this.LPCFile = LPCFile;
     }
 
-    public Config(String name, File file) {
+    public Config(String name, LPCFile LPCFile) {
         this.name = name;
-        this.file = file;
+        this.LPCFile = LPCFile;
     }
 
-    public void loadConfig() throws FileException, IOException {
-        Scanner scan = new Scanner(this.file.read());
-
-        while (scan.hasNext()) {
-            String key = scan.next();
-            String value = scan.next();
-            System.out.println("Key : "+key+" Value : "+value);
-        }
-
+    public static String getMainInputFile() {
+        return mainInputFile;
     }
+
+    /*    public void loadConfig() throws FileException, IOException {
+            Scanner scan = new Scanner(this.LPCFile.read());
+
+            while (scan.hasNext()) {
+                String key = scan.next();
+                String value = scan.next();
+                System.out.println("Key : "+key+" Value : "+value);
+            }
+
+        }*/
     public void createConfig() throws IOException {
-        this.file.create("config"+System.lineSeparator()+"test");
+     //   this.LPCFile.create("config"+System.lineSeparator()+"test");
     }
 }
