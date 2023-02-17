@@ -52,7 +52,7 @@ public class Graphic {
             @Override
             public void actionPerformed(ActionEvent e) {
                 System.out.println("Export code lancé");
-                //    Documentation.visit();
+
             }
         });
 

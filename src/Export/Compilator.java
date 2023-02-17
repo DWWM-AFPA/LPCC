@@ -1,12 +1,13 @@
 package Export;
 
+import javax.swing.*;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Hashtable;
 import java.util.List;
 import java.util.Objects;
 
-public class Compilator {
+public class Compilator implements Visitable{
     protected String openTag;
     protected String closeTag;
     protected  int pos=0;
@@ -222,7 +223,7 @@ public class Compilator {
         return this.getToken();
     }
 
-    public ArrayList<Node> compile() throws Exception {
+    public ArrayList<Node> compile() throws LPCSyntaxException {
         this.reset();
         cursor();
         while (pos<doc.length()-1) {
@@ -236,7 +237,8 @@ public class Compilator {
 
 
         if(!args.isEmpty())
-            throw new LPCSyntaxException("Erreur sur les balises a la ligne "+countLines()+" a proximité de "+"\""+doc.substring(Math.max(0,pos-10),Math.min(doc.length(),pos+10)) +"\"");
+            throw new LPCSyntaxException("Erreur sur les balises a la ligne "+countLines()+
+                    " a proximité de "+"\""+doc.substring(Math.max(0,pos-10),Math.min(doc.length(),pos+10)) +"\"");
         return this.compiledfile;
     }
 
@@ -305,7 +307,7 @@ public class Compilator {
 
     // Methode qui extrait un doc node (independament de dev/user)
 
-    private void getDocNode() throws Exception {
+    private void getDocNode() throws LPCSyntaxException {
         String txt="";
         //on determine ici les effets de style qui s'apliques au docnode
         while(Objects.equals(this.token,openTag)){
@@ -316,7 +318,8 @@ public class Compilator {
                 int ref=args.size();
                 this.args.remove(getarg());
                 if(ref<=args.size())
-                    throw new LPCSyntaxException("Erreur sur les balises a la ligne "+countLines()+"a proximité de "+doc.substring(Math.max(0,pos-10),Math.min(doc.length(),pos+10)));
+                    throw new LPCSyntaxException("Erreur sur les balises a la ligne "+countLines()+"a proximité de "
+                            +doc.substring(Math.max(0,pos-10),Math.min(doc.length(),pos+10)));
             }
             else {
                 this.args.add(getarg());
@@ -356,7 +359,7 @@ public class Compilator {
         }
 
 
-    private void devdoc() throws Exception {
+    private void devdoc() throws LPCSyntaxException {
         String txt="";
         int posdeb=this.getPos();
         int posfin=this.getPos();
@@ -364,8 +367,11 @@ public class Compilator {
             this.excape();
             if(this.getToken().equals(chapteropen)) {
                 String chaptername = this.getChapterName();
-                File chaptersource=new File()
-                Compilator chapter=new Compilator(); //placeholder, en réaliter il faudra passer par la classe File
+                String sourcepath=source.getPath();
+                String sourcechapter=sourcepath.substring(0,sourcepath.length()-source.getName().length()-source.getExtension().length()-1);
+                File chaptersource=new File(sourcechapter,chaptername,source.getExtension());
+
+                Compilator chapter=new Compilator(); //placeholder, en réalité il faudra passer par la classe File
                 compiledfile.addAll(chapter.compile());
             }
             if(Objects.equals(this.getToken(), codeopen)){
@@ -383,5 +389,15 @@ public class Compilator {
         compiledfile.add(new DocumentationNode(true,txt,argnode));
     }
 
+    @Override
+    public void accept(Visitor v) {
+        try {
+            this.compile();
+            v.visit(this.compiledfile);
+        }
+        catch (LPCSyntaxException e){
+            JOptionPane error=new JOptionPane(e.getMessage());
+        }
+    }
 }
 

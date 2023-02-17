@@ -8,15 +8,9 @@ import java.util.Scanner;
 
 public class LateXDoc implements Visitor{
 
-    protected  Hashtable<String,String> corresbal;
+    protected  Hashtable<String,String> corresbalise;
 
     //getters
-
-    public void setCorresbal(Hashtable<String,String> corresbal0){
-       corresbal=corresbal0;
-    }
-
-
 
     public LateXDoc() throws FileNotFoundException {
         Hashtable<String,String> corresdefault=new Hashtable<>();
@@ -29,7 +23,7 @@ public class LateXDoc implements Visitor{
             part=line.split(";");
             corresdefault.put(part[0],part[1]);
         }
-        setCorresbal(corresdefault);
+        setCorresbalise(corresdefault);
     }
 
     public LateXDoc(String configname) throws FileNotFoundException {
@@ -43,7 +37,13 @@ public class LateXDoc implements Visitor{
             parts = line.split(";");
             corresdefault.put(parts[0],parts[1]);
         }
-        setCorresbal(corresdefault);
+        setCorresbalise(corresdefault);
+    }
+
+    //setters
+
+    public void setCorresbalise(Hashtable<String,String> corresbal0){
+       corresbalise=corresbal0;
     }
 
     public void user(ArrayList<DocumentationNode> n) throws LPCSyntaxException {
@@ -176,11 +176,12 @@ public class LateXDoc implements Visitor{
                 String firstarg=doc.getArgs().get(0);
                 switch (firstarg) {
                     case ("img"):
-                        node = new StringBuilder("\\begin{figure}" + '\n' + "\\centering" + '\n' + "\\includegraphics{" + node + "}" + '\n' + "\\end{figure}");
+                        node = new StringBuilder("\\begin{figure}" + '\n' + "\\centering" + '\n' + "\\includegraphics{"
+                                + node + "}" + '\n' + "\\end{figure}");
                         doc.remove("img");
                         break;
                     default:
-                        node=new StringBuilder(this.corresbal.get(doc.getArgs().get(0))+node+"}");
+                        node=new StringBuilder(this.corresbalise.get(doc.getArgs().get(0))+node+"}");
                         doc.remove(doc.getArgs().get(0));
                 }
             }
