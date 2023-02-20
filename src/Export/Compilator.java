@@ -234,10 +234,8 @@ public class Compilator implements Visitable{
                 this.getDocNode();
             }
         }
-
-
         if(!args.isEmpty())
-            throw new LPCSyntaxException("Erreur sur les balises a la ligne "+countLines()+
+            throw new LPCSyntaxException("Erreur sur les balises dans le fichier "+source.getName()+" a la ligne "+countLines()+
                     " a proximité de "+"\""+doc.substring(Math.max(0,pos-10),Math.min(doc.length(),pos+10)) +"\"");
         return this.compiledfile;
     }
@@ -318,7 +316,7 @@ public class Compilator implements Visitable{
                 int ref=args.size();
                 this.args.remove(getarg());
                 if(ref<=args.size())
-                    throw new LPCSyntaxException("Erreur sur les balises a la ligne "+countLines()+"a proximité de "
+                    throw new LPCSyntaxException("Erreur sur les balises dans le fichier "+source.getName()+"a la ligne "+countLines()+"a proximité de "
                             +doc.substring(Math.max(0,pos-10),Math.min(doc.length(),pos+10)));
             }
             else {
@@ -397,6 +395,7 @@ public class Compilator implements Visitable{
         }
         catch (LPCSyntaxException e){
             JOptionPane error=new JOptionPane(e.getMessage());
+            error.setVisible(true);
         }
     }
 }
