@@ -47,7 +47,7 @@ public class Graphic {
                 } catch (FileException | IOException ex) {
                     throw new RuntimeException(ex);
                 }
-            //    Compilator compile = new Compilator();
+              //  Compilator compile = new Compilator();
             }
         });
        // compile.setBounds(50,50, 10,10);
