@@ -133,10 +133,7 @@ public class Compilator {
     }
 
     //builders
-    public Compilator() {
-        this.setOpenTag("<");
-        this.setCloseTag(">");
-    }
+
     public Compilator(String textToCompile) {
         this.setOpenTag("<");
         this.setCloseTag(">");
@@ -168,11 +165,14 @@ public class Compilator {
 
     protected String cursor(int pos) {
         String retour = String.valueOf(doc.charAt(getPos()));
-        retour = retour != " "? String.valueOf(doc.charAt(getPos())):next();
+        retour = !retour.equals(" ") ? String.valueOf(doc.charAt(getPos())):next();
         return setToken(retour.toLowerCase());
     }
     public String next(){
-        this.pos++;
+       // System.out.println(this.getDoc().length()+" "+this.pos);
+       // if (this.getDoc().length()-1<this.pos)
+            this.pos++;
+
         //retourne this.token
         return this.cursor(this.getPos());
     }
@@ -214,7 +214,10 @@ public class Compilator {
 
     private String findTextContent(){
         return this.getDoc().substring(ft1+1,ot2-1).trim();
-    }  
+    }
+    private String findTextContent(int pos){
+        return this.getDoc().substring(ft1+1,pos-1).trim();
+    }
     private String findTagContent(){
         StringBuilder retour=new StringBuilder();
         while (!Objects.equals(next(), this.getCloseTag())) {
@@ -248,22 +251,26 @@ public class Compilator {
     private Node expr () {
         debug();
         this.setOt1(getPos());
+        System.err.println(cursor(this.getPos()));
         String next =this.findTagContent();
         if (next.equals("user")){
             setFt1(getPos());
             tagContent =next;
-            return tag();//new DocumentationNode();
+            DocumentationNode doc = new DocumentationNode(tagContent);
+            return tag(doc);//new DocumentationNode();
         }
         else if (next.equals("dev")) {
             setFt1(getPos());
             tagContent =next;
-                return tag();//new DocumentationNode();
+            DocumentationNode doc = new DocumentationNode(tagContent);
+            return tag(doc);//new DocumentationNode();
             }
         //TODO check next ligne
         else if (!next.equals("")) {
             setFt1(getPos());
             tagContent =next;
-            return exprEnd();//new CodeNode();
+            CodeNode code = new CodeNode(tagContent);
+            return exprEnd(code);//new CodeNode();
             }
 
         else if (!endOfString()) {
@@ -275,22 +282,22 @@ public class Compilator {
     }
 
 
-    private Node exprEnd () {
+    private Node exprEnd (Node node) {
         debug();
         this.findOpenTag();
         String end = this.findTagContent();
 
         if (end.equals("user/")) {
             this.setOt2(pos-5);
-            return new DocumentationNode(findTextContent());
+            node.add((new DocumentationNode(findTextContent(),null)));
         }
         else if (end.equals("dev/")) {
             this.setOt2(pos-4);
-            return new DocumentationNode(true,findTextContent());
+            node.add((new DocumentationNode(findTextContent(),null)));
         }
         else if (end.equals(this.tagContent + "/")) {
             this.setOt2(pos-this.getTagContent().length()-1);
-            return new CodeNode(findTextContent(),tagContent);
+            return new CodeNode(findTextContent(),node);
         }
         //il a trouvé la balise, mais ce n'est pas le code qui l'a ouvert
         else {
@@ -298,45 +305,50 @@ public class Compilator {
             int deb=pos-end.length()-1-tagContent.length()-3;
             int fin=deb+end.length()+1;
             //TODO singleton for the code nodes
-            CodeNode node = new CodeNode(end,this.getTagContent(),deb,fin);
+            if (Node.getNodeRegistry().containsKey(end))
+                node.add(Node.getNodeRegistry().get(end));
+            else
+                node.add(new CodeNode(end));
             System.out.println("expr ENd "+end);
-            return exprEnd();
+
+            return exprEnd(node);
         }
-       // return expr();
+        return expr();
     }
 
-    private Node tag () {
+    private Node tag (Node node) {
         debug();
         findOpenTag();
         String end = this.findTagContent();
         if (tagList.contains(end)) {
             System.out.println("contenu");
-            return tagEnd();
+            return tagEnd(node);
         }
         else if (end.contains(";")||end.contains("#")) {
             System.out.println("couleur");
-            return tagEnd();
+            return tagEnd(node);
         }
         return null;
     }
 
-    private Node tagEnd () {
+    private Node tagEnd (Node node) {
         debug();
         this.findOpenTag();
         String end = this.findTagContent();
         if (end.equals("it/") || end.contains("title/") || end.equals("bd/") || end.equals("ul/") || end.equals("img/") || end.equals("link/")) {
-            System.out.println("contenu");
-            return exprEnd();
+            node.add((new DocumentationNode(findTextContent(getPos()),end)));
+            return exprEnd(node);
         }
-        return text();
+        return null;
+        //return text();
     }
 
-    private Node text () {
+/*    private Node text () {
         this.findOpenTag();
         String end = this.findTagContent();
         System.out.println(end);
         return exprEnd();
-    }
+    }*/
 
 
 }

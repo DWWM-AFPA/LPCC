@@ -33,6 +33,7 @@ public abstract class LPCFile extends File {
     public static void setInputDirectory(File inputDir) {
         LPCFile.inputDirectory = inputDir;
     }
+
     /** create a File from a Class File parent Directory,extension without "." and automatically in LowerCase  */
     public static File create(File parent, String name, String extension, String content) throws IOException {
         File file = new File(parent,name+"."+extension.toLowerCase());
@@ -67,7 +68,6 @@ public abstract class LPCFile extends File {
 
         for (File s : inputDirectory.listFiles())
         {
-            System.err.println(s + "  "+Config.getMainInputFileName());
             if (s.getName().equals(Config.getMainInputFileName()))
                 retour = s;
         }
