@@ -32,7 +32,7 @@ public class Graphic {
         choose.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                    LPCFile.setInputDir(Graphic.chooseDirectory(ChooserType.OPEN));
+                    LPCFile.setInputDirectory(Graphic.chooseDirectory(ChooserType.OPEN));
             }
         });
 
@@ -42,7 +42,11 @@ public class Graphic {
             public void actionPerformed(ActionEvent e) {
                 System.out.println("Compilation lancée");
             //    Compilator.compile();
-
+                try {
+                    System.out.println(LPCFile.getMainFile());
+                } catch (FileException | IOException ex) {
+                    throw new RuntimeException(ex);
+                }
                 Compilator compile = new Compilator();
             }
         });
@@ -142,7 +146,7 @@ public class Graphic {
                     if(file.isFile())
                         file= file.getParentFile();
 
-                    LPCFile.setInputDir(choose.getSelectedFile());
+                    LPCFile.setInputDirectory(choose.getSelectedFile());
                 }
             }
         }

@@ -30,7 +30,7 @@ public abstract class LPCFile extends File {
         return inputDirectory;
     }
 
-    public static void setInputDir(File inputDir) {
+    public static void setInputDirectory(File inputDir) {
         LPCFile.inputDirectory = inputDir;
     }
     /** create a File from a Class File parent Directory,extension without "." and automatically in LowerCase  */
@@ -62,18 +62,19 @@ public abstract class LPCFile extends File {
         }
     }
 
-    public static String prepareCompilatorString(){
-        String retour = new String();
-        for (String s : inputDirectory.list())
+    public static File getMainFile() throws FileException, IOException {
+        File retour = null;
+
+        for (File s : inputDirectory.listFiles())
         {
-            File file = s.equals(Config.getMainInputFile()) ?  ;
+            System.err.println(s + "  "+Config.getMainInputFileName());
+            if (s.getName().equals(Config.getMainInputFileName()))
+                retour = s;
         }
-        try {
-            String textToCompilate = LPCFile.read();
-        } catch (IOException ex) {
-            throw new RuntimeException(ex);
-        } catch (FileException ex) {
-            throw new RuntimeException(ex);
+        if (retour == null) {
+            JFileChooser choose = new JFileChooser(inputDirectory);
+            choose.showOpenDialog(null);
+            retour = choose.getSelectedFile();
         }
         return retour;
     }
