@@ -1,5 +1,6 @@
 package Export;
 
+import java.io.IOException;
 import java.util.*;
 
 public class Code implements Visitor{
@@ -20,7 +21,11 @@ public class Code implements Visitor{
         }
         for (Node n : compilation) {
             if (n instanceof CodeNode && ((CodeNode) n).isStart()) {
-                File f=new File(((CodeNode) n).getName(),((CodeNode) n).getExtension());
+                try {
+                    LPCFile.create(null,((CodeNode) n).getName(),".java",extractcode((CodeNode) n,ref));
+                } catch (IOException e) {
+                    throw new RuntimeException(e);
+                }
             }
         }
     }

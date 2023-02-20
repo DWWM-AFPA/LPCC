@@ -1,6 +1,7 @@
 package Export;
 
 import javax.swing.*;
+import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Hashtable;
@@ -78,6 +79,10 @@ public class Compilator implements Visitable{
     //setters
 
 
+    public void setSource(File source) {
+        this.source = source;
+    }
+
     public void setChapteropen(String chapteropen) {
         this.chapteropen = chapteropen;
     }
@@ -131,6 +136,20 @@ public class Compilator implements Visitable{
         this.setExcapch("\\");
         this.setChapteropen("¤");
         this.setChapterclose("¤");
+        try {
+            this.setSource(LPCFile.getMainFile());
+        } catch (FileException e) {
+            throw new RuntimeException(e);
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+        try {
+            this.setDoc(LPCFile.read(source));
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        } catch (FileException e) {
+            throw new RuntimeException(e);
+        }
         this.compiledfile=new ArrayList<>();
         this.setArgs(new ArrayList<>());
         this.specialchar=new ArrayList<>();
@@ -151,8 +170,9 @@ public class Compilator implements Visitable{
         this.setExcapch("\\");
         this.setChapteropen("¤");
         this.setChapterclose("¤");
+        this.setSource(source);
+        this.setDoc(LPCFile.read(source));
         this.compiledfile=new ArrayList<>();
-        this.setDoc(source.read());
         this.setArgs(new ArrayList<>());
         this.specialchar=new ArrayList<>();
         this.specialchar.addAll(List.of(this.codeopen
@@ -365,11 +385,17 @@ public class Compilator implements Visitable{
             this.excape();
             if(this.getToken().equals(chapteropen)) {
                 String chaptername = this.getChapterName();
-                String sourcepath=source.getPath();
-                String sourcechapter=sourcepath.substring(0,sourcepath.length()-source.getName().length()-source.getExtension().length()-1);
-                File chaptersource=new File(sourcechapter,chaptername,source.getExtension());
-
-                Compilator chapter=new Compilator(); //placeholder, en réalité il faudra passer par la classe File
+                String sourcepath=source.getParent();
+                String chapterfullpath=sourcepath+chaptername;
+                File chaptersource=new File(chapterfullpath);
+                Compilator chapter= null;
+                try {
+                    chapter = new Compilator(chaptersource);
+                } catch (FileException e) {
+                    throw new RuntimeException(e);
+                } catch (IOException e) {
+                    JOptionPane error=new JOptionPane("Une erreur inconnue s'est produite, veuillez redemarrer l'application");
+                }
                 compiledfile.addAll(chapter.compile());
             }
             if(Objects.equals(this.getToken(), codeopen)){

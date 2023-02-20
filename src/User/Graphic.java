@@ -1,16 +1,18 @@
 package User;
 
 import Export.Compilator;
+import Export.FileException;
+import Export.LPCFile;
+import Export.LateXDoc;
+import jdk.jshell.SourceCodeAnalysis;
+
 import javax.swing.*;
-import javax.swing.filechooser.FileSystemView;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.Paths;
-
-import static javax.swing.JOptionPane.ERROR_MESSAGE;
 
 public class Graphic {
     public static void draw() {
@@ -28,11 +30,10 @@ public class Graphic {
         panel.setBackground(Color.lightGray);
 
         JButton choose = new JButton("Choose");
-        // compile.setBounds(50,50, 10,10);
         choose.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                    Graphic.choose(TypeChoose.OPEN);
+                    LPCFile.setInputDirectory(Graphic.chooseDirectory(ChooserType.OPEN));
             }
         });
 
@@ -42,12 +43,18 @@ public class Graphic {
             public void actionPerformed(ActionEvent e) {
                 System.out.println("Compilation lancée");
             //    Compilator.compile();
+                try {
+                    System.out.println(LPCFile.getMainFile());
+                } catch (FileException | IOException ex) {
+                    throw new RuntimeException(ex);
+                }
+                Compilator compile = new Compilator();
             }
         });
-       // compile.setBounds(50,50, 10,10);
+
 
         JButton exportCode = new JButton("Export Code");
-       // exportCode.setBounds(10,10,10,10);
+
         exportCode.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
@@ -62,7 +69,7 @@ public class Graphic {
             @Override
             public void actionPerformed(ActionEvent e) {
                 System.out.println("Export dev doc lancé");
-                //    Documentation.visit();
+
             }
         });
         JButton exportUserDoc = new JButton("Export User Doc");
@@ -118,37 +125,33 @@ public class Graphic {
         panel.add(exportDevDoc);
         frame.setVisible(true);
     }
-    public enum TypeChoose {SAVE,OPEN}
-    public static File choose(TypeChoose typeChoose){
+    public enum ChooserType {SAVE,OPEN}
+    public static File chooseDirectory(ChooserType chooseButtonType){
         File outputName=new File("LPCC");
-        String outputDir=Export.File.desktopPath+"\\Projet\\LPCC";
-        JFileChooser choose=new JFileChooser(
-                outputDir
-                    //    .getHomeDirectory()
-        );
+        String outputDir= LPCFile.desktopPath+"\\Projet\\LPCC";
+        JFileChooser choose=new JFileChooser(outputDir    /*.getHomeDirectory()/**/ );
         choose.setBackground(Color.BLUE);
         choose.setDialogTitle("Choix fichier LPCC :");
         choose.setFileSelectionMode(JFileChooser.FILES_AND_DIRECTORIES);
 
-        int res = -1;
-        switch (typeChoose) {
-            case SAVE ->  res = choose.showSaveDialog(null);
-            case OPEN -> {
-                res = choose.showOpenDialog(null);
-                System.out.println(res);
+        int buttonResult = -1;
+        switch (chooseButtonType) {
+            case SAVE -> {
+                buttonResult = choose.showSaveDialog(null);
             }
-        }
 
-        if(res == JFileChooser.APPROVE_OPTION)
-        {
-            if(choose.getSelectedFile().isFile())
-            {
-                System.out.println("Vous avez selectionne le repertoire: "+ choose.getSelectedFile());
-            } else {
-                JOptionPane.showMessageDialog(null, "Veuillez selectionner un fichier");
+            case OPEN -> {
+                buttonResult = choose.showOpenDialog(null);
+                if(buttonResult == JFileChooser.APPROVE_OPTION) {
+                    File file=choose.getSelectedFile();
+                    if(file.isFile())
+                        file= file.getParentFile();
+
+                    LPCFile.setInputDirectory(choose.getSelectedFile());
+                }
             }
-        return choose.getSelectedFile();
         }
-        return null;
+        return choose.getSelectedFile();
     }
+
 }
