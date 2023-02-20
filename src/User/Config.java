@@ -1,15 +1,10 @@
 package User;
 
-import Export.LPCFile;
-import Export.FileException;
-
 import java.io.IOException;
-import java.util.Scanner;
 
 public class Config {
     protected String name;
-    protected LPCFile LPCFile;
-    protected static String mainInputFile;
+    protected static String mainInputFileName;
 
     public String getName() {
         return name;
@@ -19,21 +14,18 @@ public class Config {
         this.name = name;
     }
 
-    public LPCFile getFile() {
-        return LPCFile;
-    }
 
-    public void setFile(LPCFile LPCFile) {
-        this.LPCFile = LPCFile;
-    }
-
-    public Config(String name, LPCFile LPCFile) {
+    public Config(String name) {
         this.name = name;
-        this.LPCFile = LPCFile;
+
     }
 
-    public static String getMainInputFile() {
-        return mainInputFile;
+    public static void setMainInputFileName(String mainInputFileName) {
+        Config.mainInputFileName = mainInputFileName;
+    }
+
+    public static String getMainInputFileName() {
+        return mainInputFileName;
     }
 
     /*    public void loadConfig() throws FileException, IOException {

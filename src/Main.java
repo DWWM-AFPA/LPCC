@@ -15,7 +15,9 @@ public class Main {
      //   matt.createConfig();
         matt.loadConfig();*/
 
+        Config.setMainInputFileName("tester.LPC");
         Graphic.draw();
+
 
     }
 }
