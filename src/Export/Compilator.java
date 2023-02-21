@@ -1,16 +1,25 @@
 package Export;
 
+import javax.swing.*;
+import java.io.File;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Hashtable;
 import java.util.List;
 import java.util.Objects;
 
-public class Compilator {
+public class Compilator implements Visitable{
     protected String openTag;
     protected String closeTag;
     protected  int pos=0;
     protected String token;
     protected String doc;
+
+    protected File source;
+
+    protected String chapteropen;
+
+    protected String chapterclose;
 
     protected String codeopen;
 
@@ -22,6 +31,8 @@ public class Compilator {
     private ArrayList<String> specialchar;
 
     private ArrayList<Node> compiledfile;
+
+
 
 
     //getters
@@ -57,8 +68,28 @@ public class Compilator {
         return excapch;
     }
 
+    public String getChapterclose() {
+        return chapterclose;
+    }
+
+    public String getChapteropen() {
+        return chapteropen;
+    }
+
     //setters
 
+
+    public void setSource(File source) {
+        this.source = source;
+    }
+
+    public void setChapteropen(String chapteropen) {
+        this.chapteropen = chapteropen;
+    }
+
+    public void setChapterclose(String chapterclose) {
+        this.chapterclose = chapterclose;
+    }
 
     public void setCodeclose(String codeclose) {
         this.codeclose = codeclose;
@@ -92,6 +123,9 @@ public class Compilator {
         this.excapch = excapch;
     }
 
+    public void setCompiledfile(ArrayList<Node> compiledfile) {
+        this.compiledfile = compiledfile;
+    }
 
     //builders
     public Compilator() {
@@ -100,22 +134,55 @@ public class Compilator {
         this.setCodeclose("$");
         this.setCodeopen("$");
         this.setExcapch("\\");
+        this.setChapteropen("¤");
+        this.setChapterclose("¤");
+        try {
+            this.setSource(LPCFile.getMainFile());
+        } catch (FileException e) {
+            throw new RuntimeException(e);
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+        try {
+            this.setDoc(LPCFile.read(source));
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        } catch (FileException e) {
+            throw new RuntimeException(e);
+        }
         this.compiledfile=new ArrayList<>();
         this.setArgs(new ArrayList<>());
         this.specialchar=new ArrayList<>();
-        this.specialchar.addAll(List.of(this.codeopen,this.closeTag,this.openTag,this.excapch,this.closeTag,"/"));
+        this.specialchar.addAll(List.of(this.codeopen
+                ,this.closeTag
+                ,this.openTag
+                ,this.excapch
+                ,this.closeTag
+                ,this.chapterclose
+                ,this.chapteropen
+                ,"/"));
     }
-    public Compilator(String textToCompile) {
+    public Compilator(File source) throws FileException, IOException {
         this.setOpenTag("<");
         this.setCloseTag(">");
         this.setCodeclose("$");
         this.setCodeopen("$");
         this.setExcapch("\\");
+        this.setChapteropen("¤");
+        this.setChapterclose("¤");
+        this.setSource(source);
+        this.setDoc(LPCFile.read(source));
         this.compiledfile=new ArrayList<>();
-        this.setDoc(textToCompile);
         this.setArgs(new ArrayList<>());
         this.specialchar=new ArrayList<>();
-        this.specialchar.addAll(List.of(this.codeopen,this.closeTag,this.openTag,this.excapch,this.closeTag,"/"));
+        this.specialchar.addAll(List.of(this.codeopen
+                ,this.closeTag
+                ,this.openTag
+                ,this.excapch
+                ,this.closeTag
+                ,this.chapterclose
+                ,this.chapteropen
+                ,"/"));
     }
     public Compilator(String openTag, String closeTag) {
         this.setCloseTag(closeTag);
@@ -130,6 +197,11 @@ public class Compilator {
     }
 
     //debug
+
+    private int countLines(){
+        String[] lines = doc.substring(0,pos).split("\r\n|\r|\n");
+        return  lines.length;
+    }
     public static boolean debug=false;
     public static void debug(Boolean debug){
         Compilator.debug=debug;
@@ -171,25 +243,24 @@ public class Compilator {
         return this.getToken();
     }
 
-    public ArrayList<Node> compile() throws Exception {
+    public ArrayList<Node> compile() throws LPCSyntaxException {
         this.reset();
         cursor();
         while (pos<doc.length()-1) {
             if(Objects.equals(this.getToken(), codeopen)) {
                 this.getCodeNode();
-                System.out.println("j'ajoute bien un codenode ");
-                System.out.println("le token a la sortie du codenode est "+ this.getToken());
             }
             else {
                 this.getDocNode();
             }
         }
         if(!args.isEmpty())
-            throw new LPCSyntaxException("Erreur sur les balises");
+            throw new LPCSyntaxException("Erreur sur les balises dans le fichier "+source.getName()+" a la ligne "+countLines()+
+                    " a proximité de "+"\""+doc.substring(Math.max(0,pos-10),Math.min(doc.length(),pos+10)) +"\"");
         return this.compiledfile;
     }
 
-
+    //gestion du caractere d'echappement
     private void excape(){
         if(Objects.equals(this.getToken(), this.excapch))
             if(this.specialchar.contains(this.next())) {
@@ -199,6 +270,8 @@ public class Compilator {
                 this.previous();
             }
     }
+
+    //récupére l'argument contenu dans une balise
 
     private String getarg(){
         String arg="";
@@ -212,16 +285,17 @@ public class Compilator {
         return arg;
     }
 
+    //fonction qui recupére un code node
+
     private void getCodeNode(){
         String name=this.getName();
         String code="";
         int posrel=0;
         Hashtable<Integer,String> callcode=new Hashtable<>();
-        while(!Objects.equals(this.token, "/")){
+        while(!Objects.equals(this.token, "/")&&pos<doc.length()-1){
             this.excape();
             if(Objects.equals(this.token, codeopen)){
                 String callname=this.getName();
-                System.out.println("je sors bien de getname");
                 callcode.put(posrel,callname);
             }
             else {
@@ -249,28 +323,36 @@ public class Compilator {
         return name;
     }
 
-    private void getDocNode(){
+    // Methode qui extrait un doc node (independament de dev/user)
+
+    private void getDocNode() throws LPCSyntaxException {
         String txt="";
+        //on determine ici les effets de style qui s'apliques au docnode
         while(Objects.equals(this.token,openTag)){
             this.excape();
             this.next();
             if(Objects.equals(this.getToken(), "/")) {
                 this.next();
+                int ref=args.size();
                 this.args.remove(getarg());
+                if(ref<=args.size())
+                    throw new LPCSyntaxException("Erreur sur les balises dans le fichier "+source.getName()+"a la ligne "+countLines()+"a proximité de "
+                            +doc.substring(Math.max(0,pos-10),Math.min(doc.length(),pos+10)));
             }
             else {
                 this.args.add(getarg());
             }
-            System.out.println("token= "+this.getToken());
-            System.out.println("pos= "+this.getPos());
         }
+        //on recupere le texte en mode docdev
         if(args.contains("dev")) {
             this.devdoc();
             return ;
         }
-        if(Objects.equals(token, codeopen) ||args.isEmpty())
+        //on gere ici le cas ou a la sortie des balises on passe directement a un noeud de code pour eviter de renvoyer des doc nodes dont le texte est vide
+        if(Objects.equals(token, codeopen))
             return ;
-        while (!Objects.equals(this.getToken(),this.getOpenTag())&&!Objects.equals(this.getToken(),codeopen)){
+        //on recupere le texte du docnode
+        while (!Objects.equals(this.getToken(),this.getOpenTag())&&!Objects.equals(this.getToken(),codeopen)&&pos<doc.length()-1){
             this.excape();
             txt=txt+this.getToken();
             this.next();
@@ -284,12 +366,38 @@ public class Compilator {
         compiledfile.add(new DocumentationNode(false,txt,argnode));
     }
 
-    private void devdoc(){
+
+    private String getChapterName(){
+        StringBuilder retour=new StringBuilder();
+        while (!this.getToken().equals(chapterclose)) {
+            this.excape();
+            retour.append(this.getToken());
+        }
+        return retour.toString();
+        }
+
+
+    private void devdoc() throws LPCSyntaxException {
         String txt="";
         int posdeb=this.getPos();
         int posfin=this.getPos();
-        while (!Objects.equals(this.getToken(), openTag)){
+        while (!Objects.equals(this.getToken(), openTag)&&pos<doc.length()-1){
             this.excape();
+            if(this.getToken().equals(chapteropen)) {
+                String chaptername = this.getChapterName();
+                String sourcepath=source.getParent();
+                String chapterfullpath=sourcepath+chaptername;
+                File chaptersource=new File(chapterfullpath);
+                Compilator chapter= null;
+                try {
+                    chapter = new Compilator(chaptersource);
+                } catch (FileException e) {
+                    throw new RuntimeException(e);
+                } catch (IOException e) {
+                    JOptionPane error=new JOptionPane("Une erreur inconnue s'est produite, veuillez redemarrer l'application");
+                }
+                compiledfile.addAll(chapter.compile());
+            }
             if(Objects.equals(this.getToken(), codeopen)){
                 posdeb=this.getPos();
                 this.getCodeNode();
@@ -305,5 +413,17 @@ public class Compilator {
         compiledfile.add(new DocumentationNode(true,txt,argnode));
     }
 
+    @Override
+    public void accept(Visitor v) {
+        try {
+            this.compile();
+            v.visit(this.compiledfile);
+            System.out.println("j'ai finis");
+        }
+        catch (LPCSyntaxException e){
+            JOptionPane error=new JOptionPane(e.getMessage());
+            error.setVisible(true);
+        }
+    }
 }
 

@@ -1,56 +1,29 @@
 @startuml
 'https://plantuml.com/use-case-diagram
-package GetProject{
-(Create Project) as (Create)
-(Load Project) as (Load)
+package Config{
+(Create Config) as (cconfig)
+(Load Config) as (lconfig)
 }
-(Choose Language) as (Choose)
+(Compile) as (comp)
+
+:User: --> (cconfig)
+:User: --> (lconfig)
+:User: --> (comp)
+
+(cconfig) --> (Echap)
+(cconfig) --> (Language)
+(cconfig) --> (Path)
+(cconfig) --> (Tag)
+
+(comp) ..|> (Confirm)
+:User: -d-> (Confirm)
+(Confirm) ..|> (comp)
+
+(Export Settings) as (exp)
+(exp)<|..(comp)
+(exp)---->:User:
+:User:---->(exp)
 
 
-:User: --> (Create)
-:User: --> (Load)
-:User: -> (Choose)
-(Create) <|.. (Work)
-(Load) <|.. (Work)
-note right of (Work)
-Automatic save
-(if possible)
-end note
-note left of (Work)
-is the projet divided
-in multiple files ?
-end note
 
- (Work) <|.- (compile)
- note right of (compile)
- confirm the language of compilation
- it gives the type of extension for each file
- end note
-
-package Compilation{
-(compile) <|.. (code)
-(compile) <|.. (user documentation)
-(compile) <|.. (dev documentation)
-}
-(Work)
-
-(code) <|.. (save)
-(user documentation) <|.. (save)
-(dev documentation) <|.. (save)
- note right of (save)
- confirm the format from the output
-
- end note
-
-(save) --> (system)
-
-
-/'note right of (Use)
-A note can also
-be on several lines
-end note
-
-note "This note is connected\nto several objects." as N2
-(Start) .. N2
-N2 .. (Use)'/
 @enduml

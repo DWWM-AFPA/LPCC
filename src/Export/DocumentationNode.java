@@ -8,7 +8,6 @@ public class DocumentationNode extends Node{
 
     //getters
 
-
     public ArrayList<String> getArgs() {
         return args;
     }

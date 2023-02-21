@@ -1,22 +1,29 @@
 package User;
 
-import Export.Compilator;
+import Export.*;
+import jdk.jshell.SourceCodeAnalysis;
+
 import javax.swing.*;
-import javax.swing.filechooser.FileSystemView;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.File;
+import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.nio.file.Paths;
 
-import static javax.swing.JOptionPane.ERROR_MESSAGE;
-
 public class Graphic {
+    private static Compilator compil;
+
+    private static String configname;
+
+    private static File target;
     public static void draw() {
         int frameWidth=500;
         int frameHeight=200;
-
+        target=null;
+        compil=null;
+        configname=null;
         Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
         JFrame frame = new JFrame("LPCC");
         frame.setLocation(screenSize.width/2-frameWidth/2,screenSize.height/2-frameHeight/2);
@@ -28,50 +35,71 @@ public class Graphic {
         panel.setBackground(Color.lightGray);
 
         JButton choose = new JButton("Choose");
-        // compile.setBounds(50,50, 10,10);
         choose.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                    Graphic.choose(TypeChoose.OPEN);
+                    Graphic.chooseDirectory(ChooserType.OPEN);
             }
         });
 
-        JButton compile = new JButton("Compile");
+        JButton compile = new JButton("Valide Selection");
         compile.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                System.out.println("Compilation lancée");
-            //    Compilator.compile();
+                if(target!=null) {
+                    /*try {
+                        LPCFile.getMainFile();
+                    } catch (FileException | IOException ex) {
+                        //TODO FATIH
+                        throw new RuntimeException(ex);
+                    }
+                    */
+                    try {
+                        compil = new Compilator(target);
+                    } catch (FileException ex) {
+                        //TODO fatih gere l'exception
+                        throw new RuntimeException(ex);
+                    } catch (IOException ex) {
+                        //TODO fatih gere l'exception
+                        throw new RuntimeException(ex);
+                    }
+                }
             }
         });
-       // compile.setBounds(50,50, 10,10);
+
+
 
         JButton exportCode = new JButton("Export Code");
-       // exportCode.setBounds(10,10,10,10);
+
         exportCode.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                System.out.println("Export code lancé");
-                //    Documentation.visit();
+                if(compil!=null)
+                    compil.accept(new Code());
             }
         });
 
-        JButton exportDevDoc = new JButton("Export Dev Doc");
+        JButton exportHTMLDoc = new JButton("Export HTML Doc");
       //  exportDevDoc.setBounds(10,10,10,10);
-        exportDevDoc.addActionListener(new ActionListener() {
+        exportHTMLDoc.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                System.out.println("Export dev doc lancé");
-                //    Documentation.visit();
+                if(compil!=null)
+                    compil.accept(new HTMLDoc());
             }
         });
-        JButton exportUserDoc = new JButton("Export User Doc");
+        JButton exportLatEXDoc = new JButton("Export LateX documentation");
      //   exportUserDoc.setBounds(10,10,10,10);
-        exportUserDoc.addActionListener(new ActionListener() {
+        exportLatEXDoc.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                System.out.println("Export user doc lancé");
-                //    Documentation.visit();
+                if(compil!=null) {
+                    try {
+                        compil.accept(new LateXDoc());
+                    } catch (FileNotFoundException ex) {
+                        throw new RuntimeException(ex);
+                    }
+                }
             }
         });
 
@@ -112,48 +140,42 @@ public class Graphic {
         panel.add(path);
         frame.add(panel);
         panel.add(choose);
-        panel.add(compile);
         panel.add(exportCode);
-        panel.add(exportUserDoc) ;
-        panel.add(exportDevDoc);
+        panel.add(exportLatEXDoc) ;
+        panel.add(compile);
+        panel.add(exportHTMLDoc);
         frame.setVisible(true);
     }
-    public enum TypeChoose {SAVE,OPEN}
-    public static File choose(TypeChoose typeChoose){
+    public enum ChooserType {SAVE,OPEN}
+
+
+    public static File chooseDirectory(ChooserType chooseButtonType){
         File outputName=new File("LPCC");
-        File outputDir=FileSystemView.getFileSystemView().getParentDirectory(outputName);
-        System.out.println(outputDir.getName()+outputDir.getPath());
-        try{
-            FileSystemView.getFileSystemView().createNewFolder(outputDir);}
-        catch (IOException e) {
-            e.printStackTrace(System.out);}
-        JFileChooser choose=new JFileChooser(
-                outputDir
-                    //    .getHomeDirectory()
-        );
+        String outputDir= LPCFile.desktopPath+"\\Projet\\LPCC";
+        JFileChooser choose=new JFileChooser(outputDir    /*.getHomeDirectory()/**/ );
         choose.setBackground(Color.BLUE);
         choose.setDialogTitle("Choix fichier LPCC :");
-        choose.setFileSelectionMode(JFileChooser.FILES_AND_DIRECTORIES);
+        choose.setFileSelectionMode(JFileChooser.FILES_ONLY);
 
-        int res = -1;
-        switch (typeChoose) {
-            case SAVE ->  res = choose.showSaveDialog(null);
+        int buttonResult = -1;
+        switch (chooseButtonType) {
+            case SAVE -> {
+                buttonResult = choose.showSaveDialog(null);
+            }
+
             case OPEN -> {
-                res = choose.showOpenDialog(null);
-                System.out.println(res);
+                buttonResult = choose.showOpenDialog(null);
+                if(buttonResult == JFileChooser.APPROVE_OPTION) {
+                    File file=choose.getSelectedFile();
+                    target=file;
+                    /*if(file.isFile())
+                        file= file.getParentFile();
+                    */
+                    LPCFile.setInputDirectory(choose.getSelectedFile().getParentFile());
+                }
             }
         }
-
-        if(res == JFileChooser.APPROVE_OPTION)
-        {
-            if(choose.getSelectedFile().isFile())
-            {
-                System.out.println("Vous avez selectionne le repertoire: "+ choose.getSelectedFile());
-            } else {
-                JOptionPane.showMessageDialog(null, "Veuillez selectionner un fichier");
-            }
         return choose.getSelectedFile();
-        }
-        return null;
     }
+
 }
