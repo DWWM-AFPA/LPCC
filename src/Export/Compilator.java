@@ -418,6 +418,7 @@ public class Compilator implements Visitable{
         try {
             this.compile();
             v.visit(this.compiledfile);
+            System.out.println("j'ai finis");
         }
         catch (LPCSyntaxException e){
             JOptionPane error=new JOptionPane(e.getMessage());

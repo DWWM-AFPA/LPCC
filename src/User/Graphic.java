@@ -1,9 +1,6 @@
 package User;
 
-import Export.Compilator;
-import Export.FileException;
-import Export.LPCFile;
-import Export.LateXDoc;
+import Export.*;
 import jdk.jshell.SourceCodeAnalysis;
 
 import javax.swing.*;
@@ -11,14 +8,22 @@ import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.File;
+import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.nio.file.Paths;
 
 public class Graphic {
+    private static Compilator compil;
+
+    private static String configname;
+
+    private static File target;
     public static void draw() {
         int frameWidth=500;
         int frameHeight=200;
-
+        target=null;
+        compil=null;
+        configname=null;
         Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
         JFrame frame = new JFrame("LPCC");
         frame.setLocation(screenSize.width/2-frameWidth/2,screenSize.height/2-frameHeight/2);
@@ -33,24 +38,35 @@ public class Graphic {
         choose.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                    LPCFile.setInputDirectory(Graphic.chooseDirectory(ChooserType.OPEN));
+                    Graphic.chooseDirectory(ChooserType.OPEN);
             }
         });
 
-        JButton compile = new JButton("Compile");
+        JButton compile = new JButton("Valide Selection");
         compile.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                System.out.println("Compilation lancée");
-            //    Compilator.compile();
-                try {
-                    System.out.println(LPCFile.getMainFile());
-                } catch (FileException | IOException ex) {
-                    throw new RuntimeException(ex);
+                if(target!=null) {
+                    /*try {
+                        LPCFile.getMainFile();
+                    } catch (FileException | IOException ex) {
+                        //TODO FATIH
+                        throw new RuntimeException(ex);
+                    }
+                    */
+                    try {
+                        compil = new Compilator(target);
+                    } catch (FileException ex) {
+                        //TODO fatih gere l'exception
+                        throw new RuntimeException(ex);
+                    } catch (IOException ex) {
+                        //TODO fatih gere l'exception
+                        throw new RuntimeException(ex);
+                    }
                 }
-                Compilator compile = new Compilator();
             }
         });
+
 
 
         JButton exportCode = new JButton("Export Code");
@@ -58,27 +74,32 @@ public class Graphic {
         exportCode.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                System.out.println("Export code lancé");
-
+                if(compil!=null)
+                    compil.accept(new Code());
             }
         });
 
-        JButton exportDevDoc = new JButton("Export Dev Doc");
+        JButton exportHTMLDoc = new JButton("Export HTML Doc");
       //  exportDevDoc.setBounds(10,10,10,10);
-        exportDevDoc.addActionListener(new ActionListener() {
+        exportHTMLDoc.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                System.out.println("Export dev doc lancé");
-
+                if(compil!=null)
+                    compil.accept(new HTMLDoc());
             }
         });
-        JButton exportUserDoc = new JButton("Export User Doc");
+        JButton exportLatEXDoc = new JButton("Export LateX documentation");
      //   exportUserDoc.setBounds(10,10,10,10);
-        exportUserDoc.addActionListener(new ActionListener() {
+        exportLatEXDoc.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                System.out.println("Export user doc lancé");
-                //    Documentation.visit();
+                if(compil!=null) {
+                    try {
+                        compil.accept(new LateXDoc());
+                    } catch (FileNotFoundException ex) {
+                        throw new RuntimeException(ex);
+                    }
+                }
             }
         });
 
@@ -119,20 +140,22 @@ public class Graphic {
         panel.add(path);
         frame.add(panel);
         panel.add(choose);
-        panel.add(compile);
         panel.add(exportCode);
-        panel.add(exportUserDoc) ;
-        panel.add(exportDevDoc);
+        panel.add(exportLatEXDoc) ;
+        panel.add(compile);
+        panel.add(exportHTMLDoc);
         frame.setVisible(true);
     }
     public enum ChooserType {SAVE,OPEN}
+
+
     public static File chooseDirectory(ChooserType chooseButtonType){
         File outputName=new File("LPCC");
         String outputDir= LPCFile.desktopPath+"\\Projet\\LPCC";
         JFileChooser choose=new JFileChooser(outputDir    /*.getHomeDirectory()/**/ );
         choose.setBackground(Color.BLUE);
         choose.setDialogTitle("Choix fichier LPCC :");
-        choose.setFileSelectionMode(JFileChooser.FILES_AND_DIRECTORIES);
+        choose.setFileSelectionMode(JFileChooser.FILES_ONLY);
 
         int buttonResult = -1;
         switch (chooseButtonType) {
@@ -144,10 +167,11 @@ public class Graphic {
                 buttonResult = choose.showOpenDialog(null);
                 if(buttonResult == JFileChooser.APPROVE_OPTION) {
                     File file=choose.getSelectedFile();
-                    if(file.isFile())
+                    target=file;
+                    /*if(file.isFile())
                         file= file.getParentFile();
-
-                    LPCFile.setInputDirectory(choose.getSelectedFile());
+                    */
+                    LPCFile.setInputDirectory(choose.getSelectedFile().getParentFile());
                 }
             }
         }

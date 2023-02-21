@@ -2,6 +2,7 @@ package Export;
 import javax.swing.*;
 import java.io.File;
 import java.io.FileNotFoundException;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Hashtable;
 import java.util.Scanner;
@@ -20,6 +21,7 @@ public class LateXDoc implements Visitor{
         Scanner sc=new Scanner(in);
         while (sc.hasNextLine()){
             line= sc.nextLine();
+            System.out.println(line);
             part=line.split(";");
             corresdefault.put(part[0],part[1]);
         }
@@ -50,6 +52,7 @@ public class LateXDoc implements Visitor{
         StringBuilder retour= new StringBuilder();
         retour.append("\\begin{document}");
         for (DocumentationNode doc:n) {
+            System.out.println("et la ?");
             doc.remove("user");
             String node;
             int titleindex=0;
@@ -60,8 +63,8 @@ public class LateXDoc implements Visitor{
                     else
                         throw new LPCSyntaxException("Un titre doit être d'un seul type");
                 }
-
             }
+            System.out.println("title ibndex="+titleindex);
             switch (titleindex){
                 case 0: node=this.nodeTosring(doc);
                         break;
@@ -87,23 +90,30 @@ public class LateXDoc implements Visitor{
                         break;
                 default:return;
             }
-            retour.insert(0,node);
+            retour.append(node);
             }
         retour.append("\\end{document}");
-        System.out.println(retour);
+        try {
+            LPCFile.create(LPCFile.getInputDirectory(),"Userdoc","tex",retour.toString());
+        } catch (IOException e) {
+            throw new RuntimeException(e);
         }
+    }
 
     public void dev(ArrayList<DocumentationNode> n) throws LPCSyntaxException {
         StringBuilder retour= new StringBuilder();
+        retour.append("\\begin{document}");
         for (DocumentationNode doc:n) {
-            doc.remove("user");
+            System.out.println("est ce que je passe ici ?");
+            doc.remove("dev");
             String node;
             int titleindex=0;
             for (int i = 1; i < 6; i++) {
                 if(doc.getArgs().contains("title"+i))
-                    titleindex=i;
-                else
-                    throw new LPCSyntaxException("Un titre doit être d'un seul type");
+                    if(titleindex==0)
+                        titleindex = i;
+                    else
+                        throw new LPCSyntaxException("Un titre doit être d'un seul type");
             }
             switch (titleindex){
                 case 0: node=this.nodeTosring(doc);
@@ -132,24 +142,30 @@ public class LateXDoc implements Visitor{
             }
             retour.insert(0, node);
         }
-        //File f=new File()
-        System.out.println(retour);
+        retour.append("\\end{document}");
+        try {
+            LPCFile.create(LPCFile.getInputDirectory(),"Devdoc","tex",retour.toString());
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
     }
 
     @Override
     public void visit(ArrayList<Node> compilation) {
         ArrayList<DocumentationNode> dev=new ArrayList<>();
         ArrayList<DocumentationNode> user=new ArrayList<>();
+
         for (Node n: compilation) {
             if(n instanceof DocumentationNode){
                 if(((DocumentationNode) n).getArgs().contains("dev")){
                     dev.add((DocumentationNode) n);
                 }
-                if(((DocumentationNode) n).getArgs().contains("user")){
+                else {
                     user.add((DocumentationNode) n);
                 }
             }
         }
+        System.out.println("user length= "+user.size());
         try {
             this.user(user);
         } catch (LPCSyntaxException e) {
@@ -166,7 +182,9 @@ public class LateXDoc implements Visitor{
 
     private String nodeTosring(DocumentationNode doc){
         StringBuilder node= new StringBuilder(doc.getText());
+
         while(!doc.getArgs().isEmpty()){
+            System.out.println("node to string= "+node.toString());
             if(doc.getArgs().get(0).length()>4&&doc.getArgs().get(0).substring(0,5).equals("color")){
                 String colorvalue=doc.getArgs().get(0).substring(6);
                 node = new StringBuilder("\\textcolor{" + colorvalue + "}" + "{" + node + "}");
@@ -182,10 +200,13 @@ public class LateXDoc implements Visitor{
                         break;
                     default:
                         node=new StringBuilder(this.corresbalise.get(doc.getArgs().get(0))+node+"}");
+                        System.out.println(firstarg);
+                        System.out.println(node);
                         doc.remove(doc.getArgs().get(0));
                 }
             }
         }
+        System.out.println("node to string= "+node.toString());
         return node.toString();
     }
 }
