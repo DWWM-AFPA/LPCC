@@ -1,5 +1,7 @@
 package Export;
 
+import User.Config;
+
 import javax.swing.*;
 import java.io.File;
 import java.io.IOException;
@@ -137,7 +139,7 @@ public class Compilator implements Visitable{
         this.setChapteropen("¤");
         this.setChapterclose("¤");
         try {
-            this.setSource(LPCFile.getMainFile());
+            this.setSource(LPCFile.getMainFile(new Config("default.config")));
         } catch (FileException e) {
             throw new RuntimeException(e);
         } catch (IOException e) {

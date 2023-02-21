@@ -1,30 +1,80 @@
 package User;
 
+import java.io.File;
+import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.util.Hashtable;
+import java.util.Scanner;
 
 public class Config {
-    protected String name;
-    protected static String mainInputFileName;
+    protected String configname;
+    protected String mainInputFileName;
 
+    protected String sourcefolder;
+
+    protected String destinationfolder;
+
+    protected Hashtable<String,String> htmlTag;
+
+    protected Hashtable<String,String> latexTag;
+
+
+    public Config(){
+        configname="default.config";
+
+    }
+
+    public Config(String name) {
+       configname = name;
+
+    }
+
+    //getters et setters
     public String getName() {
-        return name;
+        return configname;
     }
 
     public void setName(String name) {
-        this.name = name;
+        this.configname = name;
     }
 
-
-    public Config(String name) {
-        this.name = name;
-
+    public String getConfigname() {
+        return configname;
     }
 
-    public static void setMainInputFileName(String mainInputFileName) {
-        Config.mainInputFileName = mainInputFileName;
+    public void setConfigname(String configname) {
+        this.configname = configname;
     }
 
-    public static String getMainInputFileName() {
+    public String getDestinationfolder() {
+        return destinationfolder;
+    }
+
+    public void setDestinationfolder(String destinationfolder) {
+        this.destinationfolder = destinationfolder;
+    }
+
+    public Hashtable<String, String> getHtmlTag() {
+        return htmlTag;
+    }
+
+    public void setHtmlTag(Hashtable<String, String> htmlTag) {
+        this.htmlTag = htmlTag;
+    }
+
+    public Hashtable<String, String> getLatexTag() {
+        return latexTag;
+    }
+
+    public void setLatexTag(Hashtable<String, String> latexTag) {
+        this.latexTag = latexTag;
+    }
+
+    public void setMainInputFileName(String mainInputFileName) {
+        this.mainInputFileName = mainInputFileName;
+    }
+
+    public  String getMainInputFileName() {
         return mainInputFileName;
     }
 
@@ -39,6 +89,35 @@ public class Config {
 
         }*/
     public void createConfig() throws IOException {
-     //   this.LPCFile.create("config"+System.lineSeparator()+"test");
+
+       //this.LPCFile.create("config"+System.lineSeparator()+"test");
+    }
+
+    public void readConfig(){
+        File in=new File(configname+".config");
+        String [] parts;
+        Scanner sc = null;
+        try {
+            sc = new Scanner(in);
+        } catch (FileNotFoundException e) {
+            throw new RuntimeException(e);
+        }
+        String line;
+        int nbline=0;
+        Hashtable<String,String> corresLatex = new Hashtable<>();
+        Hashtable<String,String> corresHTML= new Hashtable<>();
+        while (sc.hasNextLine()){
+            if(nbline==0)
+                mainInputFileName=sc.nextLine();
+            if(nbline==1)
+                destinationfolder=sc.nextLine();
+            if(nbline>1) {
+                line = sc.nextLine();
+                parts = line.split(";");
+                corresLatex.put(parts[0], parts[1]);
+                corresHTML.put(parts[0],parts[2]);
+            }
+            nbline++;
+        }
     }
 }

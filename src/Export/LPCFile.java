@@ -62,13 +62,12 @@ public abstract class LPCFile extends File {
         }
     }
 
-    public static File getMainFile() throws FileException, IOException {
+    public static File getMainFile(Config c) throws FileException, IOException {
         File retour = null;
 
         for (File s : inputDirectory.listFiles())
         {
-            System.err.println(s + "  "+Config.getMainInputFileName());
-            if (s.getName().equals(Config.getMainInputFileName()))
+            if (s.getName().equals(c.getMainInputFileName()))
                 retour = s;
         }
         if (retour == null) {

@@ -13,33 +13,12 @@ public class LateXDoc implements Visitor{
 
     //getters
 
-    public LateXDoc() throws FileNotFoundException {
-        Hashtable<String,String> corresdefault=new Hashtable<>();
-        java.io.File in=new File("defaultlatex.config");
-        String line;
-        String[] part;
-        Scanner sc=new Scanner(in);
-        while (sc.hasNextLine()){
-            line= sc.nextLine();
-            System.out.println(line);
-            part=line.split(";");
-            corresdefault.put(part[0],part[1]);
-        }
-        setCorresbalise(corresdefault);
+    public LateXDoc(Hashtable<String,String> corresbalise) throws FileNotFoundException {
+        this.corresbalise=corresbalise;
     }
 
     public LateXDoc(String configname) throws FileNotFoundException {
-        java.io.File in=new File(configname);
-        String [] parts;
-        Scanner sc = new Scanner(in);
-        String line;
-        Hashtable<String,String> corresdefault = new Hashtable<>();
-        while (sc.hasNextLine()){
-            line=sc.nextLine();
-            parts = line.split(";");
-            corresdefault.put(parts[0],parts[1]);
-        }
-        setCorresbalise(corresdefault);
+
     }
 
     //setters
