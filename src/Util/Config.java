@@ -1,4 +1,4 @@
-package User;
+package Util;
 
 import java.io.IOException;
 
@@ -17,7 +17,6 @@ public class Config {
 
     public Config(String name) {
         this.name = name;
-
     }
 
     public static void setMainInputFileName(String mainInputFileName) {

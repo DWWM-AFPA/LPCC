@@ -1,6 +1,6 @@
-package Export;
+package Util;
 
-import User.Config;
+import Export.FileException;
 
 import javax.swing.*;
 import javax.swing.filechooser.FileSystemView;

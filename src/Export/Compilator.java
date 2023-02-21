@@ -1,6 +1,5 @@
 package Export;
 
-import java.sql.SQLOutput;
 import java.util.*;
 
 public class Compilator {
@@ -215,9 +214,6 @@ public class Compilator {
     private String findTextContent(){
         return this.getDoc().substring(ft1+1,ot2-1).trim();
     }
-    private String findTextContent(int pos){
-        return this.getDoc().substring(ft1+1,pos-1).trim();
-    }
     private String findTagContent(){
         StringBuilder retour=new StringBuilder();
         while (!Objects.equals(next(), this.getCloseTag())) {
@@ -246,9 +242,9 @@ public class Compilator {
         this.findOpenTag();
         this.setDoc(this.doc.substring(pos));
         reset();
-        return expr();
+        return mainTag();
     }
-    private Node expr () {
+    private Node mainTag() {
         debug();
         this.setOt1(getPos());
         System.err.println(cursor(this.getPos()));
@@ -257,32 +253,32 @@ public class Compilator {
             setFt1(getPos());
             tagContent =next;
             DocumentationNode doc = new DocumentationNode(tagContent);
-            return tag(doc);//new DocumentationNode();
+            return sytle(doc);//new DocumentationNode();
         }
         else if (next.equals("dev")) {
             setFt1(getPos());
             tagContent =next;
             DocumentationNode doc = new DocumentationNode(tagContent);
-            return tag(doc);//new DocumentationNode();
+            return sytle(doc);//new DocumentationNode();
             }
         //TODO check next ligne
         else if (!next.equals("")) {
             setFt1(getPos());
             tagContent =next;
             CodeNode code = new CodeNode(tagContent);
-            return exprEnd(code);//new CodeNode();
+            return mainTagEnd(code);//new CodeNode();
             }
 
         else if (!endOfString()) {
             System.out.println("continue !!!!!!!!!!!!");
-            expr();
+            mainTag();
         }
         debug();
         return null;
     }
 
 
-    private Node exprEnd (Node node) {
+    private Node mainTagEnd(Node node) {
         debug();
         this.findOpenTag();
         String end = this.findTagContent();
@@ -311,33 +307,33 @@ public class Compilator {
                 node.add(new CodeNode(end));
             System.out.println("expr ENd "+end);
 
-            return exprEnd(node);
+            return mainTagEnd(node);
         }
-        return expr();
+        return mainTag();
     }
 
-    private Node tag (Node node) {
+    private Node sytle(Node node) {
         debug();
         findOpenTag();
         String end = this.findTagContent();
         if (tagList.contains(end)) {
             System.out.println("contenu");
-            return tagEnd(node);
+            return styleEnd(node);
         }
         else if (end.contains(";")||end.contains("#")) {
             System.out.println("couleur");
-            return tagEnd(node);
+            return styleEnd(node);
         }
         return null;
     }
 
-    private Node tagEnd (Node node) {
+    private Node styleEnd(Node node) {
         debug();
         this.findOpenTag();
         String end = this.findTagContent();
         if (end.equals("it/") || end.contains("title/") || end.equals("bd/") || end.equals("ul/") || end.equals("img/") || end.equals("link/")) {
-            node.add((new DocumentationNode(findTextContent(getPos()),end)));
-            return exprEnd(node);
+            node.add((new DocumentationNode("test",end)));
+            return mainTagEnd(node);
         }
         return null;
         //return text();

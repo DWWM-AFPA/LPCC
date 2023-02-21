@@ -1,8 +1,7 @@
 package User;
 
-import Export.Compilator;
 import Export.FileException;
-import Export.LPCFile;
+import Util.LPCFile;
 
 import javax.swing.*;
 import java.awt.*;

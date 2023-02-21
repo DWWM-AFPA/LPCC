@@ -13,7 +13,6 @@ public class DocumentationNode extends Node{
     }
     public DocumentationNode(String name){
         super(name);
-        this.setName(name);
     }
 
     public static ArrayList<DocumentationNode> getCodeNodeRegistry() {

@@ -1,6 +1,4 @@
 import Export.*;
-import User.Config;
-import User.Graphic;
 
 import java.io.IOException;
 
@@ -14,10 +12,10 @@ public class Main {
         Config matt= new Config("matt",new File("matt","config"));
      //   matt.createConfig();
         matt.loadConfig();*/
-new Compilator("<user> a <it> He <it/> t <user/> ").compile();
+new CompilatorT("<user> a <it> He <it/> t <user/> ").compile();
 
-        Config.setMainInputFileName("tester.LPC");
-        Graphic.draw();
+     //   Config.setMainInputFileName("tester.LPC");
+    //    Graphic.draw();
 
     }
 }
