@@ -19,7 +19,7 @@ public abstract class Node {
 
     public Node(String name){
         //nodeList.add(this);
-        nodeRegistry.put(name,this);
+        Node.nodeRegistry.put(name,this);
         nodeContained=new ArrayList<>();
         this.setText("");
     }

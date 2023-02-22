@@ -6,10 +6,11 @@ public class DocumentationNode extends Node{
 
     protected static ArrayList<DocumentationNode> documentationNodeRegistry;
 
-    protected ArrayList<DocumentationNode> NodeContained;
+    String style;
 
     public DocumentationNode(String text,String style){
         this.setText(text);
+        this.setStyle(style);
     }
     public DocumentationNode(String name){
         super(name);
@@ -23,6 +24,21 @@ public class DocumentationNode extends Node{
         DocumentationNode.documentationNodeRegistry = documentationNodeRegistry;
     }
 
+    public static ArrayList<DocumentationNode> getDocumentationNodeRegistry() {
+        return documentationNodeRegistry;
+    }
+
+    public static void setDocumentationNodeRegistry(ArrayList<DocumentationNode> documentationNodeRegistry) {
+        DocumentationNode.documentationNodeRegistry = documentationNodeRegistry;
+    }
+
+    public String getStyle() {
+        return style;
+    }
+
+    public void setStyle(String style) {
+        this.style = style;
+    }
 
 /*    public ArrayList<DocumentationNode> getNodeContained() {
         return NodeContained;

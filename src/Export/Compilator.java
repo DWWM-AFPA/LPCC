@@ -1,22 +1,17 @@
 package Export;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Objects;
 
 public class Compilator {
     protected String openTag;
     protected String closeTag;
 
-    // ot1  tag1    ft1 content  ot2 tag2   ft2
-    // <    code    >   text      < code    />
     protected int pos=0;
-    protected int ot1;
-    protected int ft1;
-    protected int ot2;
-    protected int ft2;
-    protected String tag1;
-    protected String tag2;
-    protected String content;
-    protected String tagContent;
+    public Node mainNode;
+    public String style;
+    protected StringBuilder content=new StringBuilder();
     protected static ArrayList<String> tagList = new ArrayList<>(List.of("it","bd","ul"));
     protected String token= new String();
     protected String doc=new String();
@@ -33,39 +28,9 @@ public class Compilator {
     public int getPos() {
         return this.pos;
     }
-
-    public int getOt1() {
-        return ot1;
-    }
-
-    public int getFt1() {
-        return ft1;
-    }
-
-    public int getOt2() {
-        return ot2;
-    }
-
-    public int getFt2() {
-        return ft2;
-    }
-
-    public String getTag1() {
-        return tag1;
-    }
-
-    public String getTag2() {
-        return tag2;
-    }
-
     public String getContent() {
-        return content;
+        return content.toString();
     }
-
-    public String getTagContent() {
-        return tagContent;
-    }
-
     public String getToken() {
         return token;
     }
@@ -75,11 +40,9 @@ public class Compilator {
     public String getDoc() {
         return doc;
     }
-
     public boolean getDebug() {
         return debug;
     }
-
     //setters
     public void setCloseTag(String closeTag) {
         this.closeTag = closeTag;
@@ -87,36 +50,12 @@ public class Compilator {
     public void setOpenTag(String openTag) {
         this.openTag = openTag;
     }
-    public void setPos(int pos) {
-        this.pos = pos;
-    }
-
-    public void setOt1(int ot1) {
-        this.ot1 = ot1;
-    }
-
-    public void setFt1(int ft1) {
-        this.ft1 = ft1;
-    }
-
-    public void setOt2(int ot2) {
-        this.ot2 = ot2;
-    }
-
-    public void setFt2(int ft2) {
-        this.ft2 = ft2;
-    }
-
-    public void setTag1(String tag1) {
-        this.tag1 = tag1;
-    }
-
-    public void setTag2(String tag2) {
-        this.tag2 = tag2;
+    public int setPos(int pos) {
+        return this.pos = pos;
     }
 
     public void setContent(String content) {
-        this.content = content;
+        this.content.append(content);
     }
 
     public String setToken(String token) {
@@ -142,7 +81,7 @@ public class Compilator {
         this.setCloseTag(closeTag);
         this.setOpenTag(openTag);
     }
-    public Compilator(String openTag, String closeTag,String textToCompile) {
+    public Compilator(String openTag, String closeTag, String textToCompile) {
         this.setCloseTag(closeTag);
         this.setOpenTag(openTag);
         this.setDoc(textToCompile);
@@ -163,14 +102,24 @@ public class Compilator {
     }
 
     protected String cursor(int pos) {
-        String retour = String.valueOf(doc.charAt(getPos()));
+        String  retour = String.valueOf(doc.charAt(getPos()));
         retour = !retour.equals(" ") ? String.valueOf(doc.charAt(getPos())):next();
+
         return setToken(retour.toLowerCase());
     }
     public String next(){
-       // System.out.println(this.getDoc().length()+" "+this.pos);
-       // if (this.getDoc().length()-1<this.pos)
-            this.pos++;
+        // System.out.println(this.getDoc().length()+" "+this.pos);
+        // if (this.getDoc().length()-1<this.pos)
+        this.pos++;
+
+        //retourne this.token
+        return this.cursor(this.getPos());
+    }
+    public String getTagIfOpentag(){
+        if (this.getToken().equals(this.getOpenTag())) {
+            //next();
+            return this.findTagContent();
+        }
 
         //retourne this.token
         return this.cursor(this.getPos());
@@ -211,9 +160,6 @@ public class Compilator {
         return this.getDoc();
     }
 
-    private String findTextContent(){
-        return this.getDoc().substring(ft1+1,ot2-1).trim();
-    }
     private String findTagContent(){
         StringBuilder retour=new StringBuilder();
         while (!Objects.equals(next(), this.getCloseTag())) {
@@ -235,7 +181,7 @@ public class Compilator {
     }
 
     public Node compile () {
-        debug(true);
+        debug(false);
         debug();
         eraseTagSpaces();
         reset();
@@ -246,105 +192,106 @@ public class Compilator {
     }
     private Node mainTag() {
         debug();
-        this.setOt1(getPos());
-        System.err.println(cursor(this.getPos()));
-        String next =this.findTagContent();
-        if (next.equals("user")){
-            setFt1(getPos());
-            tagContent =next;
-            DocumentationNode doc = new DocumentationNode(tagContent);
-            return sytle(doc);//new DocumentationNode();
+        String mainTag = getTagIfOpentag();
+        if (mainTag.equals("user")){
+            mainNode =new DocumentationNode(mainTag);
+            System.out.println(mainNode);
+            next();
+            return style();//new DocumentationNode();
         }
-        else if (next.equals("dev")) {
-            setFt1(getPos());
-            tagContent =next;
-            DocumentationNode doc = new DocumentationNode(tagContent);
-            return sytle(doc);//new DocumentationNode();
-            }
-        //TODO check next ligne
-        else if (!next.equals("")) {
-            setFt1(getPos());
-            tagContent =next;
-            CodeNode code = new CodeNode(tagContent);
-            return mainTagEnd(code);//new CodeNode();
-            }
+        else if (mainTag.equals("dev")) {
+            //   tagContent =mainTag;
+            mainNode =new DocumentationNode(mainTag);
+            next();
+            return style();//new DocumentationNode();
+        }
+        //TODO check next ligne to create codeNodes
+        else if (!mainTag.equals("")&&!mainTag.equals(">")) {
+            // tagContent =mainTag;
+            mainNode =new CodeNode(mainTag);
+            next();
+            return text();//new CodeNode();
+        }
 
         else if (!endOfString()) {
             System.out.println("continue !!!!!!!!!!!!");
             mainTag();
         }
+
+        else if (endOfString()) {
+            System.out.println("stop !!!!!!!!!!!!");
+            return null;
+        }
         debug();
         return null;
     }
 
-
-    private Node mainTagEnd(Node node) {
+    private Node mainTagEnd() {
         debug();
-        this.findOpenTag();
-        String end = this.findTagContent();
+        // this.findOpenTag();
+        int position=this.getPos();
+        String end = getTagIfOpentag();;
 
-        if (end.equals("user/")) {
-            this.setOt2(pos-5);
-            node.add((new DocumentationNode(findTextContent(),null)));
+        if (end.equals("user/")||end.equals("dev/")) {
+            // next();
+            DocumentationNode.getNodeRegistry().put(mainNode.getName(),this.mainNode);
         }
-        else if (end.equals("dev/")) {
-            this.setOt2(pos-4);
-            node.add((new DocumentationNode(findTextContent(),null)));
-        }
-        else if (end.equals(this.tagContent + "/")) {
-            this.setOt2(pos-this.getTagContent().length()-1);
-            return new CodeNode(findTextContent(),node);
+        //est-ce un node de fin de code, et il correspond au Node entrant ?
+        //TOOD replace this tagcontent with object.name ?
+        else if (end.equals(this.mainNode.getName() + "/")) {
+            next();
+            System.out.println("upper");
+            //TODO
+            return new CodeNode("test",null);
         }
         //il a trouvé la balise, mais ce n'est pas le code qui l'a ouvert
         else {
-            //position relative dans le codeNode
-            int deb=pos-end.length()-1-tagContent.length()-3;
-            int fin=deb+end.length()+1;
-            //TODO singleton for the code nodes
-            if (Node.getNodeRegistry().containsKey(end))
-                node.add(Node.getNodeRegistry().get(end));
-            else
-                node.add(new CodeNode(end));
-            System.out.println("expr ENd "+end);
-
-            return mainTagEnd(node);
+            cursor(this.setPos(position));
+            return style();
         }
         return mainTag();
     }
 
-    private Node sytle(Node node) {
+    private Node style() {
         debug();
-        findOpenTag();
-        String end = this.findTagContent();
-        if (tagList.contains(end)) {
-            System.out.println("contenu");
-            return styleEnd(node);
+        String end = getTagIfOpentag();
+        if (tagList.contains(end) || end.contains(";") || end.contains("#")) {
+            this.style=end;
+            next();
         }
-        else if (end.contains(";")||end.contains("#")) {
-            System.out.println("couleur");
-            return styleEnd(node);
-        }
-        return null;
+
+        return text();
     }
 
-    private Node styleEnd(Node node) {
+    private Node styleEnd() {
         debug();
-        this.findOpenTag();
+        // this.findOpenTag();
         String end = this.findTagContent();
         if (end.equals("it/") || end.contains("title/") || end.equals("bd/") || end.equals("ul/") || end.equals("img/") || end.equals("link/")) {
-            node.add((new DocumentationNode("test",end)));
-            return mainTagEnd(node);
+            //node.add(new DocumentationNode("test",end));
+            this.style=null;
+            next();
+            return mainTagEnd(); //mainTagEnd(node);
         }
-        return null;
+        return text();
         //return text();
     }
 
-/*    private Node text () {
-        this.findOpenTag();
-        String end = this.findTagContent();
-        System.out.println(end);
-        return exprEnd();
-    }*/
+    private Node text () {
+        // this.findOpenTag();
+        // String end = this.findTagContent();
+        debug();
+        while (!token.equals(this.getOpenTag())) {
+            this.setContent(token);
+            next();
+        }
+        if(this.style!=null) {
+            mainNode.add(new DocumentationNode(this.getContent(),style));
+            return styleEnd();
+        }
+        mainNode.add(new DocumentationNode(this.getContent(),style));
+        return mainTagEnd();
+    }
 
 
 }
