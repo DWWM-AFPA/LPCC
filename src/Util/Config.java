@@ -1,4 +1,4 @@
-package User;
+package Util;
 
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -20,13 +20,14 @@ public class Config {
 
 
     public Config(){
-        configname="default.config";
+        configname="default";
+        this.readConfig();
 
     }
 
     public Config(String name) {
        configname = name;
-
+       this.readConfig();
     }
 
     //getters et setters
@@ -88,13 +89,14 @@ public class Config {
             }
 
         }*/
-    public void createConfig() throws IOException {
-
-       //this.LPCFile.create("config"+System.lineSeparator()+"test");
+    public static void createConfig(String name,String contenu) throws IOException {
+        LPCFile.create(new File("C:\\Users\\CDA-03\\Desktop\\LPCCConfig\\"),name,"config",contenu);
     }
 
+
     public void readConfig(){
-        File in=new File(configname+".config");
+        File in=new File(LPCFile.getConfigDirectory().getPath()+"\\"+this.configname+".config");
+        System.out.println("config directory"+LPCFile.getConfigDirectory().getPath());
         String [] parts;
         Scanner sc = null;
         try {
@@ -119,5 +121,7 @@ public class Config {
             }
             nbline++;
         }
+        latexTag=corresLatex;
+        htmlTag=corresHTML;
     }
 }

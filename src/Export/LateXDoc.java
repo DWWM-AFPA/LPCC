@@ -1,11 +1,11 @@
 package Export;
+import Util.LPCFile;
+
 import javax.swing.*;
-import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Hashtable;
-import java.util.Scanner;
 
 public class LateXDoc implements Visitor{
 
@@ -73,7 +73,7 @@ public class LateXDoc implements Visitor{
             }
         retour.append("\\end{document}");
         try {
-            LPCFile.create(LPCFile.getInputDirectory(),"Userdoc","tex",retour.toString());
+            LPCFile.create(LPCFile.getOutputDirectory(),"Userdoc","tex",retour.toString());
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
@@ -123,7 +123,7 @@ public class LateXDoc implements Visitor{
         }
         retour.append("\\end{document}");
         try {
-            LPCFile.create(LPCFile.getInputDirectory(),"Devdoc","tex",retour.toString());
+            LPCFile.create(LPCFile.getOutputDirectory(),"Devdoc","tex",retour.toString());
         } catch (IOException e) {
             throw new RuntimeException(e);
         }

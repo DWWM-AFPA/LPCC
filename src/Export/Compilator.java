@@ -1,6 +1,7 @@
 package Export;
 
-import User.Config;
+import Util.Config;
+import Util.LPCFile;
 
 import javax.swing.*;
 import java.io.File;
