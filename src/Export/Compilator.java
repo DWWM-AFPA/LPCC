@@ -8,11 +8,12 @@ import java.util.Objects;
 public class Compilator {
     protected String openTag;
     protected String closeTag;
-
     protected int pos=0;
     public Node mainNode;
+    public Node containedNode;
     public String style;
     protected StringBuilder content=new StringBuilder();
+    protected static ArrayList<String> tagListClose = new ArrayList<>(List.of("it/","bd/","ul/"));
     protected static ArrayList<String> tagList = new ArrayList<>(List.of("it","bd","ul"));
     protected String token= new String();
     protected String doc=new String();
@@ -109,6 +110,8 @@ public class Compilator {
         return setToken(retour.toLowerCase());
     }
     public String next(){
+        //TODO Faire pour ne plus avoir les erreurs StringOutOfBound en avanceant.//
+
         // System.out.println(this.getDoc().length()+" "+this.pos);
         // if (this.getDoc().length()-1<this.pos)
         this.pos++;
@@ -130,6 +133,10 @@ public class Compilator {
     }
     protected String reset(){
         this.pos=0;
+        return this.cursor(this.getPos());
+    }
+    protected String reset(int pos){
+        this.pos=pos;
         return this.cursor(this.getPos());
     }
 
@@ -165,14 +172,13 @@ public class Compilator {
      *
      * @return le nom du tag sans les char ouvrants et fermants
      */
-    private String findTagContent(){
+    private String findTagContent() {
         StringBuilder retour=new StringBuilder();
         if (this.getToken().equals(this.getOpenTag())) {
             while (!Objects.equals(next(), this.getCloseTag())) {
                 if (!this.getToken().equals(this.getCloseTag()))
                     retour.append(getToken());
             }
-            next();
             return retour.toString().trim();
         }
         System.err.println("erreur sur la fonction findTagContent");
@@ -203,10 +209,15 @@ public class Compilator {
     }
     private Node mainTag() {
         debug();
-        String mainTag = findTagContent();
-        if(this.mainNode instanceof CodeNode)
-            System.err.println("INSTANCE DE CODE NODE !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!");
-        if (mainTag.equals("user")){
+        int savePos=this.getPos();
+        String mainTag = getTagIfOpentag();
+/*        if(this.mainNode instanceof CodeNode)
+            System.err.println("INSTANCE DE CODE NODE !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!");*/
+        if (endOfString()) {
+            System.out.println("stop !!!!!!!!!!!!");
+            return null;
+        }
+        else if (mainTag.equals("user")){
             mainNode =new DocumentationNode(mainTag);
             System.out.println(mainNode);
             next();
@@ -215,11 +226,10 @@ public class Compilator {
         else if (mainTag.equals("dev")) {
             //   tagContent =mainTag;
             mainNode =new DocumentationNode(mainTag);
-            next();
             return style();//new DocumentationNode();
         }
         //TODO check next ligne to create codeNodes
-        else if (!mainTag.equals("")&&!mainTag.equals(">")) {
+        else if (!mainTag.equals("")&&!mainTag.equals(">")&& mainNode==null) {
             // tagContent =mainTag;
             //TODO take the hashmap into account
             HashMap<String, Node> map= Node.getNodeRegistry();
@@ -228,21 +238,41 @@ public class Compilator {
             else
                 mainNode=map.get(mainTag);
             int save = this.getPos();
-            next();
             return text();//new CodeNode();
-        }
+        } else if (!mainTag.equals("")&&!mainTag.equals(">")&&!tagListClose.contains(mainTag)&&mainNode!=null) {
+            if (containedNode==null) {
+                HashMap<String, Node> map = Node.getNodeRegistry();
+                if (!Node.getNodeRegistry().containsKey(mainTag))
+                    containedNode = new CodeNode(mainTag);
+                else
+                    containedNode = map.get(mainTag);
+                mainNode.add(containedNode);
+                return text();
+            } else if (containedNode!=null && !mainTag.contains(containedNode.getName())) {
+                HashMap<String, Node> map= Node.getNodeRegistry();
+                CodeNode node;
+                if (!Node.getNodeRegistry().containsKey(mainTag))
+                    node = new CodeNode(mainTag);
+                else
+                    node= (CodeNode) map.get(mainTag);
+                containedNode.add(node);
+                return mainTagEnd();
+            }
+/*        } else if (!mainTag.equals("")&&!mainTag.equals(">")&&!tagListClose.contains(mainTag)&&mainNode!=null && containedNode!=null && !mainTag.contains(containedNode.getName())) {
+            HashMap<String, Node> map= Node.getNodeRegistry();
+            CodeNode node;
+            if (!Node.getNodeRegistry().containsKey(mainTag))
+                node = new CodeNode(mainTag);
+            else
+                node= (CodeNode) map.get(mainTag);
+            containedNode.add(node);
+            return mainTagEnd();*/
 
-        else if (!endOfString()) {
+        } else if (!endOfString()) {
             System.out.println("continue !!!!!!!!!!!!");
-         //   next();
-            mainTag();
+            this.reset(savePos);
+            return style();
         }
-
-        else if (endOfString()) {
-            System.out.println("stop !!!!!!!!!!!!");
-            return null;
-        }
-       // debug();
         return null;
     }
 
@@ -250,18 +280,21 @@ public class Compilator {
         debug();
         // this.findOpenTag();
         int position=this.getPos();
-        String end = getTagIfOpentag();;
-
+        String end = getTagIfOpentag();
         if (end.equals("user/")||end.equals("dev/")) {
-            System.out.println(end);
-            // next();
+            System.out.println(end + "fin");
+            mainNode=null;
         }
         //est-ce un node de fin de code, et il correspond au Node entrant ?
         //TOOD replace this tagcontent with object.name ?
         else if (end.equals(this.mainNode.getName() + "/")) {
            // next();
-            System.out.println("ClosingEndTag");
-
+            System.out.println(end + "fin");
+            if (containedNode!=null){
+                containedNode=null;
+                return mainTag();
+            }
+            mainNode=null;
             return mainTag();
         }
         //il a trouvé la balise, mais ce n'est pas le code qui l'a ouvert
@@ -276,25 +309,29 @@ public class Compilator {
 
     private Node style() {
         debug();
+        int savePos=this.getPos();
         String end = getTagIfOpentag();
-        if (tagList.contains(end) || end.contains(";") || end.contains("#")) {
-            this.style=end;
-            next();
-        }
+        System.out.println(end);
+            if (tagList.contains(end) || end.contains(";") || end.contains("#") )
+                this.style=end;
+
+            this.reset(savePos);
+
 
         return text();
     }
 
     private Node styleEnd() {
         debug();
-        // this.findOpenTag();
-        String end = this.findTagContent();
+        int savePos=this.getPos();
+        String end = getTagIfOpentag();
         if (end.equals("it/") || end.contains("title/") || end.equals("bd/") || end.equals("ul/") || end.equals("img/") || end.equals("link/")) {
             //node.add(new DocumentationNode("test",end));
             this.style=null;
             next();
             return mainTagEnd(); //mainTagEnd(node);
         }
+        this.reset(savePos);
         return text();
         //return text();
     }
@@ -304,18 +341,19 @@ public class Compilator {
         // String end = this.findTagContent();
         debug();
         StringBuilder content=new StringBuilder();
+
         while (!token.equals(this.getOpenTag())) {
             content.append(token);
             next();
         }
         //TODO gérer les instances de code et doc nodes si important
         System.out.println(this.mainNode instanceof CodeNode);
-        if(this.style!=null) {
-            mainNode.add(new DocumentationNode(content.toString(),style));
-            return styleEnd();
+        if (containedNode!=null){
+            containedNode.add(new CodeNode("txt",content.toString()));
+            return mainTag();
         }
         mainNode.add(new DocumentationNode(content.toString(),style));
-        return mainTagEnd();
+        return mainTag();
     }
 
 

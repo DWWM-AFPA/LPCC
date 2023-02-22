@@ -14,6 +14,10 @@ public class CodeNode extends Node {
     public CodeNode(String name){
     super(name);
     }
+    public CodeNode(String name,String text){
+
+        this.setText(text);
+    }
 
 
 
