@@ -4,7 +4,6 @@ import java.util.ArrayList;
 
 public class DocumentationNode extends Node{
 
-    protected static ArrayList<DocumentationNode> documentationNodeRegistry;
 
     String style;
 
@@ -14,22 +13,6 @@ public class DocumentationNode extends Node{
     }
     public DocumentationNode(String name){
         super(name);
-    }
-
-    public static ArrayList<DocumentationNode> getCodeNodeRegistry() {
-        return documentationNodeRegistry;
-    }
-
-    public static void setCodeNodeRegistry(ArrayList<DocumentationNode> documentationNodeRegistry) {
-        DocumentationNode.documentationNodeRegistry = documentationNodeRegistry;
-    }
-
-    public static ArrayList<DocumentationNode> getDocumentationNodeRegistry() {
-        return documentationNodeRegistry;
-    }
-
-    public static void setDocumentationNodeRegistry(ArrayList<DocumentationNode> documentationNodeRegistry) {
-        DocumentationNode.documentationNodeRegistry = documentationNodeRegistry;
     }
 
     public String getStyle() {

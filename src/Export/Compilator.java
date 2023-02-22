@@ -1,6 +1,7 @@
 package Export;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Objects;
 
@@ -116,8 +117,7 @@ public class Compilator {
         return this.cursor(this.getPos());
     }
     public String getTagIfOpentag(){
-        if (this.getToken().equals(this.getOpenTag())) {
-            //next();
+        if (this.getToken().equals(this.getOpenTag())) {//next();
             return this.findTagContent();
         }
 
@@ -160,12 +160,23 @@ public class Compilator {
         return this.getDoc();
     }
 
+    /** Fonction qui permet de trouver un nom de Tag donné entre deux char ouvrants et fermants.
+     * En sortant de la fonction, le compilateur se trouve après le tag fermant.
+     *
+     * @return le nom du tag sans les char ouvrants et fermants
+     */
     private String findTagContent(){
         StringBuilder retour=new StringBuilder();
-        while (!Objects.equals(next(), this.getCloseTag())) {
-            retour.append(getToken());
+        if (this.getToken().equals(this.getOpenTag())) {
+            while (!Objects.equals(next(), this.getCloseTag())) {
+                if (!this.getToken().equals(this.getCloseTag()))
+                    retour.append(getToken());
+            }
+            next();
+            return retour.toString().trim();
         }
-        return retour.toString().trim();
+        System.err.println("erreur sur la fonction findTagContent");
+        return null;
     }
     private String findOpenTag(){
         while (!Objects.equals(this.getToken(), this.getOpenTag())) {
@@ -181,7 +192,7 @@ public class Compilator {
     }
 
     public Node compile () {
-        debug(false);
+        debug(true);
         debug();
         eraseTagSpaces();
         reset();
@@ -192,7 +203,9 @@ public class Compilator {
     }
     private Node mainTag() {
         debug();
-        String mainTag = getTagIfOpentag();
+        String mainTag = findTagContent();
+        if(this.mainNode instanceof CodeNode)
+            System.err.println("INSTANCE DE CODE NODE !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!");
         if (mainTag.equals("user")){
             mainNode =new DocumentationNode(mainTag);
             System.out.println(mainNode);
@@ -208,13 +221,20 @@ public class Compilator {
         //TODO check next ligne to create codeNodes
         else if (!mainTag.equals("")&&!mainTag.equals(">")) {
             // tagContent =mainTag;
-            mainNode =new CodeNode(mainTag);
+            //TODO take the hashmap into account
+            HashMap<String, Node> map= Node.getNodeRegistry();
+            if (!Node.getNodeRegistry().containsKey(mainTag))
+                mainNode =new CodeNode(mainTag);
+            else
+                mainNode=map.get(mainTag);
+            int save = this.getPos();
             next();
             return text();//new CodeNode();
         }
 
         else if (!endOfString()) {
             System.out.println("continue !!!!!!!!!!!!");
+         //   next();
             mainTag();
         }
 
@@ -222,7 +242,7 @@ public class Compilator {
             System.out.println("stop !!!!!!!!!!!!");
             return null;
         }
-        debug();
+       // debug();
         return null;
     }
 
@@ -233,19 +253,21 @@ public class Compilator {
         String end = getTagIfOpentag();;
 
         if (end.equals("user/")||end.equals("dev/")) {
+            System.out.println(end);
             // next();
-            DocumentationNode.getNodeRegistry().put(mainNode.getName(),this.mainNode);
         }
         //est-ce un node de fin de code, et il correspond au Node entrant ?
         //TOOD replace this tagcontent with object.name ?
         else if (end.equals(this.mainNode.getName() + "/")) {
-            next();
-            System.out.println("upper");
-            //TODO
-            return new CodeNode("test",null);
+           // next();
+            System.out.println("ClosingEndTag");
+
+            return mainTag();
         }
         //il a trouvé la balise, mais ce n'est pas le code qui l'a ouvert
         else {
+            //TODO vérifier les erreurs en trouvant les balises différentes : EXCEPTION
+            //if()
             cursor(this.setPos(position));
             return style();
         }
@@ -281,15 +303,18 @@ public class Compilator {
         // this.findOpenTag();
         // String end = this.findTagContent();
         debug();
+        StringBuilder content=new StringBuilder();
         while (!token.equals(this.getOpenTag())) {
-            this.setContent(token);
+            content.append(token);
             next();
         }
+        //TODO gérer les instances de code et doc nodes si important
+        System.out.println(this.mainNode instanceof CodeNode);
         if(this.style!=null) {
-            mainNode.add(new DocumentationNode(this.getContent(),style));
+            mainNode.add(new DocumentationNode(content.toString(),style));
             return styleEnd();
         }
-        mainNode.add(new DocumentationNode(this.getContent(),style));
+        mainNode.add(new DocumentationNode(content.toString(),style));
         return mainTagEnd();
     }
 

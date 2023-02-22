@@ -6,8 +6,8 @@ import java.util.HashMap;
 public abstract class Node {
     protected String name;
     protected String text;
-   // protected static ArrayList<Node> nodeList= new ArrayList<>();
-   protected static HashMap<String,Node> nodeRegistry = new HashMap<>();
+    protected static ArrayList<Node> nodeList= new ArrayList<>();
+    protected static HashMap<String,Node> nodeRegistry = new HashMap<>();
 
     protected ArrayList<Node> nodeContained;
 
@@ -18,10 +18,12 @@ public abstract class Node {
     }
 
     public Node(String name){
-        //nodeList.add(this);
-        Node.nodeRegistry.put(name,this);
+        nodeList.add(this);
+        this.setName(name);
+        if (!name.equals("user")&&!name.equals("dev"))
+            Node.nodeRegistry.put(name,this);
         nodeContained=new ArrayList<>();
-        this.setText("");
+        //TODO this.setText("");
     }
     //getters
 
@@ -61,7 +63,13 @@ public abstract class Node {
         this.nodeContained = nodeContained;
     }
 
+    public static ArrayList<Node> getNodeList() {
+        return nodeList;
+    }
 
+    public static void setNodeList(ArrayList<Node> nodeList) {
+        Node.nodeList = nodeList;
+    }
 
     public void add(Node node){
     nodeContained.add(node);
