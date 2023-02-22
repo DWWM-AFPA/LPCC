@@ -20,6 +20,12 @@ public class Main {
                         "<dev/>"+
                 "<code> azerty <test> <code/>" +"<user> a <it> He <it/> t <user/> " +
                 "<user> test <bd> azerty<bd/> <user/>").compile();
+/*        new Compilator(
+                          "<code> azerty " +
+                                  "<test> " +
+                                  "<code/>" ).compile();*/
+/*        new Compilator(
+                        "<user> test <bd>   azerty    <bd/> <user/>").compile();*/
 
 /*        HashMap<String, Node> nodes = Node.getNodeRegistry();
         Set<String> keys =  nodes.keySet();
@@ -30,8 +36,9 @@ public class Main {
         }*/
         String ln=System.lineSeparator();
         System.out.println(ln+"Nombre de Nodes compris : "+Node.getNodeList().size());
+
         for (Node node : Node.getNodeList()) {
-            System.out.printf("%sMain Node : \n  nom : %s Nombre de Nodes contenus : %s%s",ln, node.getName(), node.getNodeContained().size()/*nd.getStyle()*/, ln);
+            System.out.printf("%s  %S Nombre de Nodes contenus : %s%s",ln, node.getName(), node.getNodeContained().size()/*nd.getStyle()*/, ln);
             for (Node node1:node.getNodeContained()){
                 if (node1 instanceof DocumentationNode) {
                     DocumentationNode doc=(DocumentationNode)node1;

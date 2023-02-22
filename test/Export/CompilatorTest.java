@@ -5,6 +5,11 @@ import org.junit.jupiter.api.Test;
 import static org.junit.jupiter.api.Assertions.*;
 
 public class CompilatorTest {
+    @Test
+    void testNext(){
+        assertEquals("a",new Compilator("a").next());
+        assertEquals("z",new Compilator("az").next());
+    }
 
     @Test
     void testEraseTagSpaces() {

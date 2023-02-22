@@ -12,6 +12,7 @@ public class Compilator {
     public Node mainNode;
     public Node containedNode;
     public String style;
+    public String text;
     protected StringBuilder content=new StringBuilder();
     protected static ArrayList<String> tagListClose = new ArrayList<>(List.of("it/","bd/","ul/"));
     protected static ArrayList<String> tagList = new ArrayList<>(List.of("it","bd","ul"));
@@ -110,17 +111,14 @@ public class Compilator {
         return setToken(retour.toLowerCase());
     }
     public String next(){
-        //TODO Faire pour ne plus avoir les erreurs StringOutOfBound en avanceant.//
-
-        // System.out.println(this.getDoc().length()+" "+this.pos);
-        // if (this.getDoc().length()-1<this.pos)
-        this.pos++;
+        if (this.getPos()+1<this.getDoc().length())
+            this.pos++;
 
         //retourne this.token
         return this.cursor(this.getPos());
     }
     public String getTagIfOpentag(){
-        if (this.getToken().equals(this.getOpenTag())) {//next();
+        if (this.getToken().equals(this.getOpenTag())) {
             return this.findTagContent();
         }
 
@@ -141,13 +139,7 @@ public class Compilator {
     }
 
     protected boolean endOfString(){
-        boolean retour = false;
-        try {
-            next();
-        } catch (StringIndexOutOfBoundsException e){
-            retour= true;
-        }
-        return retour;
+        return this.getPos()+1==this.getDoc().length();
     }
     public String eraseTagSpaces() {
         try {
@@ -168,7 +160,7 @@ public class Compilator {
     }
 
     /** Fonction qui permet de trouver un nom de Tag donné entre deux char ouvrants et fermants.
-     * En sortant de la fonction, le compilateur se trouve après le tag fermant.
+     * En sortant de la fonction, le compilateur se trouve après le tag fermant, sauf au dernier caractère.
      *
      * @return le nom du tag sans les char ouvrants et fermants
      */
@@ -179,9 +171,10 @@ public class Compilator {
                 if (!this.getToken().equals(this.getCloseTag()))
                     retour.append(getToken());
             }
+            next();
             return retour.toString().trim();
         }
-        System.err.println("erreur sur la fonction findTagContent");
+        System.err.println("erreur sur la fonction findTagContent !!!!!!!!!");
         return null;
     }
     private String findOpenTag(){
@@ -198,7 +191,7 @@ public class Compilator {
     }
 
     public Node compile () {
-        debug(true);
+        debug(false);
         debug();
         eraseTagSpaces();
         reset();
@@ -211,20 +204,15 @@ public class Compilator {
         debug();
         int savePos=this.getPos();
         String mainTag = getTagIfOpentag();
-/*        if(this.mainNode instanceof CodeNode)
-            System.err.println("INSTANCE DE CODE NODE !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!");*/
-        if (endOfString()) {
-            System.out.println("stop !!!!!!!!!!!!");
-            return null;
+        if (mainTag.charAt(mainTag.length()-1)=='/') {
+            reset(savePos);
+            return mainTagEnd();
         }
-        else if (mainTag.equals("user")){
+        if (mainTag.equals("user")){
             mainNode =new DocumentationNode(mainTag);
             System.out.println(mainNode);
-            next();
             return style();//new DocumentationNode();
-        }
-        else if (mainTag.equals("dev")) {
-            //   tagContent =mainTag;
+        } else if (mainTag.equals("dev")) {
             mainNode =new DocumentationNode(mainTag);
             return style();//new DocumentationNode();
         }
@@ -239,7 +227,9 @@ public class Compilator {
                 mainNode=map.get(mainTag);
             int save = this.getPos();
             return text();//new CodeNode();
-        } else if (!mainTag.equals("")&&!mainTag.equals(">")&&!tagListClose.contains(mainTag)&&mainNode!=null) {
+            //si c'est un code, pas un style, et que ça n'est pas le tag principal
+        } else if (!mainTag.equals("")&&!mainTag.equals(">")&&!tagListClose.contains(mainTag)&&mainNode!=null&&!tagList.contains(mainTag)&&!tagListClose.contains(mainTag)) {
+            //si on a pas de noeud imbriqué
             if (containedNode==null) {
                 HashMap<String, Node> map = Node.getNodeRegistry();
                 if (!Node.getNodeRegistry().containsKey(mainTag))
@@ -248,38 +238,39 @@ public class Compilator {
                     containedNode = map.get(mainTag);
                 mainNode.add(containedNode);
                 return text();
-            } else if (containedNode!=null && !mainTag.contains(containedNode.getName())) {
-                HashMap<String, Node> map= Node.getNodeRegistry();
-                CodeNode node;
-                if (!Node.getNodeRegistry().containsKey(mainTag))
-                    node = new CodeNode(mainTag);
-                else
-                    node= (CodeNode) map.get(mainTag);
-                containedNode.add(node);
-                return mainTagEnd();
+                //si on a un noeud imbriqué
+            } else {
+                //boolean ne fermant pas le NodeContenu
+                boolean closingOpenendTag =mainTag.contains((containedNode.getName()));
+                if (!closingOpenendTag) {
+                    HashMap<String, Node> map = Node.getNodeRegistry();
+                    CodeNode node;
+                    if (!Node.getNodeRegistry().containsKey(mainTag))
+                        node = new CodeNode(mainTag);
+                    else
+                        node = (CodeNode) map.get(mainTag);
+                    containedNode.add(node);
+                    return mainTagEnd();
+                } else  {
+                    reset(savePos);
+                    return mainTagEnd();
+                }
             }
-/*        } else if (!mainTag.equals("")&&!mainTag.equals(">")&&!tagListClose.contains(mainTag)&&mainNode!=null && containedNode!=null && !mainTag.contains(containedNode.getName())) {
-            HashMap<String, Node> map= Node.getNodeRegistry();
-            CodeNode node;
-            if (!Node.getNodeRegistry().containsKey(mainTag))
-                node = new CodeNode(mainTag);
-            else
-                node= (CodeNode) map.get(mainTag);
-            containedNode.add(node);
-            return mainTagEnd();*/
-
         } else if (!endOfString()) {
             System.out.println("continue !!!!!!!!!!!!");
             this.reset(savePos);
             return style();
+        }
+        else if (endOfString()) {
+            System.out.println("stop !!!!!!!!!!!!");
+            return null;
         }
         return null;
     }
 
     private Node mainTagEnd() {
         debug();
-        // this.findOpenTag();
-        int position=this.getPos();
+        int savePos=this.getPos();
         String end = getTagIfOpentag();
         if (end.equals("user/")||end.equals("dev/")) {
             System.out.println(end + "fin");
@@ -288,20 +279,23 @@ public class Compilator {
         //est-ce un node de fin de code, et il correspond au Node entrant ?
         //TOOD replace this tagcontent with object.name ?
         else if (end.equals(this.mainNode.getName() + "/")) {
-           // next();
             System.out.println(end + "fin");
-            if (containedNode!=null){
-                containedNode=null;
-                return mainTag();
-            }
             mainNode=null;
+            return mainTag();
+        }   else if (containedNode!=null && end.equals(this.containedNode.getName() + "/")) {
+            containedNode.add(new CodeNode("txt",content.toString()));
+            containedNode=null;
             return mainTag();
         }
         //il a trouvé la balise, mais ce n'est pas le code qui l'a ouvert
         else {
             //TODO vérifier les erreurs en trouvant les balises différentes : EXCEPTION
             //if()
-            cursor(this.setPos(position));
+            cursor(this.setPos(savePos));
+            if (end.charAt(end.length()-1)=='/') {
+                reset(savePos);
+                return styleEnd();
+            }
             return style();
         }
         return mainTag();
@@ -311,11 +305,10 @@ public class Compilator {
         debug();
         int savePos=this.getPos();
         String end = getTagIfOpentag();
-        System.out.println(end);
-            if (tagList.contains(end) || end.contains(";") || end.contains("#") )
-                this.style=end;
-
-            this.reset(savePos);
+        if (tagList.contains(end) || end.contains(";") || end.contains("#") )
+            this.style=end;
+        else
+          this.reset(savePos);
 
 
         return text();
@@ -328,7 +321,7 @@ public class Compilator {
         if (end.equals("it/") || end.contains("title/") || end.equals("bd/") || end.equals("ul/") || end.equals("img/") || end.equals("link/")) {
             //node.add(new DocumentationNode("test",end));
             this.style=null;
-            next();
+
             return mainTagEnd(); //mainTagEnd(node);
         }
         this.reset(savePos);
@@ -349,7 +342,7 @@ public class Compilator {
         //TODO gérer les instances de code et doc nodes si important
         System.out.println(this.mainNode instanceof CodeNode);
         if (containedNode!=null){
-            containedNode.add(new CodeNode("txt",content.toString()));
+            text=content.toString();
             return mainTag();
         }
         mainNode.add(new DocumentationNode(content.toString(),style));
