@@ -26,6 +26,9 @@ public class DocumentationNode extends Node{
         return this.style = style;
     }
     public ArrayList<String> cloneStyle(ArrayList<String> style) {
+        if (style==null)
+            return null;
+        System.err.println(style);
         return this.setStyle((ArrayList<String>) style.clone());
     }
 

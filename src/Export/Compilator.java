@@ -1,5 +1,6 @@
 package Export;
 
+import javax.swing.*;
 import java.io.*;
 import java.util.*;
 
@@ -13,8 +14,8 @@ public class Compilator {
     public ArrayList<String> style=new ArrayList<>();
     public String text;//=new ArrayList<>();
     protected StringBuilder content=new StringBuilder();
-    protected static ArrayList<String> tagListClose = new ArrayList<>(List.of("it/","bd/","ul/"));
-    protected static ArrayList<String> tagList = new ArrayList<>(List.of("it","bd","ul"));
+    protected static ArrayList<String> tagListClose = new ArrayList<>(List.of("it/","bd/","ul/","title1/"));
+    protected static ArrayList<String> styleTagList = new ArrayList<>(List.of("it","bd","ul","title1"));
     protected String token= new String();
     protected String doc=new String();
     //protected ArrayList<String> containedCode = new HashMap<>();
@@ -125,9 +126,9 @@ public class Compilator {
         }
     }
 
-    protected String cursor(int pos) {
+    protected String cursor(int pos,boolean keepSpaces) {
         String  retour = String.valueOf(doc.charAt(getPos()));
-        retour = !retour.equals(" ") ? String.valueOf(doc.charAt(getPos())):next();
+        retour = !retour.equals(" ") || keepSpaces ? String.valueOf(doc.charAt(getPos())):next();
 
         return setToken(retour.toLowerCase());
     }
@@ -136,7 +137,14 @@ public class Compilator {
             this.pos++;
 
         //retourne this.token
-        return this.cursor(this.getPos());
+        return this.cursor(this.getPos(),false);
+    }
+    public String next(boolean keepSpaces){
+        if (this.getPos()+1<this.getDoc().length())
+            this.pos++;
+
+        //retourne this.token
+        return this.cursor(this.getPos(),keepSpaces);
     }
     public String getTagIfOpentag(){
         if (this.getToken().equals(this.getOpenTag())) {
@@ -148,15 +156,15 @@ public class Compilator {
     }
     public String previous(){
         this.pos--;
-        return this.cursor(this.getPos());
+        return this.cursor(this.getPos(),true);
     }
     protected String reset(){
         this.pos=0;
-        return this.cursor(this.getPos());
+        return this.cursor(this.getPos(),true);
     }
     protected String reset(int pos){
         this.pos=pos;
-        return this.cursor(this.getPos());
+        return this.cursor(this.getPos(),true);
     }
 
     protected boolean endOfString(){
@@ -262,7 +270,7 @@ public class Compilator {
             //C'est un pas une dev ou user et ça doit être un CodeNode
             else if (!currentMainTag.equals(">") &&
                     !(currentMainTag.charAt(currentMainTag.length() - 1) == '/') &&
-                    !tagList.contains(currentMainTag)) {
+                    !styleTagList.contains(currentMainTag)) {
 
                 //  boolean closedNode = this.hasCloseTagContent(currentMainTag);
                 if (mainNode == null) {
@@ -271,8 +279,20 @@ public class Compilator {
                     return style();//new CodeNode();
                     // si on a pas encore de noeuds imbriqués
                 } else {
+                    if (mainNode.getName().equals("user")){
+                        JOptionPane.showMessageDialog(null,
+                                "Attention vous avez inseré du Code en balise dans la documentation utilisateur."
+                                        +System.lineSeparator()+
+                                "Le programme va tranquillement te ramener vers l'interface graphique pour réparer tes conneries !!");
+                        return null;
+                        //System.exit(2);
+                    }
+
                     //on ajoute le noeud au noeud parent
-                    mainNode.add(CodeNode.getCodeNodeInstance(currentMainTag));
+                    if (containedStackNode.empty())
+                        mainNode.add(CodeNode.getCodeNodeInstance(currentMainTag));
+                    else
+                        containedStackNode.peek().add(CodeNode.getCodeNodeInstance(currentMainTag));
                     //on empile si il y a une fin
                     if (!this.hasCloseTagContent(currentMainTag))
                         return this.mainTag();
@@ -303,11 +323,13 @@ public class Compilator {
         int savePos=this.getPos();
         String end = getTagIfOpentag();
         if (end!=null) {
+            String beginEnd=end.substring(0,end.length() - 1);
             boolean isEnd = end.charAt(end.length() - 1) == '/';
-            boolean isStyle = tagList.contains(end);
+            boolean isStyle = styleTagList.contains(beginEnd);
             if (isEnd && !isStyle) {
                 if (end.equals("user/") || end.equals("dev/")) {
                     mainNode = null;
+                    return mainTag();
                 }
                 //est-ce un node de fin de code qui correspond au Node entrant principal ?
                 else if (end.equals(this.mainNode.getName() + "/")) {
@@ -315,7 +337,6 @@ public class Compilator {
                     if (!containedStackNode.empty()) {
                         //on doit ajouter le codeNode au code node et ajouter le texte aussi au bon endroit
                         containedStackNode.pop();
-                        mainNode.add(new CodeNode(null, text));
                     } else {
                         System.err.println("MainTagEnd Error");
 
@@ -327,7 +348,7 @@ public class Compilator {
                     while (!containedStackNode.empty()&& !Objects.equals(this.containedStackNode.peek().getName() + "/", end))
                         this.containedStackNode.pop();
 
-                    containedStackNode.add(new CodeNode("txt", content.toString()));
+            //        containedStackNode.add(new CodeNode("txt", content.toString()));
                     containedStackNode.pop();
                     return mainTag();
                 }
@@ -341,7 +362,7 @@ public class Compilator {
         debug();
         int savePos=this.getPos();
         String end = getTagIfOpentag();
-        if (end!=null&&(tagList.contains(end) || end.contains(";") || end.contains("#")) )
+        if (end!=null&& (styleTagList.contains(end) || end.contains(";") || end.contains("#")) )
             this.style.add(end);
         else
           this.reset(savePos);
@@ -354,14 +375,15 @@ public class Compilator {
         debug();
         int savePos=this.getPos();
         String end = getTagIfOpentag();
-        if (end.equals("it/") || end.contains("title/") || end.equals("bd/") || end.equals("ul/") || end.equals("img/") || end.equals("link/")) {
-            //node.add(new DocumentationNode("test",end));
-            this.style=null;
-
-            return mainTagEnd(); //mainTagEnd(node);
+        if (end!=null) {
+            String beginEnd = end.substring(0, end.length() - 1);
+            if (styleTagList.contains(beginEnd) ){ //|| end.contains("title/") || end.equals("bd/") || end.equals("ul/") || end.equals("img/") || end.equals("link/")) {
+                this.style = null;
+                return mainTagEnd(); //mainTagEnd(node);
+            }
         }
         this.reset(savePos);
-        return text();
+        return mainTag();
         //return text();
     }
 
@@ -373,7 +395,7 @@ public class Compilator {
 
         while (!token.equals(this.getOpenTag())) {
             content.append(token);
-            next();
+            next(true);
         }
         //TODO gérer les instances de code et doc nodes en fonction de la pile de node
        // System.out.println(this.mainNode instanceof CodeNode);
@@ -382,7 +404,7 @@ public class Compilator {
         } else
             mainNode.add(new DocumentationNode(content.toString(),style));
 
-        return mainTag();
+        return styleEnd();
     }
 
 
