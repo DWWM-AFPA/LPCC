@@ -38,7 +38,7 @@ public class Main {
             System.out.printf("Name : %s Text : %s Style :%s%s", nd.getName(),nd.getText(),""*//**//*nd.getStyle()*//**//*,System.lineSeparator());
         }/**/
 
-        new Compilator("<dev> documentation dev <code> c'est du code <codeTest> un autre bout de code <codeAlone> apres l'autre code <codeTest> encore dans code <code/> fin dans dev <dev/>").compile();
+        new Compilator("<dev> documentation dev <code> c'est du code <codeTest> un autre bout de code <codeAlone> apres l'autre code <codeTest/> encore dans code <code/> fin dans dev <dev/>").compile();
 
 
         String ln=System.lineSeparator();

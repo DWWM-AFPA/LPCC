@@ -9,9 +9,9 @@ public class Compilator {
     protected int pos=0;
     public Node mainNode;
     //TODO Etudier le stack pour permettre d'imbriquer les nodes à la lecture
-    public Stack<Node> containedNode=new Stack<>();
+    public Stack<Node> containedStackNode =new Stack<>();
     public ArrayList<String> style=new ArrayList<>();
-    public ArrayList<String> text=new ArrayList<>();
+    public String text;//=new ArrayList<>();
     protected StringBuilder content=new StringBuilder();
     protected static ArrayList<String> tagListClose = new ArrayList<>(List.of("it/","bd/","ul/"));
     protected static ArrayList<String> tagList = new ArrayList<>(List.of("it","bd","ul"));
@@ -144,7 +144,7 @@ public class Compilator {
         }
 
         //retourne this.token
-        return this.cursor(this.getPos());
+        return null; //this.cursor(this.getPos());
     }
     public String previous(){
         this.pos--;
@@ -198,6 +198,29 @@ public class Compilator {
         System.err.println("erreur sur la fonction findTagContent !!!!!!!!!");
         return null;
     }
+
+    /** Check if the parameters has a closing Tag corresponding
+     *
+     * @param openingTag : Opening string without the delimiters
+     * @return a boolean "true" if contains a closingNode. Else 'false'
+     */
+    private boolean hasCloseTagContent(String openingTag) {
+        int savePosition = this.getPos();
+        findOpenTag();
+        String tag= this.findTagContent();
+        //TODO choisir entre les deux : while (!endOfString()){
+        while (!tag.equals(this.mainNode.getName()+"/")){
+            findOpenTag();
+            tag= this.findTagContent();
+            if (tag.substring(0,tag.length()-1).equals(openingTag)) {
+                reset(savePosition);
+                return true;
+            }
+        }
+
+        reset(savePosition);
+        return false;
+    }
     private String findOpenTag(){
         while (!Objects.equals(this.getToken(), this.getOpenTag())) {
             next();
@@ -220,123 +243,105 @@ public class Compilator {
         reset();
         this.findOpenTag();
         this.setDoc(this.doc.substring(pos));
+        System.out.println(doc);
         reset();
         return mainTag();
     }
     private Node mainTag() {
         debug();
         int savePos=this.getPos();
-        String mainTag = getTagIfOpentag();
-        if (mainTag.charAt(mainTag.length()-1)=='/') {
-            reset(savePos);
-            return mainTagEnd();
-        }
-        if (mainTag.equals("user")){
-            mainNode =new DocumentationNode(mainTag);
-            return style();//new DocumentationNode();
-        } else if (mainTag.equals("dev")) {
-            mainNode =new DocumentationNode(mainTag);
-            return style();//new DocumentationNode();
-        }
-        //TODO check next ligne to create codeNodes
-        else if (!mainTag.equals(">")&& mainNode==null) {
-            // tagContent =mainTag;
-            //TODO take the hashmap into account
-            HashMap<String, Node> map= Node.getNodeRegistry();
-            if (!Node.getNodeRegistry().containsKey(mainTag))
-                mainNode =new CodeNode(mainTag);
-            else
-                mainNode=map.get(mainTag);
-            int save = this.getPos();
-            return text();//new CodeNode();
-            //si c'est un code, pas un style, et que ça n'est pas le tag principal
-        } else if (!mainTag.equals(this.getCloseTag())&&!tagListClose.contains(mainTag)&&mainNode!=null&&!tagList.contains(mainTag)&&!tagListClose.contains(mainTag)) {
-            //si on a pas de noeud imbriqué
-            if (containedNode==null) {
-                HashMap<String, Node> map = Node.getNodeRegistry();
-                if (!Node.getNodeRegistry().containsKey(mainTag))
-                    containedNode.add(new CodeNode(mainTag));
-                else
-                    containedNode.add(map.get(mainTag));
-                //le dernier ajouté est toujours le dernier, donc stocke celui qu'on vient d'ajouter
-                mainNode.add(containedNode.get(containedNode.size()-1));
-                return text();
-                //si on a un noeud imbriqué
-            } else {
-                //boolean ne fermant pas le NodeContenu
-                boolean closingOpenendTag =mainTag.contains((containedNode.get(containedNode.size()-1).getName()));
-                if (!closingOpenendTag) {
-                    HashMap<String, Node> map = Node.getNodeRegistry();
-                    CodeNode node;
-                    if (!Node.getNodeRegistry().containsKey(mainTag))
-                        node = new CodeNode(mainTag);
-                    else
-                        node = (CodeNode) map.get(mainTag);
-                    containedNode.add(node);
-                    return mainTagEnd();
-                } else  {
-                    reset(savePos);
-                    return mainTagEnd();
-                }
+        String currentMainTag = getTagIfOpentag();
+        if (currentMainTag!=null) {
+            if (currentMainTag.equals("user")) {
+                mainNode = new DocumentationNode(currentMainTag);
+                return style();//new DocumentationNode();
+            } else if (currentMainTag.equals("dev")) {
+                mainNode = new DocumentationNode(currentMainTag);
+                return style();//new DocumentationNode();
             }
-        } else if (!endOfString()) {
-            System.out.println("continue !!!!!!!!!!!!");
-            this.reset(savePos);
-            return style();
+            //C'est un pas une dev ou user et ça doit être un CodeNode
+            else if (!currentMainTag.equals(">") &&
+                    !(currentMainTag.charAt(currentMainTag.length() - 1) == '/') &&
+                    !tagList.contains(currentMainTag)) {
+
+                //  boolean closedNode = this.hasCloseTagContent(currentMainTag);
+                if (mainNode == null) {
+                    //TODO bannir le code dans la doc user
+                    mainNode = CodeNode.getCodeNodeInstance(currentMainTag);
+                    return style();//new CodeNode();
+                    // si on a pas encore de noeuds imbriqués
+                } else {
+                    //on ajoute le noeud au noeud parent
+                    mainNode.add(CodeNode.getCodeNodeInstance(currentMainTag));
+                    //on empile si il y a une fin
+                    if (!this.hasCloseTagContent(currentMainTag))
+                        return this.mainTag();
+                    containedStackNode.add(CodeNode.getCodeNodeInstance(currentMainTag));
+                /*} else {
+                    reset(savePos);
+                    System.err.println("MainTag CodeNode else, on peut pas penser à tout !!");
+                */
+                }
+                return mainTagEnd();
+            } else if (!endOfString()) {
+                System.out.println("MainTag continue !!!!!!!!!!!!");
+                this.reset(savePos);
+                return mainTagEnd();
+            } else if (endOfString()) {
+                System.out.println("MainTag stop !!!!!!!!!!!!");
+                return null;
+            } else
+                System.err.println("il y a vraiment un soucis dans la méthode mainTag");
         }
-        else if (endOfString()) {
-            System.out.println("stop !!!!!!!!!!!!");
-            return null;
-        }
-        return null;
+
+        reset(savePos);
+        return mainTagEnd();
     }
 
     private Node mainTagEnd() {
          debug();
         int savePos=this.getPos();
         String end = getTagIfOpentag();
-        if (end.equals("user/")||end.equals("dev/")) {
-            System.out.println(end + "fin");
-            mainNode=null;
-        }
-        //est-ce un node de fin de code, et il correspond au Node entrant ?
-        //TOOD replace this tagcontent with object.name ?
-        else if (end.equals(this.mainNode.getName() + "/")) {
-            System.out.println(end + "fin");
-            if (containedNode!=null){
-                //on doit ajouter le codeNode au code node et ajouter le texte aussi au bon endroit
-                //-------------------------------------
-                mainNode.add(new CodeNode("",text.get(text.size()-1)));
-                containedNode=null;
-                //-------------------------------------
+        if (end!=null) {
+            boolean isEnd = end.charAt(end.length() - 1) == '/';
+            boolean isStyle = tagList.contains(end);
+            if (isEnd && !isStyle) {
+                if (end.equals("user/") || end.equals("dev/")) {
+                    mainNode = null;
+                }
+                //est-ce un node de fin de code qui correspond au Node entrant principal ?
+                else if (end.equals(this.mainNode.getName() + "/")) {
+                    //on a un noeud imbriqué ?
+                    if (!containedStackNode.empty()) {
+                        //on doit ajouter le codeNode au code node et ajouter le texte aussi au bon endroit
+                        containedStackNode.pop();
+                        mainNode.add(new CodeNode(null, text));
+                    } else {
+                        System.err.println("MainTagEnd Error");
 
+                    }
+                    mainNode = null;
+                    return mainTag();
+                    //il y a forcément un noeud imbriqué, ferme t'il le premier ?
+                } else { //end.equals(this.containedStackNode.pop().getName() + "/")) {
+                    while (!containedStackNode.empty()&& !Objects.equals(this.containedStackNode.peek().getName() + "/", end))
+                        this.containedStackNode.pop();
+
+                    containedStackNode.add(new CodeNode("txt", content.toString()));
+                    containedStackNode.pop();
+                    return mainTag();
+                }
             }
-            mainNode=null;
-            return mainTag();
-        }   else if (containedNode!=null && end.equals(this.containedNode.get(containedNode.size()-1).getName() + "/")) {
-            containedNode.add(new CodeNode("txt",content.toString()));
-            containedNode=null;
-            return mainTag();
         }
-        //il a trouvé la balise, mais ce n'est pas le code qui l'a ouvert
-        else {
-            //TODO vérifier les erreurs en trouvant les balises différentes : EXCEPTION
-            //if()
-            cursor(this.setPos(savePos));
-            if (end.charAt(end.length()-1)=='/') {
-                reset(savePos);
-                return styleEnd();
-            }
-            return style();
-        }
-        return mainTag();
+        reset(savePos);
+        return style();
     }
 
     private Node style() {
         debug();
         int savePos=this.getPos();
         String end = getTagIfOpentag();
-        if (tagList.contains(end) || end.contains(";") || end.contains("#") )
+        if (end!=null&&(tagList.contains(end) || end.contains(";") || end.contains("#")) )
             this.style.add(end);
         else
           this.reset(savePos);
@@ -370,13 +375,13 @@ public class Compilator {
             content.append(token);
             next();
         }
-        //TODO gérer les instances de code et doc nodes si important
+        //TODO gérer les instances de code et doc nodes en fonction de la pile de node
        // System.out.println(this.mainNode instanceof CodeNode);
-        if (containedNode!=null){
-            text.add(content.toString());
-            return mainTag();
-        }
-        mainNode.add(new DocumentationNode(content.toString(),style.get(style.size()-1)));
+        if (!containedStackNode.empty()){
+            containedStackNode.peek().add(new DocumentationNode(content.toString(),style));
+        } else
+            mainNode.add(new DocumentationNode(content.toString(),style));
+
         return mainTag();
     }
 

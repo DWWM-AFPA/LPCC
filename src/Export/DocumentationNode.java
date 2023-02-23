@@ -5,23 +5,34 @@ import java.util.ArrayList;
 public class DocumentationNode extends Node{
 
 
-    String style;
+    ArrayList<String> style;
 
-    public DocumentationNode(String text,String style){
+    public DocumentationNode(String text,ArrayList<String> style){
         this.setText(text);
-        this.setStyle(style);
+        this.cloneStyle(style);
     }
     public DocumentationNode(String name){
         super(name);
     }
 
-    public String getStyle() {
-        return style;
+    public ArrayList<String> getStyle() {
+        return this.style!=null ? style:this.setStyle(new ArrayList<>());
+    }
+    public String getStyle(int pos) {
+        return this.style!=null ? this.getStyle().get(pos):null;
     }
 
-    public void setStyle(String style) {
-        this.style = style;
+    public ArrayList<String> setStyle(ArrayList<String> style) {
+        return this.style = style;
     }
+    public ArrayList<String> cloneStyle(ArrayList<String> style) {
+        return this.setStyle((ArrayList<String>) style.clone());
+    }
+
+    public void addStyle(String style){
+        this.getStyle().add(style);
+    }
+
 
 /*    public ArrayList<DocumentationNode> getNodeContained() {
         return NodeContained;

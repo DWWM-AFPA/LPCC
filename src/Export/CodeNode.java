@@ -8,14 +8,25 @@ public class CodeNode extends Node {
 
     protected ArrayList<CodeNode> NodeContained;
 
-    public CodeNode(String text,Node Parent){
-    this.setText(text);
+    /** this particular constructor create a CodeNode which have to be the only one */
+    private CodeNode(String name){
+        super(name);
+        ;
     }
-    public CodeNode(String name){
-    super(name);
+    public static CodeNode getCodeNodeInstance(String name){
+        CodeNode instance;
+        HashMap<String, Node> map= Node.getNodeRegistry();
+        if (!Node.getNodeRegistry().containsKey(name))
+            instance =new CodeNode(name);
+        else
+            instance=(CodeNode) map.get(name);
+        return instance;
     }
     public CodeNode(String name,String text){
 
+        this.setText(text);
+    }
+    public CodeNode(String text,Node Parent){
         this.setText(text);
     }
 
