@@ -120,7 +120,7 @@ public class Graphic {
                         compil=new Compilator(target);
                     } catch (FileException | IOException ex) {
                         //TODO FATIH
-                        throw new RuntimeException(ex);
+                        JOptionPane.showInputDialog(null,"Le fichier spécifié semble introuvable","File error",JOptionPane.ERROR_MESSAGE);
                     }
                 }
                 else{
@@ -130,11 +130,11 @@ public class Graphic {
                         File target=LPCFile.getMainFile(config);
                         compil = new Compilator(target);
                     } catch (FileException ex) {
-                        //TODO fatih gere l'exception
+                        JOptionPane.showInputDialog(null,"Le fichier spécifié semble introuvable","File error",JOptionPane.ERROR_MESSAGE);
                         throw new RuntimeException(ex);
                     } catch (IOException ex) {
                         //TODO fatih gere l'exception
-                        throw new RuntimeException(ex);
+                        JOptionPane.showInputDialog(null,"Le fichier spécifié semble introuvable","File error",JOptionPane.ERROR_MESSAGE);
                     }
                 }
             }

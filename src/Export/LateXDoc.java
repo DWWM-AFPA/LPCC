@@ -147,14 +147,12 @@ public class LateXDoc implements Visitor{
         try {
             this.user(user);
         } catch (LPCSyntaxException e) {
-            //TODO message renvoyé
-            new JOptionPane(e.getMessage());
+            JOptionPane.showInputDialog(null,e.getMessage(),"Error",JOptionPane.ERROR_MESSAGE);
         }
         try {
             this.dev(dev);
         } catch (LPCSyntaxException e) {
-            //TODO message renvoyé
-            new JOptionPane(e.getMessage());
+            JOptionPane.showInputDialog(null,e.getMessage(),"Error",JOptionPane.ERROR_MESSAGE);
         }
     }
 
@@ -162,7 +160,6 @@ public class LateXDoc implements Visitor{
         StringBuilder node= new StringBuilder(doc.getText());
 
         while(!doc.getArgs().isEmpty()){
-            System.out.println("node to string= "+node.toString());
             if(doc.getArgs().get(0).length()>4&&doc.getArgs().get(0).substring(0,5).equals("color")){
                 String colorvalue=doc.getArgs().get(0).substring(6);
                 node = new StringBuilder("\\textcolor{" + colorvalue + "}" + "{" + node + "}");
@@ -184,7 +181,6 @@ public class LateXDoc implements Visitor{
                 }
             }
         }
-        System.out.println("node to string= "+node);
         return node.toString();
     }
 }

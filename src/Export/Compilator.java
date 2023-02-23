@@ -239,11 +239,9 @@ public class Compilator implements Visitable{
         this.cursor();
         this.compiledfile=new ArrayList<>();
         while (!(Objects.equals(this.getToken(), openTag) || Objects.equals(this.getToken(), codeopen))&&pos<doc.length()-1 ) {
-            System.out.println("token ="+this.getToken());
-            System.out.println(pos);
             this.next();
         }
-        if (pos==doc.length()-2)
+        if (pos>=doc.length()-1)
             throw new LPCSyntaxException("Aucune balise detectée");
         this.cursor();
         return this.getToken();
@@ -379,6 +377,7 @@ public class Compilator implements Visitable{
             this.excape();
             retour.append(this.getToken());
         }
+        retour.append(".lpc");
         return retour.toString();
         }
 
@@ -424,10 +423,10 @@ public class Compilator implements Visitable{
         try {
             this.compile();
             v.visit(this.compiledfile);
-            System.out.println("j'ai finis");
+            JOptionPane.showMessageDialog(null,"Fichiers générés avec succés !");
         }
         catch (LPCSyntaxException e){
-            JOptionPane.showMessageDialog(null,e.getMessage());
+            JOptionPane.showMessageDialog(null,e.getMessage(),"Error",JOptionPane.ERROR_MESSAGE);
         }
     }
 }

@@ -122,7 +122,6 @@ public class CreateConfig extends JPanel {
                 buttonResult = choose.showOpenDialog(null);
                 if(buttonResult == JFileChooser.APPROVE_OPTION)
                     f = choose.getSelectedFile();
-                System.out.println("path=" +f.getPath());
                 resultdirectorypath=f.getPath();
             }
         });
@@ -255,10 +254,7 @@ public class CreateConfig extends JPanel {
         tag.add(htmltag);
         tag.add(defintag);
         tag.add(annuler1);
-
         this.reset();
-
-
         this.fenetre.getFrame().pack();
         this.fenetre.getFrame().repaint();
         this.fenetre.getFrame().revalidate();
