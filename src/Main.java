@@ -29,18 +29,23 @@ public class Main {
 *//*        new Compilator(
                         "<user> test <bd>   azerty    <bd/> <user/>").compile();*//*
 
-*//*        HashMap<String, Node> nodes = Node.getNodeRegistry();
+*/
+        /*HashMap<String, Node> nodes = Node.getNodeRegistry();
         Set<String> keys =  nodes.keySet();
         for (String s : keys){
             Node nd =  nodes.get(s);
             System.err.println(nd);
             System.out.printf("Name : %s Text : %s Style :%s%s", nd.getName(),nd.getText(),""*//**//*nd.getStyle()*//**//*,System.lineSeparator());
-        }*//*
+        }/**/
+
+        new Compilator("<dev> documentation dev <code> c'est du code <codeTest> un autre bout de code <codeAlone> apres l'autre code <codeTest> encore dans code <code/> fin dans dev <dev/>").compile();
+
+
         String ln=System.lineSeparator();
         System.out.println(ln+"Nombre de Nodes compris : "+Node.getNodeList().size());
 
         for (Node node : Node.getNodeList()) {
-            System.out.printf("%s  %S Nombre de Nodes contenus : %s%s",ln, node.getName(), node.getNodeContained().size()*//*nd.getStyle()*//*, ln);
+            System.out.printf("%s  %S Nombre de Nodes contenus : %s%s",ln, node.getName(), node.getNodeContained().size()/*nd.getStyle()*/, ln);
             for (Node node1:node.getNodeContained()){
                 if (node1 instanceof DocumentationNode) {
                     DocumentationNode doc=(DocumentationNode)node1;
@@ -52,10 +57,10 @@ public class Main {
                 }
 
             }
-        }*/
+        }
 
      //   Config.setMainInputFileName("tester.LPC");
-        Graphic.draw();
+      //  Graphic.draw();
 
     }
 }

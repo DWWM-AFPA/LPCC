@@ -1,10 +1,7 @@
 package Export;
 
 import java.io.*;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Objects;
+import java.util.*;
 
 public class Compilator {
     protected String openTag;
@@ -12,9 +9,9 @@ public class Compilator {
     protected int pos=0;
     public Node mainNode;
     //TODO Etudier le stack pour permettre d'imbriquer les nodes à la lecture
-    public Node containedNode;
-    public ArrayList<String> style;
-    public String text;
+    public Stack<Node> containedNode=new Stack<>();
+    public ArrayList<String> style=new ArrayList<>();
+    public ArrayList<String> text=new ArrayList<>();
     protected StringBuilder content=new StringBuilder();
     protected static ArrayList<String> tagListClose = new ArrayList<>(List.of("it/","bd/","ul/"));
     protected static ArrayList<String> tagList = new ArrayList<>(List.of("it","bd","ul"));
@@ -242,7 +239,7 @@ public class Compilator {
             return style();//new DocumentationNode();
         }
         //TODO check next ligne to create codeNodes
-        else if (!mainTag.equals("")&&!mainTag.equals(">")&& mainNode==null) {
+        else if (!mainTag.equals(">")&& mainNode==null) {
             // tagContent =mainTag;
             //TODO take the hashmap into account
             HashMap<String, Node> map= Node.getNodeRegistry();
@@ -253,20 +250,21 @@ public class Compilator {
             int save = this.getPos();
             return text();//new CodeNode();
             //si c'est un code, pas un style, et que ça n'est pas le tag principal
-        } else if (!mainTag.equals("")&&!mainTag.equals(this.getCloseTag())&&!tagListClose.contains(mainTag)&&mainNode!=null&&!tagList.contains(mainTag)&&!tagListClose.contains(mainTag)) {
+        } else if (!mainTag.equals(this.getCloseTag())&&!tagListClose.contains(mainTag)&&mainNode!=null&&!tagList.contains(mainTag)&&!tagListClose.contains(mainTag)) {
             //si on a pas de noeud imbriqué
             if (containedNode==null) {
                 HashMap<String, Node> map = Node.getNodeRegistry();
                 if (!Node.getNodeRegistry().containsKey(mainTag))
-                    containedNode = new CodeNode(mainTag);
+                    containedNode.add(new CodeNode(mainTag));
                 else
-                    containedNode = map.get(mainTag);
-                mainNode.add(containedNode);
+                    containedNode.add(map.get(mainTag));
+                //le dernier ajouté est toujours le dernier, donc stocke celui qu'on vient d'ajouter
+                mainNode.add(containedNode.get(containedNode.size()-1));
                 return text();
                 //si on a un noeud imbriqué
             } else {
                 //boolean ne fermant pas le NodeContenu
-                boolean closingOpenendTag =mainTag.contains((containedNode.getName()));
+                boolean closingOpenendTag =mainTag.contains((containedNode.get(containedNode.size()-1).getName()));
                 if (!closingOpenendTag) {
                     HashMap<String, Node> map = Node.getNodeRegistry();
                     CodeNode node;
@@ -308,14 +306,14 @@ public class Compilator {
             if (containedNode!=null){
                 //on doit ajouter le codeNode au code node et ajouter le texte aussi au bon endroit
                 //-------------------------------------
-                mainNode.add(new CodeNode("",text));
+                mainNode.add(new CodeNode("",text.get(text.size()-1)));
                 containedNode=null;
                 //-------------------------------------
 
             }
             mainNode=null;
             return mainTag();
-        }   else if (containedNode!=null && end.equals(this.containedNode.getName() + "/")) {
+        }   else if (containedNode!=null && end.equals(this.containedNode.get(containedNode.size()-1).getName() + "/")) {
             containedNode.add(new CodeNode("txt",content.toString()));
             containedNode=null;
             return mainTag();
@@ -339,7 +337,7 @@ public class Compilator {
         int savePos=this.getPos();
         String end = getTagIfOpentag();
         if (tagList.contains(end) || end.contains(";") || end.contains("#") )
-            this.style=end;
+            this.style.add(end);
         else
           this.reset(savePos);
 
@@ -375,10 +373,10 @@ public class Compilator {
         //TODO gérer les instances de code et doc nodes si important
        // System.out.println(this.mainNode instanceof CodeNode);
         if (containedNode!=null){
-            text=content.toString();
+            text.add(content.toString());
             return mainTag();
         }
-        mainNode.add(new DocumentationNode(content.toString(),style));
+        mainNode.add(new DocumentationNode(content.toString(),style.get(style.size()-1)));
         return mainTag();
     }
 
