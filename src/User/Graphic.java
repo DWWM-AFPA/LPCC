@@ -144,8 +144,6 @@ public class Graphic {
                     File file=choose.getSelectedFile();
                     if(file.isFile())
                         file= file.getParentFile();
-
-                    LPCFile.setInputDirectory(choose.getSelectedFile());
                 }
             }
         }

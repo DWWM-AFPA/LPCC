@@ -24,7 +24,12 @@ public class CompilatorTest {
     @Test
     void testCompilator(){
 
-        Compilator compTest = new Compilator("< code > Hello < test  > World <code/>");
+        Compilator compTest = new Compilator("<dev> ceci est du code : \" +\n" +
+                "                            \"<codeTest> code code code <codeTest/>\"+\n" +
+                "                        \"<dev/>\"+\n" +
+                "                \"<code> azerty <test> zob <code/>\" +\n" +
+                "                        \"<user> <bd> a <it>  He <bd/><it/> t <user/> \" +\n" +
+                "                \"<user> test <bd> azerty<bd/> <user/>");
         CodeNode nodeTest = (CodeNode) compTest.compile();
         assertEquals("Hello World code", nodeTest.getText() + " "+nodeTest.getName());
 

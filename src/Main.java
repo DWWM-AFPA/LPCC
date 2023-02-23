@@ -1,4 +1,5 @@
 import Export.*;
+import User.Graphic;
 
 import java.io.IOException;
 import java.util.HashMap;
@@ -14,31 +15,32 @@ public class Main {
         Config matt= new Config("matt",new File("matt","config"));
      //   matt.createConfig();
         matt.loadConfig();*/
-        new Compilator(
+     /*   new Compilator(
                 "<dev> ceci est du code : " +
                             "<codeTest> code code code <codeTest/>"+
                         "<dev/>"+
-                "<code> azerty <test> <code/>" +"<user> a <it> He <it/> t <user/> " +
+                "<code> azerty <test> zob <code/>" +
+                        "<user> <bd> a <it>  He <bd/><it/> t <user/> " +
                 "<user> test <bd> azerty<bd/> <user/>").compile();
-/*        new Compilator(
+*//*        new Compilator(
                           "<code> azerty " +
                                   "<test> " +
-                                  "<code/>" ).compile();*/
-/*        new Compilator(
-                        "<user> test <bd>   azerty    <bd/> <user/>").compile();*/
+                                  "<code/>" ).compile();*//*
+*//*        new Compilator(
+                        "<user> test <bd>   azerty    <bd/> <user/>").compile();*//*
 
-/*        HashMap<String, Node> nodes = Node.getNodeRegistry();
+*//*        HashMap<String, Node> nodes = Node.getNodeRegistry();
         Set<String> keys =  nodes.keySet();
         for (String s : keys){
             Node nd =  nodes.get(s);
             System.err.println(nd);
-            System.out.printf("Name : %s Text : %s Style :%s%s", nd.getName(),nd.getText(),""*//*nd.getStyle()*//*,System.lineSeparator());
-        }*/
+            System.out.printf("Name : %s Text : %s Style :%s%s", nd.getName(),nd.getText(),""*//**//*nd.getStyle()*//**//*,System.lineSeparator());
+        }*//*
         String ln=System.lineSeparator();
         System.out.println(ln+"Nombre de Nodes compris : "+Node.getNodeList().size());
 
         for (Node node : Node.getNodeList()) {
-            System.out.printf("%s  %S Nombre de Nodes contenus : %s%s",ln, node.getName(), node.getNodeContained().size()/*nd.getStyle()*/, ln);
+            System.out.printf("%s  %S Nombre de Nodes contenus : %s%s",ln, node.getName(), node.getNodeContained().size()*//*nd.getStyle()*//*, ln);
             for (Node node1:node.getNodeContained()){
                 if (node1 instanceof DocumentationNode) {
                     DocumentationNode doc=(DocumentationNode)node1;
@@ -50,10 +52,10 @@ public class Main {
                 }
 
             }
-        }
+        }*/
 
      //   Config.setMainInputFileName("tester.LPC");
-    //    Graphic.draw();
+        Graphic.draw();
 
     }
 }

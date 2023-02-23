@@ -1,5 +1,6 @@
 package Export;
 
+import java.io.*;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -10,8 +11,9 @@ public class Compilator {
     protected String closeTag;
     protected int pos=0;
     public Node mainNode;
+    //TODO Etudier le stack pour permettre d'imbriquer les nodes à la lecture
     public Node containedNode;
-    public String style;
+    public ArrayList<String> style;
     public String text;
     protected StringBuilder content=new StringBuilder();
     protected static ArrayList<String> tagListClose = new ArrayList<>(List.of("it/","bd/","ul/"));
@@ -92,15 +94,37 @@ public class Compilator {
 
     //debug
     public  boolean debug=false;
-    public  void debug(Boolean debug){
+    public  void debug(boolean debug){
         this.setDebug(debug);
+        if (debug) {
+            try {
+            File debugFile = new File((File)null,"debug.txt");
+                out=new FileOutputStream(debugFile);
+                in=new FileInputStream(debugFile);
+            } catch (Exception e) {
+                System.err.println("debugFile exception");
+            }
+        }
     }
-    public  void debug(/*String expr*/) {
+
+    public  void debug() {
         if (this.getDebug()) {
             String expr = Thread.currentThread().getStackTrace()[2].getMethodName();
             String ls = System.lineSeparator();
             String dash = "-".repeat(26);
-            System.err.printf("%s loc : %s %s token : %s    pos : %s %s remaining : %s%s%S",ls,expr,ls+dash+ls, getToken(),getPos(), ls+dash+ls,this.getDoc().substring(getPos()),ls+dash, ls);
+            String out = String.format("%s loc : %s %s token : %s    pos : %s %s remaining : %s%s%S",ls,expr,ls+dash+ls, getToken(),getPos(), ls+dash+ls,this.getDoc().substring(getPos()),ls+dash, ls);
+            try {
+          //      byte[] tableauDevant= in.readAllBytes();
+          //      byte[] tableauDerriere= out.getBytes();
+              //  byte[] tableauCombine= new byte[tableauDevant.length+tableauDerriere.length];
+
+             //   System.arraycopy(tableauDevant, 0, tableauCombine, 0, tableauDevant.length);
+             //   System.arraycopy(tableauDerriere, 0, tableauCombine, tableauDevant.length, tableauDerriere.length);
+
+                this.out.write(out.getBytes());
+            } catch (IOException ioe) {
+                System.err.println(out);
+            }
         }
     }
 
@@ -190,8 +214,10 @@ public class Compilator {
         return this.getToken();
     }
 
+    FileOutputStream out;
+    FileInputStream in;
     public Node compile () {
-        debug(false);
+        debug(true);
         debug();
         eraseTagSpaces();
         reset();
@@ -210,7 +236,6 @@ public class Compilator {
         }
         if (mainTag.equals("user")){
             mainNode =new DocumentationNode(mainTag);
-            System.out.println(mainNode);
             return style();//new DocumentationNode();
         } else if (mainTag.equals("dev")) {
             mainNode =new DocumentationNode(mainTag);
@@ -228,7 +253,7 @@ public class Compilator {
             int save = this.getPos();
             return text();//new CodeNode();
             //si c'est un code, pas un style, et que ça n'est pas le tag principal
-        } else if (!mainTag.equals("")&&!mainTag.equals(">")&&!tagListClose.contains(mainTag)&&mainNode!=null&&!tagList.contains(mainTag)&&!tagListClose.contains(mainTag)) {
+        } else if (!mainTag.equals("")&&!mainTag.equals(this.getCloseTag())&&!tagListClose.contains(mainTag)&&mainNode!=null&&!tagList.contains(mainTag)&&!tagListClose.contains(mainTag)) {
             //si on a pas de noeud imbriqué
             if (containedNode==null) {
                 HashMap<String, Node> map = Node.getNodeRegistry();
@@ -269,7 +294,7 @@ public class Compilator {
     }
 
     private Node mainTagEnd() {
-        debug();
+         debug();
         int savePos=this.getPos();
         String end = getTagIfOpentag();
         if (end.equals("user/")||end.equals("dev/")) {
@@ -280,6 +305,14 @@ public class Compilator {
         //TOOD replace this tagcontent with object.name ?
         else if (end.equals(this.mainNode.getName() + "/")) {
             System.out.println(end + "fin");
+            if (containedNode!=null){
+                //on doit ajouter le codeNode au code node et ajouter le texte aussi au bon endroit
+                //-------------------------------------
+                mainNode.add(new CodeNode("",text));
+                containedNode=null;
+                //-------------------------------------
+
+            }
             mainNode=null;
             return mainTag();
         }   else if (containedNode!=null && end.equals(this.containedNode.getName() + "/")) {
@@ -340,7 +373,7 @@ public class Compilator {
             next();
         }
         //TODO gérer les instances de code et doc nodes si important
-        System.out.println(this.mainNode instanceof CodeNode);
+       // System.out.println(this.mainNode instanceof CodeNode);
         if (containedNode!=null){
             text=content.toString();
             return mainTag();
