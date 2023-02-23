@@ -31,8 +31,7 @@ public class LateXDoc implements Visitor{
         StringBuilder retour= new StringBuilder();
         retour.append("\\begin{document}");
         for (DocumentationNode doc:n) {
-            System.out.println("et la ?");
-            doc.remove("user");
+            //doc.remove("user");
             String node;
             int titleindex=0;
             for (int i = 1; i < 6; i++) {
@@ -185,7 +184,7 @@ public class LateXDoc implements Visitor{
                 }
             }
         }
-        System.out.println("node to string= "+node.toString());
+        System.out.println("node to string= "+node);
         return node.toString();
     }
 }

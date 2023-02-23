@@ -18,6 +18,56 @@ public class Graphic {
 
     private  Config config;
 
+    private JFrame frame;
+
+    private CreateConfig create;
+
+    private JPanel panelcompile;
+
+    private ConfigSelection configsel;
+
+    private UpdatePanel updatePanel;
+
+    public UpdatePanel getUpdatePanel() {
+        return updatePanel;
+    }
+
+    public void setUpdatePanel(UpdatePanel updatePanel) {
+        this.updatePanel = updatePanel;
+    }
+
+    public void setCreate(CreateConfig create) {
+        this.create = create;
+    }
+
+    public ConfigSelection getConfigsel() {
+        return configsel;
+    }
+
+    public void setConfigsel(ConfigSelection configsel) {
+        this.configsel = configsel;
+    }
+
+    public JPanel getCreate() {
+        return create;
+    }
+
+
+    public JPanel getPanelcompile() {
+        return panelcompile;
+    }
+
+    public void setPanelcompile(JPanel panelcompile) {
+        this.panelcompile = panelcompile;
+    }
+
+    public JFrame getFrame() {
+        return frame;
+    }
+
+    public void setFrame(JFrame frame) {
+        this.frame = frame;
+    }
 
     public  Compilator getCompil() {
         return compil;
@@ -42,11 +92,9 @@ public class Graphic {
         config=null;
         JPanel panel=new JPanel();
         Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
-        JFrame frame = new JFrame("LPCC");
+        frame = new JFrame("LPCC");
         frame.setLocation(screenSize.width/2-frameWidth/2,screenSize.height/2-frameHeight/2);
-        frame.setSize(frameWidth,frameHeight);
-
-        JPanel panelcompile = new JPanel();
+        panelcompile = new JPanel();
 
         JTextArea path= new JTextArea(Paths.get("").toAbsolutePath().toString());
         panel.setBackground(Color.lightGray);
@@ -67,7 +115,6 @@ public class Graphic {
                     try {
                         config = new Config();
                         File destination=new File(config.getDestinationfolder());
-                        System.out.println("destination path "+destination.getPath());
                         LPCFile.setOutputDirectory(destination);
                         File target=LPCFile.getMainFile(config);
                         compil=new Compilator(target);
@@ -78,7 +125,8 @@ public class Graphic {
                 }
                 else{
                     try {
-                        config.setDestinationfolder(LPCFile.getInputDirectory().getPath());
+                        File destination=new File(config.getDestinationfolder());
+                        LPCFile.setOutputDirectory(destination);
                         File target=LPCFile.getMainFile(config);
                         compil = new Compilator(target);
                     } catch (FileException ex) {
@@ -130,26 +178,29 @@ public class Graphic {
         // Créer le menu
         menu = new JMenu("Menu");
         // Créer le sous menu
-        e2 = new ConfigSelection(this);
+        configsel = new ConfigSelection(this);
         // Créer les éléments du menu et sous menu
         e1 = new JMenuItem("Create Config");
-        CreateConfig create=new CreateConfig(this);
+        create=new CreateConfig(this);
 
         e1.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
                 panelcompile.setVisible(false);
                 create.setVisible(true);
+                frame.pack();
+                frame.revalidate();
+                frame.repaint();
             }
         });
         // Ajouter les éléments au menu
         menu.add(e1);
-        menu.add(e2);
+        menu.add(configsel);
         // Ajouter le menu au barre de menu
         menubar.add(menu);
         // Ajouter la barre de menu au frame
         frame.setJMenuBar(menubar);
-        //frame.setLayout(null);
+        frame.setLayout(new FlowLayout());
         path.setLocation(500,500);
         panelcompile.add(path);
         frame.setContentPane(panel);

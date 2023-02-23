@@ -234,14 +234,17 @@ public class Compilator implements Visitable{
         this.cursor();
         return this.getToken();
     }
-    protected String reset(){
+    protected String reset() throws LPCSyntaxException {
         this.pos=0;
         this.cursor();
         this.compiledfile=new ArrayList<>();
-        while (!(Objects.equals(this.getToken(), openTag) || Objects.equals(this.getToken(), codeopen)) ) {
+        while (!(Objects.equals(this.getToken(), openTag) || Objects.equals(this.getToken(), codeopen))&&pos<doc.length()-1 ) {
             System.out.println("token ="+this.getToken());
+            System.out.println(pos);
             this.next();
         }
+        if (pos==doc.length()-2)
+            throw new LPCSyntaxException("Aucune balise detectée");
         this.cursor();
         return this.getToken();
     }
@@ -424,8 +427,7 @@ public class Compilator implements Visitable{
             System.out.println("j'ai finis");
         }
         catch (LPCSyntaxException e){
-            JOptionPane error=new JOptionPane(e.getMessage());
-            error.setVisible(true);
+            JOptionPane.showMessageDialog(null,e.getMessage());
         }
     }
 }
