@@ -28,101 +28,19 @@ public class LateXDoc implements Visitor{
     }
 
     public void user(ArrayList<DocumentationNode> n) throws LPCSyntaxException {
-        StringBuilder retour= new StringBuilder();
-        retour.append("\\begin{document}");
-        for (DocumentationNode doc:n) {
-            //doc.remove("user");
-            String node;
-            int titleindex=0;
-            for (int i = 1; i < 6; i++) {
-                if(doc.getArgs().contains("title"+i)) {
-                    if(titleindex == 0)
-                        titleindex = i;
-                    else
-                        throw new LPCSyntaxException("Un titre doit être d'un seul type");
-                }
-            }
-            System.out.println("title ibndex="+titleindex);
-            switch (titleindex){
-                case 0: node=this.nodeTosring(doc);
-                        break;
-                case 1: doc.remove("title1");
-                        node=this.nodeTosring(doc);
-                        node="\\part{"+node+"}";
-                        break;
-                case 2:doc.remove("title2");
-                        node=this.nodeTosring(doc);
-                        node="\\chapter{"+node+"}";
-                        break;
-                case 3:doc.remove("title3");
-                        node=this.nodeTosring(doc);
-                        node="\\section{"+node+"}";
-                        break;
-                case 4:doc.remove("title4");
-                        node=this.nodeTosring(doc);
-                        node="\\subsection{"+node+"}";
-                        break;
-                case 5:doc.remove("title5");
-                        node=this.nodeTosring(doc);
-                        node="\\subsubsection{"+node+"}";
-                        break;
-                default:return;
-            }
-            retour.append(node);
-            }
-        retour.append("\\end{document}");
         try {
-            LPCFile.create(LPCFile.getOutputDirectory(),"Userdoc","tex",retour.toString());
+            LPCFile.create(LPCFile.getOutputDirectory(),"TestUserdoc","tex",nodeinterpret(n));
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
     }
 
     public void dev(ArrayList<DocumentationNode> n) throws LPCSyntaxException {
-        StringBuilder retour= new StringBuilder();
-        retour.append("\\begin{document}");
-        for (DocumentationNode doc:n) {
-            System.out.println("est ce que je passe ici ?");
+        for (DocumentationNode doc: n) {
             doc.remove("dev");
-            String node;
-            int titleindex=0;
-            for (int i = 1; i < 6; i++) {
-                if(doc.getArgs().contains("title"+i))
-                    if(titleindex==0)
-                        titleindex = i;
-                    else
-                        throw new LPCSyntaxException("Un titre doit être d'un seul type");
-            }
-            switch (titleindex){
-                case 0: node=this.nodeTosring(doc);
-                    break;
-                case 1: doc.remove("title1");
-                    node=this.nodeTosring(doc);
-                    node="\\part{"+node+"}";
-                    break;
-                case 2:doc.remove("title2");
-                    node=this.nodeTosring(doc);
-                    node="\\chapter{"+node+"}";
-                    break;
-                case 3:doc.remove("title3");
-                    node=this.nodeTosring(doc);
-                    node="\\section{"+node+"}";
-                    break;
-                case 4:doc.remove("title4");
-                    node=this.nodeTosring(doc);
-                    node="\\subsection{"+node+"}";
-                    break;
-                case 5:doc.remove("title5");
-                    node=this.nodeTosring(doc);
-                    node="\\subsubsection{"+node+"}";
-                    break;
-                default:return;
-            }
-            retour.insert(0, node);
         }
-        retour.append("\\end{document}");
         try {
-            LPCFile.create(LPCFile.getOutputDirectory(),"Devdoc","tex",retour.toString());
+            LPCFile.create(LPCFile.getOutputDirectory(),"Devdoc","tex",nodeinterpret(n));
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
@@ -135,6 +53,7 @@ public class LateXDoc implements Visitor{
 
         for (Node n: compilation) {
             if(n instanceof DocumentationNode){
+                n.setText(n.getText().replaceAll("\n","\\\\newline    "));
                 if(((DocumentationNode) n).getArgs().contains("dev")){
                     dev.add((DocumentationNode) n);
                 }
@@ -143,7 +62,6 @@ public class LateXDoc implements Visitor{
                 }
             }
         }
-        System.out.println("user length= "+user.size());
         try {
             this.user(user);
         } catch (LPCSyntaxException e) {
@@ -183,4 +101,90 @@ public class LateXDoc implements Visitor{
         }
         return node.toString();
     }
+
+    private String nodeinterpret(ArrayList<DocumentationNode> n) throws LPCSyntaxException {
+        StringBuilder retour= new StringBuilder();
+        retour.append("\\begin{document}");
+        for (int j=0;j<n.size();j++) {
+            DocumentationNode doc=n.get(j);
+            String node="";
+            int titleindex=0;
+            for (int i = 1; i < 6; i++) {
+                if(doc.getArgs().contains("title"+i)) {
+                    if (titleindex == 0)
+                            titleindex = i;
+                    else
+                        throw new LPCSyntaxException("Un titre doit être d'un seul type");
+                }
+            }
+            System.out.println("titleindex=" +titleindex);
+            switch (titleindex){
+                case 0: node=this.nodeTosring(doc);
+                    break;
+                case 1: doc.remove("title1");
+                    System.out.println("Je passe bien par titre 1");
+                    node=this.nodeTosring(doc);
+                    node="\\part{"+node;
+                    System.out.println("next node contain title1"+n.get(j+1).getArgs().contains("title1"));
+                    while (j<n.size()&&n.get(j+1).getArgs().contains("title1")) {
+                        System.out.println("je passe par le while "+node);
+                        n.get(j+1).remove("title1");
+                        node = node + nodeTosring(n.get(j+1));
+                        if(j+1<n.size())
+                            j++;
+                        else
+                            node=node+"}";
+                    }
+                    node=node+"}";
+                    break;
+                case 2:doc.remove("title2");
+                    node=this.nodeTosring(doc);
+                    node="\\chapter{"+node;
+                    while (j<n.size()&&n.get(j+1).getArgs().contains("title2")) {
+                        n.get(j+1).remove("title2");
+                        node = node + nodeTosring(n.get(j+1));
+                        j++;
+                    }
+                    node=node+"}";
+                    break;
+                case 3:doc.remove("title3");
+                    node=this.nodeTosring(doc);
+                    node="\\section{"+node;
+                    while (j<n.size()&&n.get(j+1).getArgs().contains("title3")) {
+                        n.get(j+1).remove("title3");
+                        node = node + nodeTosring(n.get(j+1));
+                        j++;
+                    }
+                    node=node+"}";
+                    break;
+                case 4:doc.remove("title4");
+                    node=this.nodeTosring(doc);
+                    node="\\subsection{"+node;
+                    while (j<n.size()&&n.get(j+1).getArgs().contains("title4")) {
+                        n.get(j+1).remove("title4");
+                        node = node + nodeTosring(n.get(j+1));
+                        j++;
+                    }
+                    node=node+"}";
+                    break;
+                case 5:doc.remove("title5");
+                    node=this.nodeTosring(doc);
+                    node="\\subsubsection{"+node;
+                    while (j<n.size()&&n.get(j+1).getArgs().contains("title5")) {
+                        n.get(j+1).remove("title5");
+                        node = node + nodeTosring(n.get(j+1));
+                        j++;
+                    }
+                    node=node+"}";
+                    break;
+                default:break;
+            }
+            retour.append(node);
+        }
+
+        retour.append("\\end{document}");
+        System.out.println("retour="+retour);
+        return retour.toString();
+    }
+
 }

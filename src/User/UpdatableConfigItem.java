@@ -20,7 +20,10 @@ public class UpdatableConfigItem extends JMenuItem {
                 fenetre.getUpdatePanel().setConfig(configname);
                 fenetre.getUpdatePanel().setVisible(true);
                 fenetre.getCreate().setVisible(false);
-
+                fenetre.getPanelcompile().setVisible(false);
+                fenetre.getFrame().repaint();
+                fenetre.getFrame().revalidate();
+                fenetre.getFrame().pack();
             }
         });
 

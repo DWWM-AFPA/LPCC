@@ -11,7 +11,7 @@ public class ConfigUpdate extends JMenu {
     public ConfigUpdate(Graphic fenetre){
         super();
         this.fenetre=fenetre;
-        this.setText("Load Config");
+        this.setText("Update Config");
         readconfignames();
     }
 
@@ -27,7 +27,7 @@ public class ConfigUpdate extends JMenu {
         this.removeAll();
         for (File s : LPCFile.getConfigDirectory().listFiles()) {
             String fullname=s.getName();
-            if(s.equals("default.config"))
+            if(!fullname.equals("default.config"))
                 this.add(new UpdatableConfigItem(this.fenetre,fullname.substring(0,fullname.length()-7)));
         }
     }

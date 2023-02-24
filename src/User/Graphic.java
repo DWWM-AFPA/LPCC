@@ -28,6 +28,19 @@ public class Graphic {
 
     private UpdatePanel updatePanel;
 
+    private ConfigUpdate configUpdate;
+
+    //getters and setters
+
+
+    public ConfigUpdate getConfigUpdate() {
+        return configUpdate;
+    }
+
+    public void setConfigUpdate(ConfigUpdate configUpdate) {
+        this.configUpdate = configUpdate;
+    }
+
     public UpdatePanel getUpdatePanel() {
         return updatePanel;
     }
@@ -95,6 +108,7 @@ public class Graphic {
         frame = new JFrame("LPCC");
         frame.setLocation(screenSize.width/2-frameWidth/2,screenSize.height/2-frameHeight/2);
         panelcompile = new JPanel();
+        updatePanel=new UpdatePanel(this);
 
         JTextArea path= new JTextArea(Paths.get("").toAbsolutePath().toString());
         panel.setBackground(Color.lightGray);
@@ -173,12 +187,13 @@ public class Graphic {
             }
         });
         JMenu menu;
-        JMenuItem e1,e2;
+        JMenuItem e1;
         JMenuBar menubar = new JMenuBar();
         // Créer le menu
         menu = new JMenu("Menu");
-        // Créer le sous menu
+        // Créer les sous menu
         configsel = new ConfigSelection(this);
+        configUpdate=new ConfigUpdate(this);
         // Créer les éléments du menu et sous menu
         e1 = new JMenuItem("Create Config");
         create=new CreateConfig(this);
@@ -196,6 +211,7 @@ public class Graphic {
         // Ajouter les éléments au menu
         menu.add(e1);
         menu.add(configsel);
+        menu.add(configUpdate);
         // Ajouter le menu au barre de menu
         menubar.add(menu);
         // Ajouter la barre de menu au frame
@@ -205,6 +221,7 @@ public class Graphic {
         panelcompile.add(path);
         frame.setContentPane(panel);
         panel.add(panelcompile);
+        panel.add(updatePanel);
         panel.add(create);
         panelcompile.add(choose);
         panelcompile.add(exportCode);

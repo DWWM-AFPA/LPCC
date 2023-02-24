@@ -1,9 +1,9 @@
 package User;
 
 import Util.Config;
-import Util.LPCFile;
 
 import javax.swing.*;
+import javax.swing.table.TableColumn;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.File;
@@ -25,17 +25,11 @@ public class UpdatePanel extends JPanel {
 
     private JButton addtag;
 
-    private JButton validconfig;
+    private JButton validirectory;
 
     private JButton defintag;
 
     private JLabel infos;
-
-    private JTextField lpctag;
-
-    private JTextField htmltag;
-
-    private JTextField latextag;
 
     private JTextField nomconfig;
 
@@ -43,39 +37,56 @@ public class UpdatePanel extends JPanel {
 
     private JTextField newpath;
 
-    private JLabel lpc;
-
-    private JLabel html;
-
-    private JLabel latex;
-
     private JPanel name;
 
     private JPanel tag;
 
-    private JButton saveconfig;
+    private JButton validmain;
 
     private String entrypoint;
 
-    private JLabel main;
+    private JTextField main;
 
-    private JLabel nom;
+    private JTextField newmain;
+
+    private JTable tagdisplayer;
+
+    private String newmainname;
+    private JLabel mainlabel;
+
+    private JLabel newmainlabel;
 
     private JButton annuler;
 
     private JButton annuler1;
 
+    private JButton annuler2;
+
+    private JButton goback;
+
+    private JButton goback1;
+
     private Hashtable<Integer,Integer> filepos;
 
+    private JPanel pathdealer;
+
+    private JPanel maindealer;
+
+    private JPanel tagdealer;
+
+    //builder
     public UpdatePanel(Graphic fenetre){
         //on initialise
         this.fenetre=fenetre;
         latextags=new Hashtable<>();
         htmltags=new Hashtable<>();
+        pathdealer=new JPanel();
+        maindealer=new JPanel();
+        tagdealer=new JPanel();
 
-        //on cree les elements graphiques
+        //on cree les elements graphiques de pathdealer
 
-        actualpath=new JTextField(config.getDestinationfolder());
+        actualpath=new JTextField(10);
         actualpath.setVisible(true);
         actualpath.setEditable(false);
         actualpath.setRequestFocusEnabled(false);
@@ -94,8 +105,10 @@ public class UpdatePanel extends JPanel {
                     f = choose.getSelectedFile();
                 System.out.println("path=" +f.getPath());
                 newpath.setText(f.getPath());
-                newpath.revalidate();
-                newpath.repaint();
+                newpath.setColumns(newpath.getText().length());
+                revalidate();
+                repaint();
+                fenetre.getFrame().pack();
             }
         });
 
@@ -104,10 +117,104 @@ public class UpdatePanel extends JPanel {
         newpath.setRequestFocusEnabled(false);
         newpath.setVisible(true);
 
-        validconfig=new JButton("Valider");
+        validirectory =new JButton("Valider changement directorie");
+        validirectory.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                if(!newpath.getText().isEmpty()) {
+                    newdirectorypath = newpath.getText();
+                }
+                pathdealer.setVisible(false);
+                maindealer.setVisible(true);
+                fenetre.getFrame().pack();
+            }
+        });
+        validirectory.setVisible(true);
+
+        annuler=new JButton("Annuler");
+        annuler.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                setVisible(false);
+                fenetre.getPanelcompile().setVisible(true);
+                reset();
+                fenetre.getFrame().revalidate();
+                fenetre.getFrame().repaint();
+                fenetre.getFrame().pack();
+            }
+        });
+
+        //on cree les élements de maindealer
+
+        mainlabel=new JLabel("Old entry point name");
+
+        main=new JTextField();
+        main.setEditable(false);
+        main.setRequestFocusEnabled(false);
+
+        newmainlabel=new JLabel("New entry point name");
+
+        newmain=new JTextField(10);
+
+
+        validmain=new JButton("Valider changement");
+        validmain.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                if(!newmain.getText().isEmpty())
+                    newmainname=newmain.getText();
+                maindealer.setVisible(false);
+                tagdealer.setVisible(true);
+            }
+        });
+
+        annuler1=new JButton("Annuler");
+        annuler1.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                reset();
+                fenetre.getUpdatePanel().setVisible(false);
+                fenetre.getPanelcompile().setVisible(true);
+                fenetre.getFrame().pack();
+                fenetre.getFrame().revalidate();
+                fenetre.getFrame().repaint();
+            }
+        });
+
+        goback=new JButton("Etape precedente");
+        goback.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                pathdealer.setVisible(true);
+                maindealer.setVisible(false);
+            }
+        });
+
+        //on construit tag dealer
+
+        tagdisplayer=new JTable(new String[3][] ,new String[] {"lpctag","latextag","htmltag"});
+        tagdisplayer.addColumn(new TableColumn());
+
+
+        maindealer.add(mainlabel);
+        maindealer.add(main);
+        maindealer.add(newmainlabel);
+        maindealer.add(newmain);
+        maindealer.add(validmain);
+        maindealer.add(goback);
+        maindealer.add(annuler1);
+        maindealer.setVisible(false);
 
 
 
+        pathdealer.add(actualpath);
+        pathdealer.add(changresultdirectorypath);
+        pathdealer.add(newpath);
+        pathdealer.add(validirectory);
+        pathdealer.add(annuler);
+        this.add(pathdealer);
+        this.add(maindealer);
+        this.setVisible(false);
     }
 
 
@@ -117,10 +224,115 @@ public class UpdatePanel extends JPanel {
     //getters et setters
 
 
+
     public void setConfig(String config) {
         this.config = new Config(config);
+        main.setText(this.config.getMainInputFileName().replace(".lpc",""));
+        main.setColumns(main.getText().length());
+        main.repaint();
+        main.revalidate();
+        actualpath.setText(this.config.getDestinationfolder());
+        actualpath.setColumns(actualpath.getText().length());
+        actualpath.revalidate();
+        actualpath.repaint();
     }
 
+
+    public Config getConfig() {
+        return config;
+    }
+
+    public void setConfig(Config config) {
+        this.config = config;
+    }
+
+    public Graphic getFenetre() {
+        return fenetre;
+    }
+
+    public void setFenetre(Graphic fenetre) {
+        this.fenetre = fenetre;
+    }
+
+    public JTextField getNewpath() {
+        return newpath;
+    }
+
+    public void setNewpath(JTextField newpath) {
+        this.newpath = newpath;
+    }
+
+    public JTextField getMain() {
+        return main;
+    }
+
+    public void setMain(JTextField main) {
+        this.main = main;
+    }
+
+    public JTextField getNewmain() {
+        return newmain;
+    }
+
+    public void setNewmain(JTextField newmain) {
+        this.newmain = newmain;
+    }
+
+    public JButton getAnnuler2() {
+        return annuler2;
+    }
+
+    public void setAnnuler2(JButton annuler2) {
+        this.annuler2 = annuler2;
+    }
+
+    public JButton getGoback() {
+        return goback;
+    }
+
+    public void setGoback(JButton goback) {
+        this.goback = goback;
+    }
+
+    public JButton getGoback1() {
+        return goback1;
+    }
+
+    public void setGoback1(JButton goback1) {
+        this.goback1 = goback1;
+    }
+
+    public Hashtable<Integer, Integer> getFilepos() {
+        return filepos;
+    }
+
+    public void setFilepos(Hashtable<Integer, Integer> filepos) {
+        this.filepos = filepos;
+    }
+
+    public JPanel getPathdealer() {
+        return pathdealer;
+    }
+
+    public void setPathdealer(JPanel pathdealer) {
+        this.pathdealer = pathdealer;
+    }
+
+    public JPanel getMaindealer() {
+        return maindealer;
+    }
+
+    public void setMaindealer(JPanel maindealer) {
+        this.maindealer = maindealer;
+    }
+
+    public JPanel getTagdealer() {
+        return tagdealer;
+    }
+
+    public void setTagdealer(JPanel tagdealer) {
+        this.tagdealer = tagdealer;
+    }
 
     public Hashtable<String, String> getLatextags() {
         return latextags;
@@ -162,12 +374,12 @@ public class UpdatePanel extends JPanel {
         this.addtag = addtag;
     }
 
-    public JButton getValidconfig() {
-        return validconfig;
+    public JButton getValidirectory() {
+        return validirectory;
     }
 
-    public void setValidconfig(JButton validconfig) {
-        this.validconfig = validconfig;
+    public void setValidirectory(JButton validirectory) {
+        this.validirectory = validirectory;
     }
 
     public JButton getDefintag() {
@@ -186,30 +398,6 @@ public class UpdatePanel extends JPanel {
         this.infos = infos;
     }
 
-    public JTextField getLpctag() {
-        return lpctag;
-    }
-
-    public void setLpctag(JTextField lpctag) {
-        this.lpctag = lpctag;
-    }
-
-    public JTextField getHtmltag() {
-        return htmltag;
-    }
-
-    public void setHtmltag(JTextField htmltag) {
-        this.htmltag = htmltag;
-    }
-
-    public JTextField getLatextag() {
-        return latextag;
-    }
-
-    public void setLatextag(JTextField latextag) {
-        this.latextag = latextag;
-    }
-
     public JTextField getNomconfig() {
         return nomconfig;
     }
@@ -226,32 +414,6 @@ public class UpdatePanel extends JPanel {
         this.actualpath = actualpath;
     }
 
-    public JLabel getLpc() {
-        return lpc;
-    }
-
-    public void setLpc(JLabel lpc) {
-        this.lpc = lpc;
-    }
-
-    public JLabel getHtml() {
-        return html;
-    }
-
-    public void setHtml(JLabel html) {
-        this.html = html;
-    }
-
-    public JLabel getLatex() {
-        return latex;
-    }
-
-    public void setLatex(JLabel latex) {
-        this.latex = latex;
-    }
-
-
-
     public void setName(JPanel name) {
         this.name = name;
     }
@@ -264,12 +426,12 @@ public class UpdatePanel extends JPanel {
         this.tag = tag;
     }
 
-    public JButton getSaveconfig() {
-        return saveconfig;
+    public JButton getValidmain() {
+        return validmain;
     }
 
-    public void setSaveconfig(JButton saveconfig) {
-        this.saveconfig = saveconfig;
+    public void setValidmain(JButton validmain) {
+        this.validmain = validmain;
     }
 
     public String getEntrypoint() {
@@ -280,20 +442,12 @@ public class UpdatePanel extends JPanel {
         this.entrypoint = entrypoint;
     }
 
-    public JLabel getMain() {
-        return main;
+    public JLabel getMainlabel() {
+        return mainlabel;
     }
 
-    public void setMain(JLabel main) {
-        this.main = main;
-    }
-
-    public JLabel getNom() {
-        return nom;
-    }
-
-    public void setNom(JLabel nom) {
-        this.nom = nom;
+    public void setMainlabel(JLabel mainlabel) {
+        this.mainlabel = mainlabel;
     }
 
     public JButton getAnnuler() {
@@ -311,4 +465,15 @@ public class UpdatePanel extends JPanel {
     public void setAnnuler1(JButton annuler1) {
         this.annuler1 = annuler1;
     }
+
+    //methodes
+
+    private void reset(){
+        this.newpath.setText("");
+        this.newmain.setText("");
+        this.pathdealer.setVisible(true);
+        this.maindealer.setVisible(false);
+        this.tagdealer.setVisible(false);
+    }
+
 }
