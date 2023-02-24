@@ -37,16 +37,17 @@ public class Main {
             System.err.println(nd);
             System.out.printf("Name : %s Text : %s Style :%s%s", nd.getName(),nd.getText(),""*//**//*nd.getStyle()*//**//*,System.lineSeparator());
         }/**/
-        new Compilator("<dev> <title1><it>documentation  titre 1 <it/><title1/> text dev <code> c'est du code <codeTest> un autre bout de code <codeAlone> apres l'autre code <codeTest/> encore dans code <code/> fin dans dev <dev/><codeAlone>le code de codeAlone<codeAlone/>").compile();
+        new Compilator("<dev> <title1><it>documentation  titre 1 <it/><title1/> text dev <code> c'est du code <codeTest> un autre bout de code <codeAlone> apres l'autre code <codeTest/> encore dans code <code/> fin dans dev <dev/><codeAlone>le code de codeAlone<codeAlone/>"+"<user > documentation Utilisateur<user/>").compile();
 
        // new Compilator("<user> documentation dev <code> c'est du code <codeTest> un autre bout de code <codeAlone> apres l'autre code <codeTest/> encore dans code <code/> fin dans dev <user/><codeAlone>le code de codeAlone<codeAlone/>").compile();
 
-
-        String ln=System.lineSeparator();
+    HTMLExportVisitor exportVisitor = new HTMLExportVisitor();
+        System.out.println(exportVisitor.export(Node.getNodeList()));
+ /*       String ln=System.lineSeparator();
         System.out.println(ln+"Nombre de Nodes compris : "+Node.getNodeList().size());
 
         for (Node node : Node.getNodeList()) {
-            System.out.printf("%s  %S Nombre de Nodes contenus : %s%s",ln, node.getName(), node.getNodeContained().size()/*nd.getStyle()*/, ln);
+            System.out.printf("%s  %S Nombre de Nodes contenus : %s%s",ln, node.getName(), node.getNodeContained().size()*//*nd.getStyle()*//*, ln);
             for (Node node1:node.getNodeContained()){
                 if (node1 instanceof DocumentationNode) {
                     DocumentationNode doc=(DocumentationNode)node1;
@@ -58,7 +59,7 @@ public class Main {
                 }
 
             }
-        }
+        }*/
 
      //   Config.setMainInputFileName("tester.LPC");
       //  Graphic.draw();

@@ -304,11 +304,9 @@ public class Compilator {
                 }
                 return mainTagEnd();
             } else if (!endOfString()) {
-                System.out.println("MainTag continue !!!!!!!!!!!!");
                 this.reset(savePos);
                 return mainTagEnd();
             } else if (endOfString()) {
-                System.out.println("MainTag stop !!!!!!!!!!!!");
                 return null;
             } else
                 System.err.println("il y a vraiment un soucis dans la méthode mainTag");
@@ -338,7 +336,7 @@ public class Compilator {
                         //on doit ajouter le codeNode au code node et ajouter le texte aussi au bon endroit
                         containedStackNode.pop();
                     } else {
-                        System.err.println("MainTagEnd Error");
+                        System.err.println("MainTagEnd Error ??");
 
                     }
                     mainNode = null;
@@ -399,10 +397,11 @@ public class Compilator {
         }
         //TODO gérer les instances de code et doc nodes en fonction de la pile de node
        // System.out.println(this.mainNode instanceof CodeNode);
-        if (!containedStackNode.empty()){
-            containedStackNode.peek().add(new DocumentationNode(content.toString(),style));
-        } else
-            mainNode.add(new DocumentationNode(content.toString(),style));
+        if (style!=null&&!content.toString().equals(""))
+            if (!containedStackNode.empty()){
+                containedStackNode.peek().add(new DocumentationNode(content.toString(),style));
+            } else
+                mainNode.add(new DocumentationNode(content.toString(),style));
 
         return styleEnd();
     }

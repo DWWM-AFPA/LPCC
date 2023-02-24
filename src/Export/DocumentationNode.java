@@ -8,6 +8,7 @@ public class DocumentationNode extends Node{
     ArrayList<String> style;
 
     public DocumentationNode(String text,ArrayList<String> style){
+
         this.setText(text);
         this.cloneStyle(style);
     }
@@ -28,7 +29,6 @@ public class DocumentationNode extends Node{
     public ArrayList<String> cloneStyle(ArrayList<String> style) {
         if (style==null)
             return null;
-        System.err.println(style);
         return this.setStyle((ArrayList<String>) style.clone());
     }
 
@@ -46,7 +46,9 @@ public class DocumentationNode extends Node{
     }*/
 
 
-
+    public String accept(Visitor visitor) {
+        return visitor.visitDocumentation(this);
+    }
 
 
 }

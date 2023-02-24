@@ -6,23 +6,23 @@ import java.util.HashMap;
 public abstract class Node {
     protected String name;
     protected String text;
-    protected static ArrayList<Node> nodeList= new ArrayList<>();
-    protected static HashMap<String,Node> nodeRegistry = new HashMap<>();
+    protected static ArrayList<Node> nodeList = new ArrayList<>();
+    protected static HashMap<String, Node> nodeRegistry = new HashMap<>();
 
     protected ArrayList<Node> nodeContained;
 
 
     //builder
-    public Node(){
+    public Node() {
         this.setText("");
     }
 
-    public Node(String name){
+    public Node(String name) {
         nodeList.add(this);
         this.setName(name);
-        if (!name.equals("user")&&!name.equals("dev"))
-            Node.nodeRegistry.put(name,this);
-        nodeContained=new ArrayList<>();
+        if (!name.equals("user") && !name.equals("dev"))
+            Node.nodeRegistry.put(name, this);
+        nodeContained = new ArrayList<>();
         //TODO this.setText("");
     }
     //getters
@@ -71,9 +71,9 @@ public abstract class Node {
         Node.nodeList = nodeList;
     }
 
-    public void add(Node node){
-    nodeContained.add(node);
- }
+    public void add(Node node) {
+        nodeContained.add(node);
+    }
 
 /*    public static void getAllNodes(){
         for(Node name:nodeList) {
@@ -92,6 +92,35 @@ public abstract class Node {
         }
     }*/
 
+    public String accept(Visitor visitor) {
+        return null;
+    }
+
+
+    @Override
+    public String toString() {
+        if (this.getName() != null&&this.getNodeContained()!=null)
+            return "Node name='" + name.toUpperCase() + '\'' +
+                    ", nodeContained=\n  " + nodeContained +
+                    '}';
+        else if (this instanceof DocumentationNode&&this.nodeContained!=null) {
+            return "{" +
+                    "text='" + text + '\'' +
+                    ", nodeContained=\n" + nodeContained +
+                    '}';}
+        else if (this instanceof DocumentationNode) {
+            return "{" +
+                    "text='" + text + "style ="+
+                    ((DocumentationNode) this).getStyle()+
+                    '}';
+        }else if (this instanceof CodeNode) {
+            return "\n  {" +
+                    "code='" + text + '\'' +
+                    ", nodeContained=\n     " + nodeContained +
+                    '}';
+        }
+     return null;
+    }
 }
 
 

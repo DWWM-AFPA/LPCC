@@ -40,5 +40,8 @@ public class CodeNode extends Node {
         NodeContained = nodeContained;
     }*/
 
-
+    @Override
+    public String accept(Visitor visitor) {
+        return visitor.visitCode(this);
+    }
 }
