@@ -1,13 +1,17 @@
 package User;
 
 import Util.Config;
+import Util.LPCFile;
 
 import javax.swing.*;
 import javax.swing.table.TableColumn;
+import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.io.File;
+import java.io.*;
+import java.util.Enumeration;
 import java.util.Hashtable;
+import java.util.Scanner;
 
 public class UpdatePanel extends JPanel {
 
@@ -23,8 +27,6 @@ public class UpdatePanel extends JPanel {
 
     private JButton changresultdirectorypath;
 
-    private JButton addtag;
-
     private JButton validirectory;
 
     private JButton defintag;
@@ -32,6 +34,7 @@ public class UpdatePanel extends JPanel {
     private JLabel infos;
 
     private JTextField nomconfig;
+
 
     private JTextField actualpath;
 
@@ -49,8 +52,11 @@ public class UpdatePanel extends JPanel {
 
     private JTextField newmain;
 
+    private static final String[] columns={"BaliseLPC","BaliseLaTeX","BaliseHTML"};
+
     private JTable tagdisplayer;
 
+    private Object[][] data;
     private String newmainname;
     private JLabel mainlabel;
 
@@ -73,6 +79,8 @@ public class UpdatePanel extends JPanel {
     private JPanel maindealer;
 
     private JPanel tagdealer;
+
+    private JScrollPane pane;
 
     //builder
     public UpdatePanel(Graphic fenetre){
@@ -103,9 +111,10 @@ public class UpdatePanel extends JPanel {
                 buttonResult = choose.showOpenDialog(null);
                 if(buttonResult == JFileChooser.APPROVE_OPTION)
                     f = choose.getSelectedFile();
-                System.out.println("path=" +f.getPath());
-                newpath.setText(f.getPath());
-                newpath.setColumns(newpath.getText().length());
+                if(f!=null) {
+                    newpath.setText(f.getPath());
+                    newpath.setColumns(newpath.getText().length());
+                }
                 revalidate();
                 repaint();
                 fenetre.getFrame().pack();
@@ -117,12 +126,15 @@ public class UpdatePanel extends JPanel {
         newpath.setRequestFocusEnabled(false);
         newpath.setVisible(true);
 
-        validirectory =new JButton("Valider changement directorie");
+        validirectory =new JButton("Etape Suivante");
         validirectory.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
                 if(!newpath.getText().isEmpty()) {
                     newdirectorypath = newpath.getText();
+                }
+                else {
+                    newdirectorypath=config.getDestinationfolder();
                 }
                 pathdealer.setVisible(false);
                 maindealer.setVisible(true);
@@ -157,14 +169,19 @@ public class UpdatePanel extends JPanel {
         newmain=new JTextField(10);
 
 
-        validmain=new JButton("Valider changement");
+        validmain=new JButton("Etape suivante");
         validmain.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
                 if(!newmain.getText().isEmpty())
                     newmainname=newmain.getText();
+                else
+                    newmainname=config.getMainInputFileName().replace(".lpc","");
                 maindealer.setVisible(false);
+                fillinitialtables();
+                updatedata();
                 tagdealer.setVisible(true);
+                fenetre.getFrame().pack();
             }
         });
 
@@ -191,9 +208,63 @@ public class UpdatePanel extends JPanel {
         });
 
         //on construit tag dealer
+        tagdealer=new JPanel(new BorderLayout());
+        JPanel buttoncontainer=new JPanel();
 
-        tagdisplayer=new JTable(new String[3][] ,new String[] {"lpctag","latextag","htmltag"});
-        tagdisplayer.addColumn(new TableColumn());
+        tagdealer.setVisible(false);
+
+        tagdisplayer=new JTable();
+        pane=new JScrollPane(tagdisplayer);
+
+
+        defintag=new JButton("Valider modification config");
+        defintag.addActionListener(e -> {
+             Hashtable<String,String> newlatextags=new Hashtable<>();
+             Hashtable<String,String> newhtmltags=new Hashtable<>();
+             for (int i = 0; i < tagdisplayer.getRowCount(); i++) {
+                newlatextags.put((String) tagdisplayer.getValueAt(i,0), (String) tagdisplayer.getValueAt(i,1));
+                newhtmltags.put((String) tagdisplayer.getValueAt(i,0), (String) tagdisplayer.getValueAt(i,2));
+             }
+            StringBuffer content=new StringBuffer();
+             content.append(newmainname);
+             content.append('\n');
+             content.append(newdirectorypath);
+             content.append('\n');
+            for (String s :newlatextags.keySet()) {
+                content.append(s).append(";").append(newlatextags.get(s)).append(";").append(newhtmltags.get(s));
+                content.append('\n');
+            }
+            DataOutputStream outstream=null;
+            try {
+                outstream= new DataOutputStream(new FileOutputStream(LPCFile.getConfigDirectory().getPath()+"\\" +config.getName()+".config",false));
+                outstream.write(content.toString().getBytes());
+                outstream.close();
+            } catch (FileNotFoundException ex) {
+                throw new RuntimeException(ex);
+            } catch (IOException ex) {
+                throw new RuntimeException(ex);
+            }
+            setVisible(false);
+            fenetre.getPanelcompile().setVisible(true);
+            fenetre.getFrame().pack();
+        });
+
+        goback1=new JButton("Revenir en arriére");
+        goback1.addActionListener(e -> {
+            maindealer.setVisible(true);
+            tagdealer.setVisible(false);
+        });
+
+        annuler2=new JButton("Annuler");
+        annuler2.addActionListener(e->{
+            reset();
+            fenetre.getUpdatePanel().setVisible(false);
+            fenetre.getPanelcompile().setVisible(true);
+            fenetre.getFrame().pack();
+            fenetre.getFrame().revalidate();
+            fenetre.getFrame().repaint();
+        });
+
 
 
         maindealer.add(mainlabel);
@@ -212,8 +283,16 @@ public class UpdatePanel extends JPanel {
         pathdealer.add(newpath);
         pathdealer.add(validirectory);
         pathdealer.add(annuler);
+
+        tagdealer.add(tagdisplayer);
+        buttoncontainer.add(defintag);
+        buttoncontainer.add(goback1);
+        buttoncontainer.add(annuler2);
+        tagdealer.add(buttoncontainer,BorderLayout.PAGE_END);
+
         this.add(pathdealer);
         this.add(maindealer);
+        this.add(tagdealer);
         this.setVisible(false);
     }
 
@@ -366,14 +445,6 @@ public class UpdatePanel extends JPanel {
         this.changresultdirectorypath = changresultdirectorypath;
     }
 
-    public JButton getAddtag() {
-        return addtag;
-    }
-
-    public void setAddtag(JButton addtag) {
-        this.addtag = addtag;
-    }
-
     public JButton getValidirectory() {
         return validirectory;
     }
@@ -474,6 +545,50 @@ public class UpdatePanel extends JPanel {
         this.pathdealer.setVisible(true);
         this.maindealer.setVisible(false);
         this.tagdealer.setVisible(false);
+    }
+
+
+    private void fillinitialtables(){
+        latextags=new Hashtable<>();
+        htmltags=new Hashtable<>();
+        File in=new File(LPCFile.getConfigDirectory().getPath()+"\\"+config.getName()+".config");
+        Scanner sc ;
+        try {
+            sc = new Scanner(in);
+        } catch (FileNotFoundException e) {
+            throw new RuntimeException(e);
+        }
+        String line;
+        String [] parts;
+        int nbline=0;
+        while (sc.hasNextLine()){
+            line = sc.nextLine();
+            if(nbline>1) {
+                parts = line.split(";");
+                latextags.put(parts[0],parts[1]);
+                htmltags.put(parts[0],parts[2]);
+            }
+            nbline++;
+        }
+    }
+
+    private void updatedata(){
+        data=new String[latextags.size()][3];
+        Object [] lpctags= latextags.keySet().toArray();
+        for (int i=0;i<latextags.keySet().size();i++) {
+            data[i][0]= (String) lpctags[i];
+            data[i][1]= latextags.get(lpctags[i]);
+            System.out.println("latextag= "+latextags.get(lpctags[i]));
+            data[i][2]=htmltags.get(lpctags[i]);
+            System.out.println("htmltag= "+htmltags.get(lpctags[i]));
+        }
+        if(tagdisplayer!=null)
+            pane.remove(tagdisplayer);
+
+        tagdisplayer=new JTable(data,columns);
+        tagdisplayer.setVisible(true);
+        tagdealer.add(tagdisplayer.getTableHeader(), BorderLayout.PAGE_START);
+        tagdealer.add(tagdisplayer, BorderLayout.CENTER);
     }
 
 }

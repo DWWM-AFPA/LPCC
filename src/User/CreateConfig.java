@@ -173,62 +173,50 @@ public class CreateConfig extends JPanel {
         defintag.setVisible(true);
 
         saveconfig=new JButton("Sauvegarder");
-        saveconfig.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                StringBuffer content=new StringBuffer();
-                if(entrypoint!=null){
-                    content.append(entrypoint).append(".lpc");
-                }
-                else {
-                    content.append("main.lpc");
-                }
-                content.append('\n');
-                if(resultdirectorypath!=null){
-                    content.append(resultdirectorypath);
-                }
-                else {
-                    content.append(LPCFile.desktopPath);
-                }
-                content.append('\n');
-                for (String s :latextags.keySet()) {
-                    content.append(s).append(";").append(latextags.get(s)).append(";").append(htmltags.get(s));
-                    content.append('\n');
-                }
-                int last = content.lastIndexOf("\n");
-                if (last >= 0)
-                    content.delete(last, content.length());
-                try {
-                    LPCFile.create(LPCFile.getConfigDirectory(),configname,"config",content.toString());
-                } catch (IOException ex) {
-                    throw new RuntimeException(ex);
-                }
-                fenetre.getPanelcompile().setVisible(true);
-                fenetre.getCreate().setVisible(false);
-                reset();
-                fenetre.getFrame().pack();
-                fenetre.getFrame().revalidate();
-                fenetre.getConfigsel().readconfignames();
-                fenetre.getFrame().repaint();
+        saveconfig.addActionListener(e -> {
+            StringBuffer content=new StringBuffer();
+            if(entrypoint!=null){
+                content.append(entrypoint).append(".lpc");
             }
+            else {
+                content.append("main.lpc");
+            }
+            content.append('\n');
+            if(resultdirectorypath!=null){
+                content.append(resultdirectorypath);
+            }
+            else {
+                content.append(LPCFile.desktopPath);
+            }
+            content.append('\n');
+            for (String s :latextags.keySet()) {
+                content.append(s).append(";").append(latextags.get(s)).append(";").append(htmltags.get(s));
+                content.append('\n');
+            }
+            int last = content.lastIndexOf("\n");
+            if (last >= 0)
+                content.delete(last, content.length());
+            try {
+                LPCFile.create(LPCFile.getConfigDirectory(),configname,"config",content.toString());
+            } catch (IOException ex) {
+                throw new RuntimeException(ex);
+            }
+            fenetre.getPanelcompile().setVisible(true);
+            fenetre.getCreate().setVisible(false);
+            reset();
+            fenetre.getFrame().pack();
+            fenetre.getFrame().revalidate();
+            fenetre.getConfigsel().readconfignames();
+            fenetre.getConfigdelete().readconfignames();
+            fenetre.getFrame().repaint();
         });
 
         annuler=new JButton("Annuler");
-        annuler.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                reset();
-            }
-        });
+        annuler.addActionListener(e -> reset());
         annuler.setVisible(true);
 
         annuler1=new JButton("Annuler");
-        annuler1.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                reset();
-            }
-        });
+        annuler1.addActionListener(e-> reset());
         annuler1.setVisible(true);
 
         //on remplit

@@ -16,12 +16,7 @@ public class ConfigItem extends JMenuItem {
         this.configname=configname;
         this.fenetre=fenetre;
         this.setText(configname);
-        this.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                fenetre.setConfig(new Config(configname));
-            }
-        });
+        this.addActionListener(e -> fenetre.setConfig(new Config(configname)));
         this.setVisible(true);
     }
 }

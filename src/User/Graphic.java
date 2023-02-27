@@ -30,8 +30,18 @@ public class Graphic {
 
     private ConfigUpdate configUpdate;
 
+    private ConfigDeletionList configdelete;
+
     //getters and setters
 
+
+    public ConfigDeletionList getConfigdelete() {
+        return configdelete;
+    }
+
+    public void setConfigdelete(ConfigDeletionList configdelete) {
+        this.configdelete = configdelete;
+    }
 
     public ConfigUpdate getConfigUpdate() {
         return configUpdate;
@@ -194,6 +204,7 @@ public class Graphic {
         // Créer les sous menu
         configsel = new ConfigSelection(this);
         configUpdate=new ConfigUpdate(this);
+        configdelete=new ConfigDeletionList(this);
         // Créer les éléments du menu et sous menu
         e1 = new JMenuItem("Create Config");
         create=new CreateConfig(this);
@@ -212,6 +223,7 @@ public class Graphic {
         menu.add(e1);
         menu.add(configsel);
         menu.add(configUpdate);
+        menu.add(configdelete);
         // Ajouter le menu au barre de menu
         menubar.add(menu);
         // Ajouter la barre de menu au frame

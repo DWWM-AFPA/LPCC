@@ -17,7 +17,7 @@ public abstract class LPCFile extends File {
     private static File inputDirectory;
     private static final ArrayList<File> alreadyReadFile=new ArrayList<>();
     private static File outputDirectory;
-    private static final File ConfigDirectory=new File("C:\\Users\\CDA-03\\Desktop\\LPCCConfig");
+    private static final File ConfigDirectory=new File("LPCCConfig");
     private static final ArrayList<File> inputFileList = new ArrayList<>();
     public static final String desktopPath = FileSystemView.getFileSystemView().getHomeDirectory().getPath();
     public static final String documentsPath = FileSystemView.getFileSystemView().getDefaultDirectory().getPath();
