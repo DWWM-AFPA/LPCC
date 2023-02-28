@@ -15,6 +15,7 @@ public class Main {
        // Node.getAllNodes();*/
         Config matt= new Config("matt");
         LPCFile.setOutputDirectory(null);
+        Config.createEmptyConfig();
                 //,new File("matt","config"));
      //   matt.createConfig();
       /* matt.loadConfig();*/

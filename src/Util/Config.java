@@ -1,7 +1,10 @@
 package Util;
 
+import Export.FileException;
+
 import java.io.IOException;
 import java.util.HashMap;
+import java.util.Scanner;
 
 public class Config {
     protected static Config currentConfig;
@@ -53,8 +56,8 @@ public class Config {
         this.HTMLBindings = HTMLBindings;
     }
 
-    /*    public void loadConfig() throws FileException, IOException {
-                Scanner scan = new Scanner(this.LPCFile.read());
+        public void loadConfig() throws FileException, IOException {
+                Scanner scan = new Scanner(LPCFile.read(null));
 
                 while (scan.hasNext()) {
                     String key = scan.next();
@@ -62,9 +65,24 @@ public class Config {
                     System.out.println("Key : "+key+" Value : "+value);
                 }
 
-            }*/
+            }
     public void createConfig() throws IOException {
-     //   this.LPCFile.create("config"+System.lineSeparator()+"test");
+        LPCFile.create(null,"DefaultConfig","cfg","");
+    }
+    public static void createEmptyConfig() throws IOException {
+        LPCFile.create(null,"DefaultConfig","cfg","Default Configuration.\n" +
+                "LPC     HTML        LATEX\n" +
+                "title1  h1\n" +
+                "title2  h2\n" +
+                "title3  h3\n" +
+                "title4  h4\n" +
+                "title5  h5\n" +
+                "title6  h6\n" +
+                "it      i\n" +
+                "bd      b\n" +
+                "ul      u\n" +
+                "color   #\n" +
+                "image   <img src=\"dinosaur.jpg\">");
     }
 
 }
