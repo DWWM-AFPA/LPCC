@@ -397,11 +397,12 @@ public class Compilator {
         }
         //TODO gérer les instances de code et doc nodes en fonction de la pile de node
        // System.out.println(this.mainNode instanceof CodeNode);
-        if (style!=null&&!content.toString().equals(""))
-            if (!containedStackNode.empty()){
+        if (!content.toString().equals(""))
+            if (!containedStackNode.empty())
                 containedStackNode.peek().add(new DocumentationNode(content.toString(),style));
-            } else
+            else
                 mainNode.add(new DocumentationNode(content.toString(),style));
+
 
         return styleEnd();
     }

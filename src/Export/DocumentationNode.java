@@ -17,7 +17,8 @@ public class DocumentationNode extends Node{
     }
 
     public ArrayList<String> getStyle() {
-        return this.style!=null ? style:this.setStyle(new ArrayList<>());
+       // return this.style!=null ? style:this.setStyle(new ArrayList<>());
+        return style;
     }
     public String getStyle(int pos) {
         return this.style!=null ? this.getStyle().get(pos):null;

@@ -97,7 +97,7 @@ public abstract class Node {
     }
 
 
-    @Override
+   /* @Override
     public String toString() {
         if (this.getName() != null&&this.getNodeContained()!=null)
             return "Node name='" + name.toUpperCase() + '\'' +
@@ -120,7 +120,7 @@ public abstract class Node {
                     '}';
         }
      return null;
-    }
+    }*/
 }
 
 

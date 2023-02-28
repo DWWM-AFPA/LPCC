@@ -34,6 +34,22 @@ public abstract class LPCFile extends File {
         LPCFile.inputDirectory = inputDir;
     }
 
+    public static File getOutputDirectory() {
+        return outputDirectory;
+    }
+
+    public static void setOutputDirectory(File outputDirectory) {
+        LPCFile.outputDirectory = outputDirectory;
+    }
+
+    public static File getConfigDirectory() {
+        return ConfigDirectory;
+    }
+
+    public static void setConfigDirectory(File configDirectory) {
+        ConfigDirectory = configDirectory;
+    }
+
     /** create a File from a Class File parent Directory,extension without "." and automatically in LowerCase  */
     public static File create(File parent, String name, String extension, String content) throws IOException {
         File file = new File(parent,name+"."+extension.toLowerCase());
