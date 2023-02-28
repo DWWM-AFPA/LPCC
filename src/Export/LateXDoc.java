@@ -10,11 +10,13 @@ import java.util.Hashtable;
 public class LateXDoc implements Visitor{
 
     protected  Hashtable<String,String> corresbalise;
+    private String projectname;
 
     //getters
 
-    public LateXDoc(Hashtable<String,String> corresbalise) throws FileNotFoundException {
+    public LateXDoc(Hashtable<String,String> corresbalise,String projectname) throws FileNotFoundException {
         this.corresbalise=corresbalise;
+        this.projectname=projectname;
     }
 
     //setters
@@ -25,7 +27,7 @@ public class LateXDoc implements Visitor{
 
     public void user(ArrayList<DocumentationNode> n) throws LPCSyntaxException {
         try {
-            LPCFile.create(LPCFile.getOutputDirectory(),"TestUserdoc","tex",nodeinterpret(n));
+            LPCFile.create(LPCFile.getOutputDirectory(),projectname+"_user","tex",nodeinterpret(n));
         } catch (IOException e) {
             JOptionPane.showMessageDialog(null,"Une erreur a eu lieu lors de la creation du fichier");
         }
@@ -36,7 +38,7 @@ public class LateXDoc implements Visitor{
             doc.remove("dev");
         }
         try {
-            LPCFile.create(LPCFile.getOutputDirectory(),"Devdoc","tex",nodeinterpret(n));
+            LPCFile.create(LPCFile.getOutputDirectory(),projectname+"_dev","tex",nodeinterpret(n));
         } catch (IOException e) {
             JOptionPane.showMessageDialog(null,"Une erreur a eu lieu lors de la creation du fichier");
 

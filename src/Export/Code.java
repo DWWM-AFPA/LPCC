@@ -6,6 +6,12 @@ import java.io.IOException;
 import java.util.*;
 
 public class Code implements Visitor{
+
+    private String language;
+
+    public Code(String language){
+        this.language=language;
+    }
     @Override
     public void visit(ArrayList<Node> compilation) {
         ArrayList<CodeNode> ref=new ArrayList<>();
@@ -24,7 +30,7 @@ public class Code implements Visitor{
         for (Node n : compilation) {
             if (n instanceof CodeNode && ((CodeNode) n).isStart()) {
                 try {
-                    LPCFile.create(null,((CodeNode) n).getName(),".java",extractcode((CodeNode) n,ref));
+                    LPCFile.create(null,((CodeNode) n).getName(),this.language,extractcode((CodeNode) n,ref));
                 } catch (IOException e) {
                     throw new RuntimeException(e);
                 }

@@ -12,11 +12,13 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.nio.file.Paths;
+import java.util.InputMismatchException;
 
 public class Graphic {
     private  Compilator compil;
 
     private  Config config;
+
 
     private JFrame frame;
 
@@ -160,26 +162,36 @@ public class Graphic {
         JButton exportCode = new JButton("Export Code");
 
         exportCode.addActionListener(e -> {
-            if(compil!=null)
-                compil.accept(new Code());
+            if(compil!=null) {
+                boolean success=false;
+                String s=new String();
+                while (!success) {
+                    try {
+                        s = JOptionPane.showInputDialog("Entrer l'extension de votre language(java,ect..)");
+                        success = true;
+                    } catch (InputMismatchException eim) {
+                        JOptionPane.showMessageDialog(null,"Rentrer un nom d'extension !");
+                    }
+                }
+                compil.accept(new Code(s));
+            }
         });
 
         JButton exportHTMLDoc = new JButton("Export HTML Doc");
         exportHTMLDoc.addActionListener(e -> {
             if(compil!=null) {
                 try {
-                    compil.accept(new HTMLDoc(config.getHtmlTag()));
+                    compil.accept(new HTMLDoc(config.getHtmlTag(),compil.getSource().getName()));
                 } catch (FileNotFoundException ex) {
                     JOptionPane.showMessageDialog(null,"Erreur lors de la lecture de la config","Config Error",JOptionPane.ERROR_MESSAGE);
                 }
             }
         });
         JButton exportLatEXDoc = new JButton("Export LateX documentation");
-     //   exportUserDoc.setBounds(10,10,10,10);
         exportLatEXDoc.addActionListener(e -> {
             if(compil!=null) {
                 try {
-                    compil.accept(new LateXDoc(config.getLatexTag()));
+                    compil.accept(new LateXDoc(config.getLatexTag(),compil.getSource().getName()));
                 } catch (FileNotFoundException ex) {
                     JOptionPane.showMessageDialog(null,"Erreur lors de la lecture de la config","Config Error",JOptionPane.ERROR_MESSAGE);
                 }

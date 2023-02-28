@@ -1,5 +1,5 @@
 package Export;
-
+import net.sourceforge.plantuml.SourceStringReader;
 import Export.Visitor;
 import Util.LPCFile;
 
@@ -13,10 +13,13 @@ public class HTMLDoc implements Visitor{
 
     protected Hashtable<String,String> corresbalise;
 
+    private String projectname;
+
     //getters
 
-    public HTMLDoc(Hashtable<String,String> corresbalise) throws FileNotFoundException {
+    public HTMLDoc(Hashtable<String,String> corresbalise,String projectname) throws FileNotFoundException {
         this.corresbalise=corresbalise;
+        this.projectname=projectname;
     }
 
     //setters
@@ -53,7 +56,7 @@ public class HTMLDoc implements Visitor{
 
     public void user(ArrayList<DocumentationNode> n) throws LPCSyntaxException {
         try {
-            LPCFile.create(LPCFile.getOutputDirectory(),"TestUserdoc","html",nodeinterpret(n));
+            LPCFile.create(LPCFile.getOutputDirectory(),projectname+"_user","html",nodeinterpret(n));
         } catch (IOException e) {
             JOptionPane.showMessageDialog(null,"Une erreur a eu lieu lors de la creation du fichier");
         }
@@ -65,7 +68,7 @@ public class HTMLDoc implements Visitor{
             doc.remove("dev");
         }
         try {
-            LPCFile.create(LPCFile.getOutputDirectory(),"Devdoc","html",nodeinterpret(n));
+            LPCFile.create(LPCFile.getOutputDirectory(),projectname+"_dev","html",nodeinterpret(n));
         } catch (IOException e) {
             JOptionPane.showMessageDialog(null,"Une erreur a eu lieu lors de la creation du fichier");
         }
@@ -89,6 +92,7 @@ public class HTMLDoc implements Visitor{
             }
             System.out.println("titleindex=" + titleindex);
             if (titleindex==0) {
+                if(doc.getArgs().contains("diag")
                     retour.append("<p>");
                     node = this.nodeTosring(doc);
                     retour.append(node);
@@ -138,4 +142,5 @@ public class HTMLDoc implements Visitor{
         }
         return node.toString();
     }
+
 }

@@ -1,5 +1,13 @@
 package Export;
 
+import net.sourceforge.plantuml.SourceStringReader;
+
+import javax.xml.transform.Source;
+import java.awt.image.BufferedImage;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.OutputStream;
 import java.util.ArrayList;
 
 public class DocumentationNode extends Node{
@@ -54,6 +62,25 @@ public class DocumentationNode extends Node{
         return this;
     }
 
+    //methodes
+
+    public BufferedImage readdiagramm(){
+        String source=this.text;
+        OutputStream out;
+        try {
+            out=new FileOutputStream("diag.png");
+        } catch (FileNotFoundException e) {
+            throw new RuntimeException(e);
+        }
+        SourceStringReader reader=new SourceStringReader(source);
+        BufferedImage im;
+        try {
+            reader.outputImage(out);
+            im=new
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+    }
 
 
 

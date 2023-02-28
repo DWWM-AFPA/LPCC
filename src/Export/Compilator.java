@@ -79,6 +79,10 @@ public class Compilator implements Visitable{
         return chapteropen;
     }
 
+    public File getSource() {
+        return source;
+    }
+
     //setters
 
 
