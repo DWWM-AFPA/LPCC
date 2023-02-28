@@ -21,6 +21,7 @@ public class UpdatableConfigItem extends JMenuItem {
                 fenetre.getUpdatePanel().setVisible(true);
                 fenetre.getCreate().setVisible(false);
                 fenetre.getPanelcompile().setVisible(false);
+                fenetre.getCreate().setVisible(false);
                 fenetre.getFrame().repaint();
                 fenetre.getFrame().revalidate();
                 fenetre.getFrame().pack();

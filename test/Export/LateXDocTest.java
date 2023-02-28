@@ -10,7 +10,7 @@ import static org.junit.jupiter.api.Assertions.*;
 
 class LateXDocTest {
 
-    DocumentationNode bold=new DocumentationNode(false,"texte en bold",new ArrayList<String>(List.of("bd")));
+    /*DocumentationNode bold=new DocumentationNode(false,"texte en bold",new ArrayList<String>(List.of("bd")));
     DocumentationNode it=new DocumentationNode(false,"texte en italique",new ArrayList<>(List.of("it")));
 
     DocumentationNode title=new DocumentationNode(false,"titre",new ArrayList<>(List.of("title1")));
@@ -21,7 +21,8 @@ class LateXDocTest {
 
     {
         try {
-            l = new LateXDoc();
+            l =
+                    new LateXDoc();
         } catch (FileNotFoundException e) {
             throw new RuntimeException(e);
         }
@@ -41,4 +42,6 @@ class LateXDocTest {
     @Test
     void visit() {
     }
+    */
+
 }

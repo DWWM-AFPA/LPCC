@@ -17,10 +17,6 @@ public class LateXDoc implements Visitor{
         this.corresbalise=corresbalise;
     }
 
-    public LateXDoc(String configname) throws FileNotFoundException {
-
-    }
-
     //setters
 
     public void setCorresbalise(Hashtable<String,String> corresbal0){
@@ -31,7 +27,7 @@ public class LateXDoc implements Visitor{
         try {
             LPCFile.create(LPCFile.getOutputDirectory(),"TestUserdoc","tex",nodeinterpret(n));
         } catch (IOException e) {
-            throw new RuntimeException(e);
+            JOptionPane.showMessageDialog(null,"Une erreur a eu lieu lors de la creation du fichier");
         }
     }
 
@@ -42,7 +38,8 @@ public class LateXDoc implements Visitor{
         try {
             LPCFile.create(LPCFile.getOutputDirectory(),"Devdoc","tex",nodeinterpret(n));
         } catch (IOException e) {
-            throw new RuntimeException(e);
+            JOptionPane.showMessageDialog(null,"Une erreur a eu lieu lors de la creation du fichier");
+
         }
     }
 

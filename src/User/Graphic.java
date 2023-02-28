@@ -117,6 +117,7 @@ public class Graphic {
         Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
         frame = new JFrame("LPCC");
         frame.setLocation(screenSize.width/2-frameWidth/2,screenSize.height/2-frameHeight/2);
+        frame.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
         panelcompile = new JPanel();
         updatePanel=new UpdatePanel(this);
 
@@ -124,80 +125,68 @@ public class Graphic {
         panel.setBackground(Color.lightGray);
 
         JButton choose = new JButton("Choose");
-        choose.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                Graphic.chooseDirectory(ChooserType.OPEN);
-            }
-        });
+        choose.addActionListener(e -> Graphic.chooseDirectory(ChooserType.OPEN));
 
         JButton compile = new JButton("Compile");
-        compile.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                if(config==null) {
-                    try {
-                        config = new Config();
-                        File destination=new File(config.getDestinationfolder());
-                        LPCFile.setOutputDirectory(destination);
-                        File target=LPCFile.getMainFile(config);
-                        compil=new Compilator(target);
-                    } catch (FileException | IOException ex) {
-                        //TODO FATIH
-                        JOptionPane.showInputDialog(null,"Le fichier spécifié semble introuvable","File error",JOptionPane.ERROR_MESSAGE);
-                    }
+        compile.addActionListener(e -> {
+            if(config==null) {
+                try {
+                    config = new Config();
+                    File destination=new File(config.getDestinationfolder());
+                    LPCFile.setOutputDirectory(destination);
+                    File target=LPCFile.getMainFile(config);
+                    compil=new Compilator(target);
+                } catch (FileException | IOException ex) {
+                    //TODO FATIH
+                    JOptionPane.showInputDialog(null,"Le fichier spécifié semble introuvable","File error",JOptionPane.ERROR_MESSAGE);
                 }
-                else{
-                    try {
-                        File destination=new File(config.getDestinationfolder());
-                        LPCFile.setOutputDirectory(destination);
-                        File target=LPCFile.getMainFile(config);
-                        compil = new Compilator(target);
-                    } catch (FileException ex) {
-                        JOptionPane.showInputDialog(null,"Le fichier spécifié semble introuvable","File error",JOptionPane.ERROR_MESSAGE);
-                        throw new RuntimeException(ex);
-                    } catch (IOException ex) {
-                        //TODO fatih gere l'exception
-                        JOptionPane.showInputDialog(null,"Le fichier spécifié semble introuvable","File error",JOptionPane.ERROR_MESSAGE);
-                    }
+            }
+            else{
+                try {
+                    File destination=new File(config.getDestinationfolder());
+                    LPCFile.setOutputDirectory(destination);
+                    File target=LPCFile.getMainFile(config);
+                    compil = new Compilator(target);
+                } catch (FileException ex) {
+                    JOptionPane.showInputDialog(null,"Le fichier spécifié semble introuvable","File error",JOptionPane.ERROR_MESSAGE);
+                    throw new RuntimeException(ex);
+                } catch (IOException ex) {
+                    //TODO fatih gere l'exception
+                    JOptionPane.showInputDialog(null,"Le fichier spécifié semble introuvable","File error",JOptionPane.ERROR_MESSAGE);
                 }
             }
         });
 
         JButton exportCode = new JButton("Export Code");
 
-        exportCode.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                if(compil!=null)
-                    compil.accept(new Code());
-            }
+        exportCode.addActionListener(e -> {
+            if(compil!=null)
+                compil.accept(new Code());
         });
 
         JButton exportHTMLDoc = new JButton("Export HTML Doc");
-        exportHTMLDoc.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                if(compil!=null)
-                    compil.accept(new HTMLDoc());
+        exportHTMLDoc.addActionListener(e -> {
+            if(compil!=null) {
+                try {
+                    compil.accept(new HTMLDoc(config.getHtmlTag()));
+                } catch (FileNotFoundException ex) {
+                    JOptionPane.showMessageDialog(null,"Erreur lors de la lecture de la config","Config Error",JOptionPane.ERROR_MESSAGE);
+                }
             }
         });
         JButton exportLatEXDoc = new JButton("Export LateX documentation");
      //   exportUserDoc.setBounds(10,10,10,10);
-        exportLatEXDoc.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                if(compil!=null) {
-                    try {
-                        compil.accept(new LateXDoc(config.getLatexTag()));
-                    } catch (FileNotFoundException ex) {
-                        throw new RuntimeException(ex);
-                    }
+        exportLatEXDoc.addActionListener(e -> {
+            if(compil!=null) {
+                try {
+                    compil.accept(new LateXDoc(config.getLatexTag()));
+                } catch (FileNotFoundException ex) {
+                    JOptionPane.showMessageDialog(null,"Erreur lors de la lecture de la config","Config Error",JOptionPane.ERROR_MESSAGE);
                 }
             }
         });
         JMenu menu;
-        JMenuItem e1;
+        JMenuItem newconfig;
         JMenuBar menubar = new JMenuBar();
         // Créer le menu
         menu = new JMenu("Menu");
@@ -206,13 +195,14 @@ public class Graphic {
         configUpdate=new ConfigUpdate(this);
         configdelete=new ConfigDeletionList(this);
         // Créer les éléments du menu et sous menu
-        e1 = new JMenuItem("Create Config");
+        newconfig = new JMenuItem("Create Config");
         create=new CreateConfig(this);
 
-        e1.addActionListener(new ActionListener() {
+        newconfig.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
                 panelcompile.setVisible(false);
+                updatePanel.setVisible(false);
                 create.setVisible(true);
                 frame.pack();
                 frame.revalidate();
@@ -220,7 +210,7 @@ public class Graphic {
             }
         });
         // Ajouter les éléments au menu
-        menu.add(e1);
+        menu.add(newconfig);
         menu.add(configsel);
         menu.add(configUpdate);
         menu.add(configdelete);
