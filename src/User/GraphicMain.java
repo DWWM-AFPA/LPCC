@@ -1,5 +1,7 @@
 package User;
 
+import Export.Compiler;
+import Export.FileException;
 import Util.Config;
 import Util.LPCFile;
 
@@ -8,6 +10,7 @@ import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.File;
+import java.io.IOException;
 
 public class GraphicMain {
     public static void main(String[] args) {
@@ -16,12 +19,7 @@ public class GraphicMain {
         Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
         JFrame frame = new JFrame("Literate Programing Code Compiler");
 
-        for (File config:LPCFile.getConfigDirectory().listFiles()) {
-            if (!config.getName().equals("DefaultConfig.cfg")) {
-                configComboBox.addItem(config.getName());
-                System.out.println();
-            }
-        }
+
 
         frame.setContentPane(new GraphicMain().panel);
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
@@ -42,16 +40,58 @@ public class GraphicMain {
 
 
     public GraphicMain() {
+
+        for (File config:LPCFile.getConfigDirectory().listFiles()) {
+            if (!config.getName().equals("DefaultConfig.cfg")) {
+                configComboBox.addItem(config.getName().split("\\.")[0]);
+            }
+        }
         loadConfigButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                Config.getCurrentConfig().setInputFolder(Graphic.chooseDirectory(Graphic.ChooserType.OPEN));
+                String name = (String) configComboBox.getSelectedItem();
+                try{
+                Config.loadConfig(name);
+                JOptionPane.showMessageDialog(null,"Configuration de "+ name +" chargée.");
+                }
+                catch (IOException | FileException io){
+
+                }
+                //Config.getCurrentConfig().setInputFolder(Graphic.chooseDirectory(Graphic.ChooserType.OPEN));
             }
         });
         configComboBox.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
 
+            }
+        });
+        compileButton.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                Config config = Config.getCurrentConfig();
+                String mainFileContent = null;
+                File mainFile=null;
+                try {
+                    mainFile = LPCFile.getMainFile();
+                     mainFileContent = LPCFile.read(mainFile);
+                } catch (IOException io)  {
+                    throw new RuntimeException(io);
+                } catch (FileException fe)  {
+                    int i = JOptionPane.showConfirmDialog(null,
+                            "attention ce fichier a déjà été compilé.\n" +
+                                    "Voulez vous le recompiler ?");
+                    switch (i){
+                        case (JOptionPane.OK_OPTION):
+                            LPCFile.getAlreadyReadFile().remove(mainFile);
+                            try {
+                                mainFileContent = LPCFile.read(mainFile);
+                            } catch (IOException|FileException ignored){}
+                            break;
+                    }
+                }
+
+                new Compiler(mainFileContent).compile();
             }
         });
     }

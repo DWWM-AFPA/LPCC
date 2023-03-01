@@ -1,21 +1,22 @@
 package Export;
 
+import Util.Config;
+
 import javax.swing.*;
 import java.io.*;
 import java.util.*;
 
 public class Compiler {
-    protected String openTag;
-    protected String closeTag;
+    protected String openTag = Config.getCurrentConfig().getTagsDelimiter()[0].trim();
+    protected String closeTag= Config.getCurrentConfig().getTagsDelimiter()[1].trim();
     protected int pos=0;
     public Node mainNode;
-    //TODO Etudier le stack pour permettre d'imbriquer les nodes à la lecture
     public Stack<Node> containedStackNode =new Stack<>();
     public ArrayList<String> style=new ArrayList<>();
     public String text;//=new ArrayList<>();
     protected StringBuilder content=new StringBuilder();
-    protected static ArrayList<String> tagListClose = new ArrayList<>(List.of("it/","bd/","ul/","title1/"));
-    protected static ArrayList<String> styleTagList = new ArrayList<>(List.of("it","bd","ul","title1"));
+   // protected static ArrayList<String> tagListClose = new ArrayList<>(List.of("it/","bd/","ul/","title1/"));
+   // protected static ArrayList<String> styleTagList = new ArrayList<>(List.of("it","bd","ul","title1"));
     protected String token= new String();
     protected String doc=new String();
     //protected ArrayList<String> containedCode = new HashMap<>();
@@ -47,12 +48,12 @@ public class Compiler {
         return debug;
     }
     //setters
-    public void setCloseTag(String closeTag) {
+/*    public void setCloseTag(String closeTag) {
         this.closeTag = closeTag;
     }
     public void setOpenTag(String openTag) {
         this.openTag = openTag;
-    }
+    }*/
     public int setPos(int pos) {
         return this.pos = pos;
     }
@@ -76,17 +77,7 @@ public class Compiler {
     //builders
 
     public Compiler(String textToCompile) {
-        this.setOpenTag("<");
-        this.setCloseTag(">");
-        this.setDoc(textToCompile);
-    }
-    public Compiler(String openTag, String closeTag) {
-        this.setCloseTag(closeTag);
-        this.setOpenTag(openTag);
-    }
-    public Compiler(String openTag, String closeTag, String textToCompile) {
-        this.setCloseTag(closeTag);
-        this.setOpenTag(openTag);
+
         this.setDoc(textToCompile);
     }
 
@@ -133,8 +124,15 @@ public class Compiler {
         return setToken(retour.toLowerCase());
     }
     public String next(){
-        if (this.getPos()+1<this.getDoc().length())
+        if (this.getPos()+1<this.getDoc().length()) {
+            String escaping = Config.getCurrentConfig().getEscapingString();
+
+            if(this.getDoc().substring(this.getPos(),this.getPos()+escaping.length()).equals(escaping))
+                this.pos += escaping.length();
+
+
             this.pos++;
+        }
 
         //retourne this.token
         return this.cursor(this.getPos(),false);
@@ -270,7 +268,7 @@ public class Compiler {
             //C'est un pas une dev ou user et ça doit être un CodeNode
             else if (!currentMainTag.equals(">") &&
                     !(currentMainTag.charAt(currentMainTag.length() - 1) == '/') &&
-                    !styleTagList.contains(currentMainTag)) {
+                    !Config.getCurrentConfig().getStyleTagList().contains(currentMainTag)) {
 
                 //  boolean closedNode = this.hasCloseTagContent(currentMainTag);
                 if (mainNode == null) {
@@ -323,7 +321,7 @@ public class Compiler {
         if (end!=null) {
             String beginEnd=end.substring(0,end.length() - 1);
             boolean isEnd = end.charAt(end.length() - 1) == '/';
-            boolean isStyle = styleTagList.contains(beginEnd);
+            boolean isStyle = Config.getCurrentConfig().getStyleTagList().contains(beginEnd);
             if (isEnd && !isStyle) {
                 if (end.equals("user/") || end.equals("dev/")) {
                     mainNode = null;
@@ -360,7 +358,7 @@ public class Compiler {
         debug();
         int savePos=this.getPos();
         String end = getTagIfOpentag();
-        if (end!=null&& (styleTagList.contains(end) || end.contains(";") || end.contains("#")) )
+        if (end!=null&& (Config.getCurrentConfig().getStyleTagList().contains(end) || end.contains(";") || end.contains("#")) )
             this.style.add(end);
         else
           this.reset(savePos);
@@ -375,7 +373,7 @@ public class Compiler {
         String end = getTagIfOpentag();
         if (end!=null) {
             String beginEnd = end.substring(0, end.length() - 1);
-            if (styleTagList.contains(beginEnd) ){ //|| end.contains("title/") || end.equals("bd/") || end.equals("ul/") || end.equals("img/") || end.equals("link/")) {
+            if (Config.getCurrentConfig().getStyleTagList().contains(beginEnd) ){ //|| end.contains("title/") || end.equals("bd/") || end.equals("ul/") || end.equals("img/") || end.equals("link/")) {
                 this.style = null;
                 return mainTagEnd(); //mainTagEnd(node);
             }
@@ -400,8 +398,10 @@ public class Compiler {
         if (!content.toString().equals(""))
             if (!containedStackNode.empty())
                 containedStackNode.peek().add(new DocumentationNode(content.toString(),style));
-            else
+            else if (mainNode!=null)
                 mainNode.add(new DocumentationNode(content.toString(),style));
+            else
+                JOptionPane.showMessageDialog(null,"Attention du code est contenu en dehors des balises");
 
 
         return styleEnd();

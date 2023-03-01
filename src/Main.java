@@ -13,21 +13,10 @@ public class Main {
     public static void main(String[] args) throws IOException, FileException {
 
 
-/*        File file = new File("input","LPCC");
+        Config.loadConfig("matt");
+        //Config.updateConfig(choose.getSelectedFile(),null);
 
-        Compilator compTest = new Compilator(file.read());
-        compTest.compile();
-       // Node.getAllNodes();*/
-    //    Config matt= new Config("matt");
-        Config.createEmptyConfig();
-        JFileChooser choose = new JFileChooser(LPCFile.getConfigDirectory());
-        choose.showDialog(null,"select");
-        Config.loadConfig(choose.getSelectedFile());
-        Config.updateConfig(choose.getSelectedFile(),null);
 
-                //,new File("matt","config"));
-     //   matt.createConfig();
-      /* matt.loadConfig();*/
      /*   new Compilator(
                 "<dev> ceci est du code : " +
                             "<codeTest> code code code <codeTest/>"+
@@ -51,7 +40,7 @@ public class Main {
             System.out.printf("Name : %s Text : %s Style :%s%s", nd.getName(),nd.getText(),""*//**//*nd.getStyle()*//**//*,System.lineSeparator());
         }/**/
 
-        new Compiler("<dev> <title1><it>documentation  titre 1 <it/><title1/> text dev <code> c'est du code <codeTest> un autre bout de code <codeAlone> apres l'autre code <codeTest/> encore dans code <code/> fin dans dev <dev/><codeAlone>le code de codeAlone<codeAlone/>"+"<user > documentation Utilisateur<user/>").compile();
+        new Compiler("<dev> <title1><it>documentation+-//*x titre 1 <it/><title1/> text dev <code> c'est du code <codeTest> un autre bout de code <codeAlone> apres l'autre code <codeTest/> encore dans code <code/> fin dans dev <dev/><codeAlone>le code de codeAlone<codeAlone/>"+"<user > documentation Utilisateur<user/>").compile();
 
        // new Compilator("<user> documentation dev <code> c'est du code <codeTest> un autre bout de code <codeAlone> apres l'autre code <codeTest/> encore dans code <code/> fin dans dev <user/><codeAlone>le code de codeAlone<codeAlone/>").compile();
 

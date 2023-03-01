@@ -31,7 +31,7 @@ public class Config {
         this.setName("default");
         this.HTMLBindings=new HashMap<>();
         try{
-        this.loadConfig(LPCFile.getConfigDirectory());
+        this.loadConfig("DefaultConfig");
         }
         catch (IOException io){
             System.err.println("config file problem");
@@ -52,6 +52,14 @@ public class Config {
     }
 
     public static Config getCurrentConfig() {
+        if (currentConfig==null)
+            try{
+            Config.loadConfig("DefaultConfig"); }
+        catch (IOException| FileException exs) {
+            System.err.println("config non existante, création d'une config par défaut");
+            try{ Config.createEmptyConfig();
+            } catch (IOException ignored) {
+        }}
         return currentConfig;
     }
 
@@ -163,14 +171,13 @@ public class Config {
         this.styleTagList = styleTagList;
     }
 
-    public static Config loadConfig(File file) throws FileException, IOException {
-        String name = file.getName();   //DefaultConfig.cfg
-        Config currentConfig = new Config(name.split("\\.")[0]);
-        Scanner scan = new Scanner(LPCFile.read(file));
+    public static Config loadConfig(String fileConfigName) throws FileException, IOException {
+        Config currentConfig = new Config(fileConfigName);
+        Scanner scan = new Scanner(LPCFile.read(new File(LPCFile.getConfigDirectory().getPath()+"\\"+fileConfigName+".cfg")));
         int line =0;
         boolean LPCTag =false;
         while (scan.hasNext()) {
-                String s = scan.nextLine();
+                String s = scan.nextLine().trim();
                 line++;
                 if (s.contains("LPC")&&!s.contains("//")) {
                     LPCTag = !LPCTag;
@@ -181,9 +188,9 @@ public class Config {
                 else if (LPCTag&&!s.contains("//")) {
                     String[] tags = s.split(";");
                     for (String st:tags){
-                        currentConfig.getStyleTagList().add(tags[0]);
-                        currentConfig.getHTMLBindings().put(tags[0],tags[1]);
-                        currentConfig.getLatexBindings().put(tags[0],tags[2]);
+                        currentConfig.getStyleTagList().add(tags[0].trim());
+                        currentConfig.getHTMLBindings().put(tags[0].trim(),tags[1].trim());
+                        currentConfig.getLatexBindings().put(tags[0].trim(),tags[2].trim());
                     //TODO arrayList compiler à transferer dans la config
                     }
                 }
@@ -191,8 +198,10 @@ public class Config {
                      switch(line){
                          //Current Configuration else if higher
                          case 2:
-                             if(file.getName().equals("DefaultConfig.cfg"))
-                                System.out.println("defaut");
+                             if(fileConfigName.equals("DefaultConfig")&&!s.equals("DefaultConfig")) {
+                                 System.out.println("defaut chargement config :"+ s);
+                                 return loadConfig(s);
+                             }
                              break;
                              //language
                          case 5:
@@ -313,7 +322,7 @@ public class Config {
     public static void createEmptyConfig() throws IOException {
         LPCFile.create(LPCFile.getConfigDirectory(),"DefaultConfig","cfg",
                "//Current Configuration\n" +
-                       "Default Configuration.\n" +
+                       "DefaultConfig\n" +
                        "\n" +
                        "//language\n" +
                        ".java\n" +

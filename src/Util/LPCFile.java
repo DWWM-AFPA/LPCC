@@ -40,6 +40,10 @@ public abstract class LPCFile extends File {
                     LPCCfolder);
         return retour;
     }
+    public static ArrayList<File> getAlreadyReadFile(){
+        return alreadyReadFile;
+    }
+
 
     /** create a File from a Class File parent Directory,extension without "." and automatically in LowerCase  */
     public static File create(File parent, String name, String extension, String content) throws IOException {
@@ -73,15 +77,22 @@ public abstract class LPCFile extends File {
     public static File getMainFile() throws FileException, IOException {
         File retour = null;
         File inputDirectory = Config.getCurrentConfig().getInputFolder();
-        for (File s : inputDirectory.listFiles())
-        {
-            if (s.getName().equals(Config.getCurrentConfig().getMainInputFileName()))
-                retour = s;
-        }
+        File[] fileList = inputDirectory.listFiles();
+        //TODO améliorer ça quand on choisi un File avec le Chooser
+        if (fileList==null)
+            JOptionPane.showMessageDialog(null,"Attention, le chemin de la configuration actuelle " +
+                    "n'est pas valide,\n veuillez selectionner le fichier à compiler");
+        else
+            for (File s : fileList)
+            {
+                if (s.getName().equals(Config.getCurrentConfig().getMainInputFileName()))
+                    retour = s;
+            }
         if (retour == null) {
             JFileChooser choose = new JFileChooser(inputDirectory);
             choose.showOpenDialog(null);
             retour = choose.getSelectedFile();
+            Config.getCurrentConfig().setInputFolder(retour);
         }
         return retour;
     }
