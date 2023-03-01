@@ -4,6 +4,9 @@ import Util.*;
 
 import javax.swing.*;
 import java.io.IOException;
+import java.lang.reflect.Array;
+import java.util.ArrayList;
+import java.util.List;
 
 public class Main {
     public static void main(String[] args) throws IOException, FileException {
@@ -12,11 +15,13 @@ public class Main {
         Compilator compTest = new Compilator(file.read());
         compTest.compile();
        // Node.getAllNodes();*/
-        Config matt= new Config("matt");
-        Config.createEmptyConfig();
+    //    Config matt= new Config("matt");
+   //     Config.createEmptyConfig();
         JFileChooser choose = new JFileChooser(LPCFile.getConfigDirectory());
         choose.showDialog(null,"select");
-        matt.loadConfig(choose.getSelectedFile());
+        Config.loadConfig(choose.getSelectedFile());
+        Config.updateConfig(choose.getSelectedFile());
+
                 //,new File("matt","config"));
      //   matt.createConfig();
       /* matt.loadConfig();*/
