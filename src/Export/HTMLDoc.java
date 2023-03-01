@@ -4,6 +4,7 @@ import Export.Visitor;
 import Util.LPCFile;
 
 import javax.swing.*;
+import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.util.ArrayList;
@@ -43,12 +44,14 @@ public class HTMLDoc implements Visitor{
             }
         }
         try {
-            this.user(user);
+            if (!user.isEmpty())
+                this.user(user);
         } catch (LPCSyntaxException e) {
             JOptionPane.showInputDialog(null, e.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
         }
         try {
-            this.dev(dev);
+            if (!dev.isEmpty())
+                this.dev(dev);
         } catch (LPCSyntaxException e) {
             JOptionPane.showInputDialog(null, e.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
         }
@@ -90,29 +93,36 @@ public class HTMLDoc implements Visitor{
                         throw new LPCSyntaxException("Un titre doit être d'un seul type");
                 }
             }
-            System.out.println("titleindex=" + titleindex);
-            if (titleindex==0) {
-                if(doc.getArgs().contains("diag")
+            if(doc.isDiagram()){
+                int coupurepos=doc.getText().indexOf(':');
+                String[] infos= {doc.getText().substring(0,coupurepos),doc.getText().substring(coupurepos+1)};
+                File img=doc.readdiagramm(infos[0]);
+                retour.append("<img src=" + img.getAbsolutePath() + "/>");
+            }
+            else {
+                System.out.println("titleindex=" + titleindex);
+                if (titleindex==0) {
                     retour.append("<p>");
                     node = this.nodeTosring(doc);
                     retour.append(node);
                     retour.append("</p>");
-            }
-            else {
-                doc.remove("title"+titleindex);
-                node = this.nodeTosring(doc);
-                node = "<h"+titleindex+">" + node;
-                while (j < n.size() && n.get(j + 1).getArgs().contains("title"+titleindex)) {
-                    n.get(j + 1).remove("title"+titleindex);
-                    node = node + nodeTosring(n.get(j + 1));
-                    if (j + 1 < n.size())
-                        j++;
-                    else
-                        node = node + "</h"+titleindex+">";
                 }
-                node = node + "</h"+titleindex+">";
-                retour.append(node);
-            }
+                else {
+                    doc.remove("title"+titleindex);
+                    node = this.nodeTosring(doc);
+                    node = "<h"+titleindex+">" + node;
+                    while (j < n.size() && n.get(j + 1).getArgs().contains("title"+titleindex)) {
+                        n.get(j + 1).remove("title"+titleindex);
+                        node = node + nodeTosring(n.get(j + 1));
+                        if (j + 1 < n.size())
+                            j++;
+                        else
+                            node = node + "</h"+titleindex+">";
+                    }
+                    node = node + "</h"+titleindex+">";
+                    retour.append(node);
+                }
+        }
         }
         retour.append("</html>");
         return retour.toString();

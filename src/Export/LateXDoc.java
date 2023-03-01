@@ -2,6 +2,7 @@ package Export;
 import Util.LPCFile;
 
 import javax.swing.*;
+import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.util.ArrayList;
@@ -52,7 +53,7 @@ public class LateXDoc implements Visitor{
 
         for (Node n: compilation) {
             if(n instanceof DocumentationNode){
-                n.setText(n.getText().replaceAll("\n","\\\\newline    "));
+                //n.setText(n.getText().replaceAll("\n","\\\\newline    "));
                 if(((DocumentationNode) n).getArgs().contains("dev")){
                     dev.add((DocumentationNode) n);
                 }
@@ -62,12 +63,14 @@ public class LateXDoc implements Visitor{
             }
         }
         try {
-            this.user(user);
+            if (!user.isEmpty())
+                this.user(user);
         } catch (LPCSyntaxException e) {
             JOptionPane.showInputDialog(null,e.getMessage(),"Error",JOptionPane.ERROR_MESSAGE);
         }
         try {
-            this.dev(dev);
+            if (!dev.isEmpty())
+                this.dev(dev);
         } catch (LPCSyntaxException e) {
             JOptionPane.showInputDialog(null,e.getMessage(),"Error",JOptionPane.ERROR_MESSAGE);
         }
@@ -116,71 +119,86 @@ public class LateXDoc implements Visitor{
                         throw new LPCSyntaxException("Un titre doit être d'un seul type");
                 }
             }
-            System.out.println("titleindex=" +titleindex);
-            switch (titleindex){
-                case 0: node=this.nodeTosring(doc);
-                    break;
-                case 1: doc.remove("title1");
-                    System.out.println("Je passe bien par titre 1");
-                    node=this.nodeTosring(doc);
-                    node="\\part{"+node;
-                    System.out.println("next node contain title1"+n.get(j+1).getArgs().contains("title1"));
-                    while (j<n.size()&&n.get(j+1).getArgs().contains("title1")) {
-                        System.out.println("je passe par le while "+node);
-                        n.get(j+1).remove("title1");
-                        node = node + nodeTosring(n.get(j+1));
-                        if(j+1<n.size())
+            if(doc.isDiagram()){
+                int coupurepos=doc.getText().indexOf(':');
+                String[] infos= {doc.getText().substring(0,coupurepos),doc.getText().substring(coupurepos+1)};
+                File img=doc.readdiagramm(infos[0]);
+                node=("\\begin{figure}" + '\n' + "\\centering" + '\n' + "\\includegraphics{"
+                        + img.getName() + "}" + '\n' + "\\end{figure}");
+            }
+            else {
+                System.out.println("titleindex=" + titleindex);
+                switch (titleindex) {
+                    case 0:
+                        node = this.nodeTosring(doc);
+                        break;
+                    case 1:
+                        doc.remove("title1");
+                        System.out.println("Je passe bien par titre 1");
+                        node = this.nodeTosring(doc);
+                        node = "\\part{" + node;
+                        System.out.println("next node contain title1" + n.get(j + 1).getArgs().contains("title1"));
+                        while (j < n.size() && n.get(j + 1).getArgs().contains("title1")) {
+                            System.out.println("je passe par le while " + node);
+                            n.get(j + 1).remove("title1");
+                            node = node + nodeTosring(n.get(j + 1));
+                            if (j + 1 < n.size())
+                                j++;
+                            else
+                                node = node + "}";
+                        }
+                        node = node + "}";
+                        break;
+                    case 2:
+                        doc.remove("title2");
+                        node = this.nodeTosring(doc);
+                        node = "\\chapter{" + node;
+                        while (j < n.size() && n.get(j + 1).getArgs().contains("title2")) {
+                            n.get(j + 1).remove("title2");
+                            node = node + nodeTosring(n.get(j + 1));
                             j++;
-                        else
-                            node=node+"}";
-                    }
-                    node=node+"}";
-                    break;
-                case 2:doc.remove("title2");
-                    node=this.nodeTosring(doc);
-                    node="\\chapter{"+node;
-                    while (j<n.size()&&n.get(j+1).getArgs().contains("title2")) {
-                        n.get(j+1).remove("title2");
-                        node = node + nodeTosring(n.get(j+1));
-                        j++;
-                    }
-                    node=node+"}";
-                    break;
-                case 3:doc.remove("title3");
-                    node=this.nodeTosring(doc);
-                    node="\\section{"+node;
-                    while (j<n.size()&&n.get(j+1).getArgs().contains("title3")) {
-                        n.get(j+1).remove("title3");
-                        node = node + nodeTosring(n.get(j+1));
-                        j++;
-                    }
-                    node=node+"}";
-                    break;
-                case 4:doc.remove("title4");
-                    node=this.nodeTosring(doc);
-                    node="\\subsection{"+node;
-                    while (j<n.size()&&n.get(j+1).getArgs().contains("title4")) {
-                        n.get(j+1).remove("title4");
-                        node = node + nodeTosring(n.get(j+1));
-                        j++;
-                    }
-                    node=node+"}";
-                    break;
-                case 5:doc.remove("title5");
-                    node=this.nodeTosring(doc);
-                    node="\\subsubsection{"+node;
-                    while (j<n.size()&&n.get(j+1).getArgs().contains("title5")) {
-                        n.get(j+1).remove("title5");
-                        node = node + nodeTosring(n.get(j+1));
-                        j++;
-                    }
-                    node=node+"}";
-                    break;
-                default:break;
+                        }
+                        node = node + "}";
+                        break;
+                    case 3:
+                        doc.remove("title3");
+                        node = this.nodeTosring(doc);
+                        node = "\\section{" + node;
+                        while (j < n.size() && n.get(j + 1).getArgs().contains("title3")) {
+                            n.get(j + 1).remove("title3");
+                            node = node + nodeTosring(n.get(j + 1));
+                            j++;
+                        }
+                        node = node + "}";
+                        break;
+                    case 4:
+                        doc.remove("title4");
+                        node = this.nodeTosring(doc);
+                        node = "\\subsection{" + node;
+                        while (j < n.size() && n.get(j + 1).getArgs().contains("title4")) {
+                            n.get(j + 1).remove("title4");
+                            node = node + nodeTosring(n.get(j + 1));
+                            j++;
+                        }
+                        node = node + "}";
+                        break;
+                    case 5:
+                        doc.remove("title5");
+                        node = this.nodeTosring(doc);
+                        node = "\\subsubsection{" + node;
+                        while (j < n.size() && n.get(j + 1).getArgs().contains("title5")) {
+                            n.get(j + 1).remove("title5");
+                            node = node + nodeTosring(n.get(j + 1));
+                            j++;
+                        }
+                        node = node + "}";
+                        break;
+                    default:
+                        break;
+                }
             }
             retour.append(node);
         }
-
         retour.append("\\end{document}");
         System.out.println("retour="+retour);
         return retour.toString();

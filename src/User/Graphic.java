@@ -140,7 +140,7 @@ public class Graphic {
                     compil=new Compilator(target);
                 } catch (FileException | IOException ex) {
                     //TODO FATIH
-                    JOptionPane.showInputDialog(null,"Le fichier spécifié semble introuvable","File error",JOptionPane.ERROR_MESSAGE);
+                    JOptionPane.showMessageDialog(null,"Le fichier spécifié semble introuvable","File error",JOptionPane.ERROR_MESSAGE);
                 }
             }
             else{
@@ -150,11 +150,10 @@ public class Graphic {
                     File target=LPCFile.getMainFile(config);
                     compil = new Compilator(target);
                 } catch (FileException ex) {
-                    JOptionPane.showInputDialog(null,"Le fichier spécifié semble introuvable","File error",JOptionPane.ERROR_MESSAGE);
-                    throw new RuntimeException(ex);
+                    JOptionPane.showMessageDialog(null,"Le fichier spécifié semble introuvable","File error",JOptionPane.ERROR_MESSAGE);
                 } catch (IOException ex) {
                     //TODO fatih gere l'exception
-                    JOptionPane.showInputDialog(null,"Le fichier spécifié semble introuvable","File error",JOptionPane.ERROR_MESSAGE);
+                    JOptionPane.showMessageDialog(null,"Le fichier spécifié semble introuvable","File error",JOptionPane.ERROR_MESSAGE);
                 }
             }
         });
@@ -181,7 +180,7 @@ public class Graphic {
         exportHTMLDoc.addActionListener(e -> {
             if(compil!=null) {
                 try {
-                    compil.accept(new HTMLDoc(config.getHtmlTag(),compil.getSource().getName()));
+                    compil.accept(new HTMLDoc(config.getHtmlTag(),compil.getSource().getName().substring(0,compil.getSource().getName().length()-4)));
                 } catch (FileNotFoundException ex) {
                     JOptionPane.showMessageDialog(null,"Erreur lors de la lecture de la config","Config Error",JOptionPane.ERROR_MESSAGE);
                 }
@@ -191,7 +190,7 @@ public class Graphic {
         exportLatEXDoc.addActionListener(e -> {
             if(compil!=null) {
                 try {
-                    compil.accept(new LateXDoc(config.getLatexTag(),compil.getSource().getName()));
+                    compil.accept(new LateXDoc(config.getLatexTag(),compil.getSource().getName().substring(0,compil.getSource().getName().length()-4)));
                 } catch (FileNotFoundException ex) {
                     JOptionPane.showMessageDialog(null,"Erreur lors de la lecture de la config","Config Error",JOptionPane.ERROR_MESSAGE);
                 }

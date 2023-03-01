@@ -219,9 +219,6 @@ public class CreateConfig extends JPanel {
         annuler1.addActionListener(e-> reset());
         annuler1.setVisible(true);
 
-        //on remplit
-
-
         //on place les elements
         this.setLayout(new FlowLayout());
         this.add(name);

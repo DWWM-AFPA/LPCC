@@ -37,7 +37,6 @@ public class Compilator implements Visitable{
 
 
 
-
     //getters
     public String getOpenTag () {
         return openTag;
@@ -262,9 +261,11 @@ public class Compilator implements Visitable{
                 this.getDocNode();
             }
         }
-        if(!args.isEmpty())
-            throw new LPCSyntaxException("Erreur sur les balises dans le fichier "+source.getName()+" a la ligne "+countLines()+
-                    " a proximité de "+"\""+doc.substring(Math.max(0,pos-10),Math.min(doc.length(),pos+10)) +"\"");
+        if(!args.isEmpty()) {
+            System.out.println("erreur ici?");
+            throw new LPCSyntaxException("Erreur sur les balises dans le fichier " + source.getName() + " a la ligne " + countLines() +
+                    " a proximité de " + "\"" + doc.substring(Math.max(0, pos - 10), Math.min(doc.length(), pos + 10)) + "\"");
+        }
         return this.compiledfile;
     }
 
@@ -335,21 +336,35 @@ public class Compilator implements Visitable{
 
     private void getDocNode() throws LPCSyntaxException {
         String txt="";
-        //on determine ici les effets de style qui s'apliques au docnode
+        //on determine ici les effets de styles qui s'appliques au docnode
         while(Objects.equals(this.token,openTag)){
             this.excape();
             this.next();
             if(Objects.equals(this.getToken(), "/")) {
                 this.next();
-                int ref=args.size();
-                this.args.remove(getarg());
-                if(ref<=args.size())
-                    throw new LPCSyntaxException("Erreur sur les balises dans le fichier "+source.getName()+"a la ligne "+countLines()+"a proximité de "
-                            +doc.substring(Math.max(0,pos-10),Math.min(doc.length(),pos+10)));
+                if(!this.args.remove(getarg()))
+                    throw new LPCSyntaxException("Erreur sur les balises dans le fichier " + source.getName() + "a la ligne " + countLines() + "a proximité de "
+                            + doc.substring(Math.max(0, pos - 10), Math.min(doc.length(), pos + 10)));
             }
             else {
                 this.args.add(getarg());
             }
+        }
+        if(this.getToken().equals(chapteropen)) {
+            String chaptername = this.getChapterName();
+            File chaptersource=new File(LPCFile.getInputDirectory()+"\\"+chaptername);
+            Compilator chapter= null;
+            try {
+                chapter = new Compilator(chaptersource);
+                System.out.println("je défini le chapter");
+            } catch (FileException e) {
+                throw new RuntimeException(e);
+            } catch (IOException e) {
+                System.err.println(e.getMessage());
+                JOptionPane.showMessageDialog(null,"Une erreur inconnue s'est produite, veuillez redemarrer l'application");
+            }
+            compiledfile.addAll(chapter.compile());
+            return;
         }
         //on recupere le texte en mode docdev
         if(args.contains("dev")) {
@@ -360,7 +375,8 @@ public class Compilator implements Visitable{
         if(Objects.equals(token, codeopen))
             return ;
         //on recupere le texte du docnode
-        while (!Objects.equals(this.getToken(),this.getOpenTag())&&!Objects.equals(this.getToken(),codeopen)&&pos<doc.length()-1){
+        while (!Objects.equals(this.getToken(),this.getOpenTag())&&!Objects.equals(this.getToken(),codeopen)
+                &&!Objects.equals(this.getToken(),chapteropen)&&pos<doc.length()-1){
             this.excape();
             txt=txt+this.getToken();
             this.next();
@@ -369,19 +385,28 @@ public class Compilator implements Visitable{
             System.out.println("token= "+this.getToken());
         }
         System.out.println(this.getArgs());
-        ArrayList<String> argnode=new ArrayList<>(this.getArgs());
-        System.out.println("argnode= "+argnode);
-        compiledfile.add(new DocumentationNode(false,txt,argnode));
+        if(!args.contains("diag")) {
+            ArrayList<String> argnode = new ArrayList<>(this.getArgs());
+            compiledfile.add(new DocumentationNode(false, txt, argnode));
+        }
+        else {
+            DocumentationNode retour=new DocumentationNode(false,txt,new ArrayList<>());
+            retour.setDiagram(true);
+            compiledfile.add(retour);
+        }
     }
 
 
     private String getChapterName(){
         StringBuilder retour=new StringBuilder();
+        next();
         while (!this.getToken().equals(chapterclose)) {
             this.excape();
             retour.append(this.getToken());
+            next();
         }
         retour.append(".lpc");
+        next();
         return retour.toString();
         }
 
@@ -392,22 +417,7 @@ public class Compilator implements Visitable{
         int posfin=this.getPos();
         while (!Objects.equals(this.getToken(), openTag)&&pos<doc.length()-1){
             this.excape();
-            if(this.getToken().equals(chapteropen)) {
-                String chaptername = this.getChapterName();
-                String sourcepath=source.getParent();
-                String chapterfullpath=sourcepath+chaptername;
-                File chaptersource=new File(chapterfullpath);
-                Compilator chapter= null;
-                try {
-                    chapter = new Compilator(chaptersource);
-                } catch (FileException e) {
-                    throw new RuntimeException(e);
-                } catch (IOException e) {
-                    JOptionPane error=new JOptionPane("Une erreur inconnue s'est produite, veuillez redemarrer l'application");
-                }
-                compiledfile.addAll(chapter.compile());
-            }
-            if(Objects.equals(this.getToken(), codeopen)){
+            if(Objects.equals(this.getToken(), codeopen)&&!Objects.equals(this.getToken(),chapteropen)){
                 posdeb=this.getPos();
                 this.getCodeNode();
                 posfin=this.getPos();
@@ -418,8 +428,16 @@ public class Compilator implements Visitable{
                 this.next();
             }
         }
-        ArrayList<String> argnode=new ArrayList<>(this.getArgs());
-        compiledfile.add(new DocumentationNode(true,txt,argnode));
+
+        if(!args.contains("diag")) {
+            ArrayList<String> argnode = new ArrayList<>(this.getArgs());
+            compiledfile.add(new DocumentationNode(true, txt, argnode));
+        }
+        else {
+            DocumentationNode retour=new DocumentationNode(false,txt,new ArrayList<>());
+            retour.setDiagram(true);
+            compiledfile.add(retour);
+        }
     }
 
     @Override

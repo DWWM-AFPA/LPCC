@@ -1,20 +1,27 @@
 package Export;
 
+import Util.LPCFile;
 import net.sourceforge.plantuml.SourceStringReader;
 
+import javax.imageio.ImageIO;
 import javax.xml.transform.Source;
+import java.awt.*;
 import java.awt.image.BufferedImage;
-import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.io.OutputStream;
+import java.io.*;
 import java.util.ArrayList;
 
 public class DocumentationNode extends Node{
     protected boolean dev;
     protected ArrayList<String> args;
 
+    protected boolean diagram;
+
     //getters
+
+
+    public boolean isDiagram() {
+        return diagram;
+    }
 
     public ArrayList<String> getArgs() {
         return args;
@@ -27,6 +34,10 @@ public class DocumentationNode extends Node{
 
     //setters
 
+
+    public void setDiagram(boolean diagram) {
+        this.diagram = diagram;
+    }
 
     public void setDev(boolean dev) {
         this.dev = dev;
@@ -64,22 +75,21 @@ public class DocumentationNode extends Node{
 
     //methodes
 
-    public BufferedImage readdiagramm(){
+    public File readdiagramm(String diagramname){
         String source=this.text;
         OutputStream out;
         try {
-            out=new FileOutputStream("diag.png");
+            out=new FileOutputStream(LPCFile.getOutputDirectory()+"\\"+diagramname+".png");
         } catch (FileNotFoundException e) {
             throw new RuntimeException(e);
         }
         SourceStringReader reader=new SourceStringReader(source);
-        BufferedImage im;
         try {
             reader.outputImage(out);
-            im=new
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
+        return new File(LPCFile.getOutputDirectory()+"\\"+diagramname+".png");
     }
 
 

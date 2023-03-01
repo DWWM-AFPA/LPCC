@@ -8,7 +8,6 @@ import java.awt.event.ActionListener;
 
 public class ConfigItem extends JMenuItem {
     private String configname;
-
     private Graphic fenetre;
 
     public ConfigItem(Graphic fenetre,String configname){

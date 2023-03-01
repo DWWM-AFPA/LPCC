@@ -111,26 +111,27 @@ public abstract class LPCFile extends File {
     //si le user ouvre le dir et qu'il contient
     public static String read(File file) throws IOException, FileException {
         //evite de lire 2x le même File
-        if (!alreadyReadFile.contains(file)) {
-            alreadyReadFile.add(file);
-            FileReader fileReader=null;
-            if(file!=null)
-                fileReader= new FileReader(file);
-            int i;
-            StringBuilder retour = new StringBuilder();
-            if (fileReader!=null)
-                while((i= fileReader.read()) != -1)
-                    retour.append((char)i);
-            return retour.toString();
+        //if (!alreadyReadFile.contains(file)) {
+        alreadyReadFile.add(file);
+        FileReader fileReader=null;
+        if(file!=null)
+            fileReader= new FileReader(file);
+        int i;
+        StringBuilder retour = new StringBuilder();
+        if (fileReader!=null)
+            while((i= fileReader.read()) != -1)
+                retour.append((char)i);
+        return retour.toString();
         }
-        else {
-            throw new FileException();
+        //else {
+            //throw new FileException();
             //System.err.println("Le fichier "+this.getPath()+" semble avoir déjà été parcouru");
-        }
-    }
+        //}
 
     public static File getMainFile(Config c) throws FileException, IOException {
         File retour = null;
+        if(inputDirectory==null)
+            inputDirectory=new File(documentsPath);
         for (File s : inputDirectory.listFiles())
         {
             if (s.getName().equals(c.getMainInputFileName()))
