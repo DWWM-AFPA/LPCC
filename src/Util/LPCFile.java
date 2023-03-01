@@ -34,7 +34,7 @@ public abstract class LPCFile extends File {
         //mes documents
         String LPCCfolder = FileSystemView.getFileSystemView().getDefaultDirectory().getPath()+"\\LPCC\\Config";
         File retour=new File(LPCCfolder);
-        if (retour.mkdir())
+        if (retour.mkdirs())
             JOptionPane.showMessageDialog(null,"Nouveau dossier configuration créé :"+
                     System.lineSeparator()+
                     LPCCfolder);

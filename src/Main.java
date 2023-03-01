@@ -1,5 +1,6 @@
 import Export.*;
 import Export.Compiler;
+import User.GraphicMain;
 import Util.*;
 
 import javax.swing.*;
@@ -10,17 +11,19 @@ import java.util.List;
 
 public class Main {
     public static void main(String[] args) throws IOException, FileException {
+
+
 /*        File file = new File("input","LPCC");
 
         Compilator compTest = new Compilator(file.read());
         compTest.compile();
        // Node.getAllNodes();*/
     //    Config matt= new Config("matt");
-   //     Config.createEmptyConfig();
+        Config.createEmptyConfig();
         JFileChooser choose = new JFileChooser(LPCFile.getConfigDirectory());
         choose.showDialog(null,"select");
         Config.loadConfig(choose.getSelectedFile());
-        Config.updateConfig(choose.getSelectedFile());
+        Config.updateConfig(choose.getSelectedFile(),null);
 
                 //,new File("matt","config"));
      //   matt.createConfig();
