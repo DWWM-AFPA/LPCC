@@ -4,19 +4,19 @@ import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.*;
 
-public class CompilatorTest {
+public class CompilerTest {
     @Test
     void testNext(){
-        assertEquals("a",new Compilator("a").next());
-        assertEquals("z",new Compilator("az").next());
+        assertEquals("a",new Compiler("a").next());
+        assertEquals("z",new Compiler("az").next());
     }
 
     @Test
     void testEraseTagSpaces() {
-        assertEquals("<code> Hello World <code/>",new Compilator("< code > Hello World <code/>").eraseTagSpaces());
-        assertEquals("<code> Hello World <code/>",new Compilator("<  code > Hello World <code/>").eraseTagSpaces());
-        assertEquals("<code> Hello World <code/>",new Compilator("< code  > Hello World < code />").eraseTagSpaces());
-        assertEquals("<code> Hello World <code/>",new Compilator("< code  > Hello World < code />").eraseTagSpaces());
+        assertEquals("<code> Hello World <code/>",new Compiler("< code > Hello World <code/>").eraseTagSpaces());
+        assertEquals("<code> Hello World <code/>",new Compiler("<  code > Hello World <code/>").eraseTagSpaces());
+        assertEquals("<code> Hello World <code/>",new Compiler("< code  > Hello World < code />").eraseTagSpaces());
+        assertEquals("<code> Hello World <code/>",new Compiler("< code  > Hello World < code />").eraseTagSpaces());
      //   assertThrows(StringIndexOutOfBoundsException.class, () -> { new Compilator("< code  > Hello World < code      /").eraseTagSpaces();});
 
 
@@ -24,7 +24,7 @@ public class CompilatorTest {
     @Test
     void testCompilator(){
 
-        Compilator compTest = new Compilator("<dev> ceci est du code : \" +\n" +
+        Compiler compTest = new Compiler("<dev> ceci est du code : \" +\n" +
                 "                            \"<codeTest> code code code <codeTest/>\"+\n" +
                 "                        \"<dev/>\"+\n" +
                 "                \"<code> azerty <test> zob <code/>\" +\n" +
@@ -34,42 +34,42 @@ public class CompilatorTest {
         assertEquals("Hello World code", nodeTest.getText() + " "+nodeTest.getName());
 
 
-        Compilator comp = new Compilator("< code > Hello <test> World <code/>");
+        Compiler comp = new Compiler("< code > Hello <test> World <code/>");
         CodeNode node = (CodeNode) comp.compile();
         assertEquals("Hello World code", node.getText() + " "+node.getName());
 
 
-        comp = new Compilator("<code> Hello World < code />");
+        comp = new Compiler("<code> Hello World < code />");
         node = (CodeNode) comp.compile();
         assertEquals("Hello World code", node.getText() + " "+node.getName());
 
-        comp = new Compilator("< code > Hello World < code />");
+        comp = new Compiler("< code > Hello World < code />");
         node = (CodeNode) comp.compile();
         assertEquals("Hello World code", node.getText() + " "+node.getName());
 
-        comp = new Compilator("<code> Hello World <code/>");
-        node = (CodeNode) comp.compile();
-        assertEquals("Hello World code", node.getText() + " "+node.getName());
-
-
-        comp = new Compilator("<code>Hello World<code/>");
-        node = (CodeNode) comp.compile();
-        assertEquals("Hello World code", node.getText() + " "+node.getName());
-
-        comp = new Compilator("<code>  Hello World  <code/>");
+        comp = new Compiler("<code> Hello World <code/>");
         node = (CodeNode) comp.compile();
         assertEquals("Hello World code", node.getText() + " "+node.getName());
 
 
-        assertEquals("Hello World", new Compilator("<user> Hello World <user/>").compile().getText());
+        comp = new Compiler("<code>Hello World<code/>");
+        node = (CodeNode) comp.compile();
+        assertEquals("Hello World code", node.getText() + " "+node.getName());
 
-        assertEquals("Hello World", new Compilator("<dev>Hello World<dev/>").compile().getText());
+        comp = new Compiler("<code>  Hello World  <code/>");
+        node = (CodeNode) comp.compile();
+        assertEquals("Hello World code", node.getText() + " "+node.getName());
 
-        assertEquals("Hello World", new Compilator("<user>Hello World<user/>").compile().getText());
 
-        assertEquals("Hello World", new Compilator("<dev>  Hello World  <dev/>").compile().getText());
+        assertEquals("Hello World", new Compiler("<user> Hello World <user/>").compile().getText());
 
-        assertEquals("Hello World", new Compilator("<user>  Hello World  <user/>").compile().getText());
+        assertEquals("Hello World", new Compiler("<dev>Hello World<dev/>").compile().getText());
+
+        assertEquals("Hello World", new Compiler("<user>Hello World<user/>").compile().getText());
+
+        assertEquals("Hello World", new Compiler("<dev>  Hello World  <dev/>").compile().getText());
+
+        assertEquals("Hello World", new Compiler("<user>  Hello World  <user/>").compile().getText());
 
 
 

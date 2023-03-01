@@ -14,10 +14,9 @@ public abstract class LPCFile extends File {
     protected String fullPath;
     protected boolean hasBeenRead;
     protected String content;
-    private static File inputDirectory;
     private static final ArrayList<File> alreadyReadFile=new ArrayList<>();
-    private static File outputDirectory;
-    private static File ConfigDirectory;
+    private static final File ConfigDirectory = setConfigDirectory();
+
     private static final ArrayList<File> inputFileList = new ArrayList<>();
     public static final String desktopPath = FileSystemView.getFileSystemView().getHomeDirectory().getPath();
     public static final String documentsPath = FileSystemView.getFileSystemView().getDefaultDirectory().getPath();
@@ -26,28 +25,20 @@ public abstract class LPCFile extends File {
         super(pathname);
     }
 
-    public static File getInputDirectory() {
-        return inputDirectory;
-    }
-
-    public static void setInputDirectory(File inputDir) {
-        LPCFile.inputDirectory = inputDir;
-    }
-
-    public static File getOutputDirectory() {
-        return outputDirectory;
-    }
-
-    public static void setOutputDirectory(File outputDirectory) {
-        LPCFile.outputDirectory = outputDirectory;
-    }
 
     public static File getConfigDirectory() {
         return ConfigDirectory;
     }
 
-    public static void setConfigDirectory(File configDirectory) {
-        ConfigDirectory = configDirectory;
+    private static File setConfigDirectory() {
+        //mes documents
+        String LPCCfolder = FileSystemView.getFileSystemView().getDefaultDirectory().getPath()+"\\LPCC\\Config";
+        File retour=new File(LPCCfolder);
+        if (retour.mkdir())
+            JOptionPane.showMessageDialog(null,"Nouveau dossier configuration créé :"+
+                    System.lineSeparator()+
+                    LPCCfolder);
+        return retour;
     }
 
     /** create a File from a Class File parent Directory,extension without "." and automatically in LowerCase  */
@@ -81,10 +72,10 @@ public abstract class LPCFile extends File {
 
     public static File getMainFile() throws FileException, IOException {
         File retour = null;
-
+        File inputDirectory = Config.getCurrentConfig().getInputFolder();
         for (File s : inputDirectory.listFiles())
         {
-            if (s.getName().equals(Config.getMainInputFileName()))
+            if (s.getName().equals(Config.getCurrentConfig().getMainInputFileName()))
                 retour = s;
         }
         if (retour == null) {
@@ -94,5 +85,6 @@ public abstract class LPCFile extends File {
         }
         return retour;
     }
+
 
 }

@@ -1,10 +1,9 @@
 import Export.*;
-import User.*;
+import Export.Compiler;
 import Util.*;
 
+import javax.swing.*;
 import java.io.IOException;
-import java.util.HashMap;
-import java.util.Set;
 
 public class Main {
     public static void main(String[] args) throws IOException, FileException {
@@ -14,8 +13,10 @@ public class Main {
         compTest.compile();
        // Node.getAllNodes();*/
         Config matt= new Config("matt");
-        LPCFile.setOutputDirectory(null);
         Config.createEmptyConfig();
+        JFileChooser choose = new JFileChooser(LPCFile.getConfigDirectory());
+        choose.showDialog(null,"select");
+        matt.loadConfig(choose.getSelectedFile());
                 //,new File("matt","config"));
      //   matt.createConfig();
       /* matt.loadConfig();*/
@@ -42,7 +43,7 @@ public class Main {
             System.out.printf("Name : %s Text : %s Style :%s%s", nd.getName(),nd.getText(),""*//**//*nd.getStyle()*//**//*,System.lineSeparator());
         }/**/
 
-        new Compilator("<dev> <title1><it>documentation  titre 1 <it/><title1/> text dev <code> c'est du code <codeTest> un autre bout de code <codeAlone> apres l'autre code <codeTest/> encore dans code <code/> fin dans dev <dev/><codeAlone>le code de codeAlone<codeAlone/>"+"<user > documentation Utilisateur<user/>").compile();
+        new Compiler("<dev> <title1><it>documentation  titre 1 <it/><title1/> text dev <code> c'est du code <codeTest> un autre bout de code <codeAlone> apres l'autre code <codeTest/> encore dans code <code/> fin dans dev <dev/><codeAlone>le code de codeAlone<codeAlone/>"+"<user > documentation Utilisateur<user/>").compile();
 
        // new Compilator("<user> documentation dev <code> c'est du code <codeTest> un autre bout de code <codeAlone> apres l'autre code <codeTest/> encore dans code <code/> fin dans dev <user/><codeAlone>le code de codeAlone<codeAlone/>").compile();
 

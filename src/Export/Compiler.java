@@ -4,7 +4,7 @@ import javax.swing.*;
 import java.io.*;
 import java.util.*;
 
-public class Compilator {
+public class Compiler {
     protected String openTag;
     protected String closeTag;
     protected int pos=0;
@@ -75,16 +75,16 @@ public class Compilator {
 
     //builders
 
-    public Compilator(String textToCompile) {
+    public Compiler(String textToCompile) {
         this.setOpenTag("<");
         this.setCloseTag(">");
         this.setDoc(textToCompile);
     }
-    public Compilator(String openTag, String closeTag) {
+    public Compiler(String openTag, String closeTag) {
         this.setCloseTag(closeTag);
         this.setOpenTag(openTag);
     }
-    public Compilator(String openTag, String closeTag, String textToCompile) {
+    public Compiler(String openTag, String closeTag, String textToCompile) {
         this.setCloseTag(closeTag);
         this.setOpenTag(openTag);
         this.setDoc(textToCompile);

@@ -35,7 +35,7 @@ public class HTMLExportVisitor implements Visitor {
     @Override
     public String visitDocumentation(DocumentationNode documentationNode) {
         HashMap<String, String> styleMap = Config.getCurrentConfig().getHTMLBindings();
-
+        File outputFolder =Config.getCurrentConfig().getOutputFolder();
 
         if (documentationNode.getName().equals("dev")) {
 
@@ -86,8 +86,9 @@ public class HTMLExportVisitor implements Visitor {
                     //TODO comment afficher le code en HTML ? Juste comme ça ?
                 }
             }
+
             try {
-                File devFile = LPCFile.create(LPCFile.getOutputDirectory(), "Developer Documentation", "html", dev.toString());
+                File devFile = LPCFile.create(outputFolder, "Developer Documentation", "html", dev.toString());
             } catch (IOException io) {
                 System.exit(-1);
             }
@@ -134,7 +135,7 @@ public class HTMLExportVisitor implements Visitor {
             }
 
             try {
-                File userFile = LPCFile.create(LPCFile.getOutputDirectory(), "User Documentation", "html", user.toString());
+                File userFile = LPCFile.create(outputFolder, "User Documentation", "html", user.toString());
             } catch (IOException io) {
                 System.exit(-1);
             }
@@ -161,7 +162,7 @@ public class HTMLExportVisitor implements Visitor {
 
 
         try {
-            File codeFile = LPCFile.create(LPCFile.getOutputDirectory(), codeName, "html", code.toString());
+            File codeFile = LPCFile.create(Config.getCurrentConfig().getOutputFolder(), codeName, "html", code.toString());
         } catch (IOException io) {
             System.exit(-1);
         }

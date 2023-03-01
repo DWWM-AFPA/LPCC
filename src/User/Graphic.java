@@ -1,6 +1,8 @@
 package User;
 
+import Export.Compiler;
 import Export.FileException;
+import Util.Config;
 import Util.LPCFile;
 
 import javax.swing.*;
@@ -26,12 +28,12 @@ public class Graphic {
         JTextArea path= new JTextArea(Paths.get("").toAbsolutePath().toString());
         panel.setBackground(Color.lightGray);
 
-        JButton choose = new JButton("Choose");
+        JButton choose = new JButton("Choose Input");
         // compile.setBounds(50,50, 10,10);
         choose.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                    LPCFile.setInputDirectory(Graphic.chooseDirectory(ChooserType.OPEN));
+                Config.getCurrentConfig().setInputFolder(Graphic.chooseDirectory(ChooserType.OPEN));
             }
         });
 
@@ -39,10 +41,9 @@ public class Graphic {
         compile.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                System.out.println("Compilation lancée");
-            //    Compilator.compile();
                 try {
                     System.out.println(LPCFile.getMainFile());
+                    new Compiler("").compile();
                 } catch (FileException | IOException ex) {
                     throw new RuntimeException(ex);
                 }
