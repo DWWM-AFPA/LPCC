@@ -3,9 +3,12 @@ package User;
 import Util.Config;
 
 import javax.swing.*;
+import javax.swing.event.DocumentEvent;
+import javax.swing.event.DocumentListener;
 import javax.swing.event.TableModelEvent;
 import javax.swing.event.TableModelListener;
 import javax.swing.table.TableModel;
+import javax.swing.text.TextAction;
 import java.awt.*;
 import java.awt.event.*;
 import java.awt.event.WindowListener;
@@ -14,7 +17,7 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
 
-public class GraphicConfig extends JFrame implements TableModelListener {
+public class GraphicConfig extends JFrame implements TableModelListener, TextListener, DocumentListener {
     private Config config;
     private JLabel configName;
     private JTextField nameTextField;
@@ -31,8 +34,8 @@ public class GraphicConfig extends JFrame implements TableModelListener {
         this.config=config;
         this.configName = new JLabel("Configuration Name");
         this.nameTextField = new JTextField(config.getName());
-        this.nameTextField.setMinimumSize(new Dimension(20,10));
-        this.nameTextField.setSize(new Dimension(20,10));
+      //  this.nameTextField.setMinimumSize(new Dimension(20,10));
+      //  this.nameTextField.setSize(new Dimension(20,10));
         this.ok = new JButton("ok");
 
 
@@ -73,7 +76,7 @@ public class GraphicConfig extends JFrame implements TableModelListener {
         table2.setAutoResizeMode(JTable.AUTO_RESIZE_ALL_COLUMNS);
 
         JPanel p = new JPanel();
-        p.setLayout(new GridBagLayout());
+        p.setLayout(new GridLayout(3,1));
         p.add(this.configName);
         p.add(this.nameTextField);
 
@@ -129,9 +132,11 @@ public class GraphicConfig extends JFrame implements TableModelListener {
 
         // Ajouter les contraintes
         getContentPane().add(tbl2,c);
-        c.gridx=1;
+        c.gridx=0;
+        c.gridwidth=3;
+        c.weightx=3;
         c.gridy+=1;
-        c.ipadx=10;
+        c.ipadx=50;
         getContentPane().add(ok,c);
 
         // Création d'un objet de "WindowAdapter"
@@ -150,7 +155,15 @@ public class GraphicConfig extends JFrame implements TableModelListener {
         pack();
        // setSize(400, 250);
         setVisible(true);
-
+        nameTextField.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                System.out.println(config.getName());
+                config.setName(nameTextField.getText());
+                System.out.println(config.getName());
+                pack();
+            }
+        });
         ok.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
@@ -166,7 +179,7 @@ public class GraphicConfig extends JFrame implements TableModelListener {
 
         table1.getModel().addTableModelListener(this);
         table2.getModel().addTableModelListener(this);
-
+nameTextField.getDocument().addDocumentListener(this);
 
 
 
@@ -217,5 +230,28 @@ public class GraphicConfig extends JFrame implements TableModelListener {
                 case 2 -> latexMap.replace((String) model.getValueAt(row, 0), data);
             }
         }
+    }
+
+    @Override
+    public void textValueChanged(TextEvent e) {
+        System.out.println(config.getName());
+        config.setName(nameTextField.getText());
+        System.out.println(config.getName());
+        pack();
+    }
+
+    @Override
+    public void insertUpdate(DocumentEvent e) {
+        config.setName(nameTextField.getText());
+    }
+
+    @Override
+    public void removeUpdate(DocumentEvent e) {
+        config.setName(nameTextField.getText());
+    }
+
+    @Override
+    public void changedUpdate(DocumentEvent e) {
+        config.setName(nameTextField.getText());
     }
 }

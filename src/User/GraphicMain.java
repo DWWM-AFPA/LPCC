@@ -63,13 +63,7 @@ public class GraphicMain extends JFrame {
 
         setLocation(screenSize.width/2-this.getWidth()/2,screenSize.height/2-this.getHeight()/2);
 
-        File[] fileList = LPCFile.getConfigDirectory().listFiles();
-        assert fileList!=null;
-        for (File config:fileList) {
-            if (!config.getName().equals("DefaultConfig.cfg")) {
-                configComboBox.addItem(config.getName().split("\\.")[0]);
-            }
-        }
+        updateChooseBox();
 
         // Créer le menu
         this.menu = new JMenu("Menu");
@@ -131,13 +125,16 @@ public class GraphicMain extends JFrame {
         deleteConfig.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-
+           // configComboBox.removeItem(name);
+                System.out.println(Config.getCurrentConfig().delete((String) configComboBox.getSelectedItem()));
             }
         });
-        loadConfigButton.addActionListener(new ActionListener() {
+        configComboBox.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
+                updateChooseBox();
                 String name = (String) configComboBox.getSelectedItem();
+
 
                 Config.getConfigSingleton(name);
                 JOptionPane.showMessageDialog(null,"Configuration de "+ name +" chargée.");
@@ -176,16 +173,20 @@ public class GraphicMain extends JFrame {
         });
 
         pack();
+        loadConfigButton.setVisible(false);
         setVisible(true);
 
-        table1.addComponentListener(new ComponentAdapter() {
-        });
-        table1.addMouseListener(new MouseAdapter() {
-        });
-        table1.addComponentListener(new ComponentAdapter() {
-        });
     }
-
+private void updateChooseBox() {
+    File[] fileList = LPCFile.getConfigDirectory().listFiles();
+    assert fileList != null;
+    configComboBox.removeAllItems();
+    for (File config : fileList) {
+        if (!config.getName().equals("DefaultConfig.cfg")) {
+            configComboBox.addItem(config.getName().split("\\.")[0]);
+        }
+    }
+}
     public static File chooseDirectory(Graphic.ChooserType chooseButtonType){
         File outputName=new File("LPCC");
         String outputDir= LPCFile.desktopPath+"\\Projet\\LPCC";

@@ -84,6 +84,7 @@ public class Config {
     }
 
     public void setConfigFile(File configFile) {
+        System.out.println(this);
         this.configFile = configFile;
     }
 
@@ -192,6 +193,7 @@ public class Config {
     //    Config currentConfig = Config.getConfigSingleton(fileConfig.getName());
         String contenu = null;
         try {
+            LPCFile.getAlreadyReadFile().remove(config.getConfigFile());
             contenu = LPCFile.read(config.getConfigFile());}
         catch (FileNotFoundException fe) {
             if (!config.getConfigFile().isFile())
@@ -203,7 +205,11 @@ public class Config {
                 System.exit(-1);
             }
         }
-        catch (FileException ignored) {}
+        catch (FileException fe) {
+            System.err.println("Loading 2 times Config file problem ");
+        }
+
+
         Scanner scan = new Scanner(contenu);
         int line =0;
         boolean LPCTag =false;
@@ -333,6 +339,11 @@ public class Config {
 
         LPCFile.create(LPCFile.getConfigDirectory(),this.getName(),"cfg",config.toString());
     }
+    public boolean delete(String name){
+        configList.remove(name);
+        Config.setCurrentConfig(getConfigSingleton("DefaultConfig"));
+        return this.configFile.delete();
+    }
 
     public static String getEmptyConfig() {
         return
@@ -382,5 +393,10 @@ public class Config {
 
     }
 
-
+    @Override
+    public String toString() {
+        return "Config{" +
+                "name='" + name + '\'' +
+                '}';
+    }
 }
