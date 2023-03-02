@@ -19,14 +19,23 @@ public class GraphicMain {
         Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
         JFrame frame = new JFrame("Literate Programing Code Compiler");
 
-
-
-        frame.setContentPane(new GraphicMain().panel);
+        GraphicMain graphicMain = new GraphicMain();
+        frame.setContentPane(graphicMain.panel);
+        frame.setJMenuBar(graphicMain.menubar);
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+
         frame.pack();
         frame.setLocation(screenSize.width/2-frame.getWidth()/2,screenSize.height/2-frame.getHeight()/2);
         frame.setVisible(true);
     }
+    private JMenu menu;
+    private JMenu smenu;
+    private JMenuBar menubar = new JMenuBar();
+    private JMenuItem open;
+    private JMenuItem createConfig;
+    private JMenuItem readConfig;
+    private JMenuItem updateConfig;
+    private JMenuItem deleteConfig;
 
     private JButton chooseFileButton;
     private JCheckBox userCheckBox;
@@ -37,6 +46,7 @@ public class GraphicMain {
     private JComboBox configComboBox;
     private JButton loadConfigButton;
     private JPanel panel;
+    private JProgressBar progressBar1;
 
 
     public GraphicMain() {
@@ -46,6 +56,68 @@ public class GraphicMain {
                 configComboBox.addItem(config.getName().split("\\.")[0]);
             }
         }
+
+        // Créer le menu
+        this.menu = new JMenu("Menu");
+        // Créer le sous menu
+        this.smenu = new JMenu("Configuration");
+        // Créer les éléments du menu et sous menu
+        this.open = new JMenuItem("Open");
+        this.createConfig = new JMenuItem("Create configuration");
+        this.readConfig = new JMenuItem("Read configuration");
+        this.updateConfig = new JMenuItem("Update configuration");
+        this.deleteConfig = new JMenuItem("Delete configuration");
+
+        // Ajouter les éléments au menu
+        this.menu.add(open);
+        // Ajouter les éléments au sous menu
+        this.smenu.add(createConfig);
+        this.smenu.add(readConfig);
+        this.smenu.add(updateConfig);
+        this.smenu.add(deleteConfig);
+        // Ajouter le sous menu au menu principale
+        menu.add(smenu);
+        // Ajouter le menu au barre de menu
+        menubar.add(menu);
+        // Ajouter la barre de menu au frame
+    //    frame.setJMenuBar(menubar);
+
+        open.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                try {
+                    LPCFile.getMainFile();
+                } catch (FileException ex) {
+                    throw new RuntimeException(ex);
+                } catch (IOException ex) {
+                    throw new RuntimeException(ex);
+                }
+            }
+        });
+        createConfig.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+
+            }
+        });
+        readConfig.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+
+            }
+        });
+        updateConfig.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+
+            }
+        });
+        deleteConfig.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+
+            }
+        });
         loadConfigButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
@@ -58,12 +130,6 @@ public class GraphicMain {
 
                 }
                 //Config.getCurrentConfig().setInputFolder(Graphic.chooseDirectory(Graphic.ChooserType.OPEN));
-            }
-        });
-        configComboBox.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-
             }
         });
         compileButton.addActionListener(new ActionListener() {
@@ -88,6 +154,7 @@ public class GraphicMain {
                                 mainFileContent = LPCFile.read(mainFile);
                             } catch (IOException|FileException ignored){}
                             break;
+                        case (JOptionPane.CANCEL_OPTION):
                     }
                 }
 

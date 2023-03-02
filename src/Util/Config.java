@@ -1,13 +1,11 @@
 package Util;
 
 import Export.FileException;
-import jdk.jshell.spi.ExecutionControl;
 
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Scanner;
 
 public class Config {
@@ -60,6 +58,8 @@ public class Config {
             try{ Config.createEmptyConfig();
             } catch (IOException ignored) {
         }}
+        if (currentConfig==null)
+            System.err.println("errrrrrreur de config putain de merde");
         return currentConfig;
     }
 
@@ -244,77 +244,7 @@ public class Config {
         return currentConfig;
         }
 
-    public static void updateConfig(File file,String changes) throws FileException, IOException {
-        String name = file.getName();   //DefaultConfig.cfg
-     //   Config currentConfig = new Config(name.split("\\.")[0]);
-        Scanner scan = new Scanner(LPCFile.read(file));
-        int line =0;
-        boolean LPCTag =false;
-        while (scan.hasNext()) {
-                String s = scan.nextLine();
-                line++;
-                if (s.contains("LPC")&&!s.contains("//")) {
-                    LPCTag = !LPCTag;
-                   // String[] tagTypes = s.split(";");
-                    //for (String stype:tagTypes)
-                    //    System.out.print("types         : " +stype);
-                }
-                else if (LPCTag&&!s.contains("//")) {
-                    String[] tags = s.split(";");
-                    for (String st:tags){
-                        currentConfig.getStyleTagList().add(tags[0]);
-                        currentConfig.getHTMLBindings().put(tags[0],tags[1]);
-                        currentConfig.getLatexBindings().put(tags[0],tags[2]);
-                    //TODO arrayList compiler à transferer dans la config
-                    }
-                }
-                else {
-                     switch(line){
-                         //Current Configuration else if higher
-                         case 2:
-                             if(file.getName().equals("DefaultConfig.cfg"))
-                                System.out.println("defaut");
-                             break;
-                             //language
-                         case 5:
-                            currentConfig.setLanguage(s);
-                             break;
-                            //inputDir
-                         case 8:
-                            currentConfig.setInputFolder(new File(s));
-                             break;
-                            //main Input File name
-                         case 11:
-                             currentConfig.setMainInputFileName(s);
-                             break;
-                             //output Dir
-                         case 14:
-                             currentConfig.setOutputFolder(new File(s));
-                             break;
-                             //tags delimiters
-                         case 17:
-                             currentConfig.setTagsDelimiter(s.split(";"));
-                             break;
-                             //user and dev tags
-                         case 20:
-                             String[] tags = s.split(";");
-                             currentConfig.setUserTag(tags[0]);
-                             currentConfig.setDevTag(tags[1]);
-                             break;
-                             //tag closer +
-                         case 23:
-                            currentConfig.setTagCloser(s.split(";"));
-                            break;
-                            //tag closer +
-                         case 26:
-                            currentConfig.setEscapingString(s);
-                            break;
-                     }
 
-                }
-                 //     else
-        }
-    }
 
     public void createConfig() throws IOException {
         LPCFile.create(LPCFile.getConfigDirectory(),"DefaultConfig","cfg","");
@@ -365,5 +295,52 @@ public class Config {
                        "image  ;        <img src=\"dinosaur.jpg\">     ;      \\includegraphics{universe}"
         );
     }
+
+    public void UpdateConfig() throws IOException {
+        StringBuilder config = new StringBuilder();
+        String ln = System.lineSeparator();
+        config.append("//Current Configuration").append(ln)
+            .append(Config.getCurrentConfig().getName())
+            .append(ln).append(ln)
+            .append("//language").append(ln)
+            .append(this.getLanguage())
+            .append(ln).append(ln)
+            .append("//input directory (if null must be in my Documents)").append(ln)
+            .append(this.getInputFolder().getPath())
+            .append(ln).append(ln)
+            .append("//main input file name").append(ln)
+            .append(this.getMainInputFileName())
+            .append(ln).append(ln)
+            .append("//output directory (if null must be in my Documents)").append(ln)
+            .append(this.getOutputFolder())
+            .append(ln).append(ln)
+            .append("//Tags Delimiter").append(ln)
+            .append(this.getTagsDelimiter()[0]).append(';').append(this.getTagsDelimiter()[1])
+            .append(ln).append(ln)
+            .append("//user and developer documentation tags ").append(ln)
+            .append(this.getUserTag()).append(';').append(this.getDevTag())
+            .append(ln).append(ln)
+            .append("//LPC Tag closer + LPC Tag position (can be start:\"/it\" or end:\"it/\")" ).append(ln)
+            .append(this.getTagCloser()[0]).append(';').append(this.getTagCloser()[1])
+            .append(ln).append(ln)
+            .append("//LPC character escaping" ).append(ln)
+            .append(this.getEscapingString())
+            .append(ln).append(ln)
+            .append("//Tags must be in the end of the file").append(ln);
+
+        HashMap<String, String> htmlMap=this.getHTMLBindings();
+        HashMap<String, String> latexMap=this.getHTMLBindings();
+
+        for (String style :this.getStyleTagList())
+            config.append(style)
+                    .append(';')
+                    .append(htmlMap.get(style))
+                    .append(';')
+                    .append(latexMap.get(style))
+                    .append(System.lineSeparator());
+
+        LPCFile.create(LPCFile.getConfigDirectory(),this.getName(),"cfg",config.toString());
+    }
+
 
 }

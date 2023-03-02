@@ -1,5 +1,6 @@
 import Export.*;
 import Export.Compiler;
+import User.GraphicConfig;
 import User.GraphicMain;
 import Util.*;
 
@@ -12,8 +13,8 @@ import java.util.List;
 public class Main {
     public static void main(String[] args) throws IOException, FileException {
 
+new GraphicConfig(Config.loadConfig("matt"));
 
-        Config.loadConfig("matt");
         //Config.updateConfig(choose.getSelectedFile(),null);
 
 

@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <form xmlns="http://www.intellij.com/uidesigner/form/" version="1" bind-to-class="User.GraphicMain">
-  <grid id="27dc6" binding="panel" layout-manager="GridLayoutManager" row-count="6" column-count="5" same-size-horizontally="false" same-size-vertically="false" hgap="-1" vgap="-1">
+  <grid id="27dc6" binding="panel" layout-manager="GridLayoutManager" row-count="7" column-count="5" same-size-horizontally="false" same-size-vertically="false" hgap="-1" vgap="-1">
     <margin top="0" left="0" bottom="0" right="0"/>
     <constraints>
       <xy x="20" y="20" width="500" height="400"/>
@@ -10,7 +10,7 @@
     <children>
       <component id="12f40" class="javax.swing.JCheckBox" binding="developerCheckBox" default-binding="true">
         <constraints>
-          <grid row="5" column="0" row-span="1" col-span="3" vsize-policy="0" hsize-policy="3" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
+          <grid row="6" column="0" row-span="1" col-span="3" vsize-policy="0" hsize-policy="3" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
         </constraints>
         <properties>
           <text value="developer"/>
@@ -18,7 +18,7 @@
       </component>
       <component id="8985c" class="javax.swing.JCheckBox" binding="userCheckBox" default-binding="true">
         <constraints>
-          <grid row="4" column="0" row-span="1" col-span="2" vsize-policy="0" hsize-policy="3" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
+          <grid row="5" column="0" row-span="1" col-span="2" vsize-policy="0" hsize-policy="3" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
         </constraints>
         <properties>
           <text value="user"/>
@@ -26,7 +26,7 @@
       </component>
       <component id="da733" class="javax.swing.JCheckBox" binding="codeCheckBox" default-binding="true">
         <constraints>
-          <grid row="3" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
+          <grid row="4" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
         </constraints>
         <properties>
           <text value="code"/>
@@ -34,7 +34,7 @@
       </component>
       <component id="5ed34" class="javax.swing.JButton" binding="exportButton" default-binding="true">
         <constraints>
-          <grid row="3" column="3" row-span="3" col-span="1" vsize-policy="0" hsize-policy="3" anchor="0" fill="1" indent="0" use-parent-layout="false"/>
+          <grid row="4" column="3" row-span="3" col-span="1" vsize-policy="0" hsize-policy="3" anchor="0" fill="1" indent="0" use-parent-layout="false"/>
         </constraints>
         <properties>
           <text value="export"/>
@@ -50,12 +50,15 @@
       </component>
       <vspacer id="db0ba">
         <constraints>
-          <grid row="1" column="0" row-span="2" col-span="1" vsize-policy="6" hsize-policy="1" anchor="0" fill="2" indent="0" use-parent-layout="false"/>
+          <grid row="1" column="0" row-span="3" col-span="1" vsize-policy="6" hsize-policy="1" anchor="0" fill="2" indent="0" use-parent-layout="false"/>
         </constraints>
       </vspacer>
       <component id="73997" class="javax.swing.JButton" binding="compileButton" default-binding="true">
         <constraints>
-          <grid row="1" column="3" row-span="2" col-span="1" vsize-policy="0" hsize-policy="3" anchor="0" fill="1" indent="0" use-parent-layout="false"/>
+          <grid row="1" column="3" row-span="2" col-span="1" vsize-policy="0" hsize-policy="3" anchor="0" fill="1" indent="0" use-parent-layout="false">
+            <minimum-size width="10" height="-1"/>
+            <preferred-size width="10" height="-1"/>
+          </grid>
         </constraints>
         <properties>
           <text value="Compile"/>
@@ -64,8 +67,8 @@
       <component id="a769a" class="javax.swing.JComboBox" binding="configComboBox">
         <constraints>
           <grid row="1" column="4" row-span="1" col-span="1" vsize-policy="0" hsize-policy="6" anchor="8" fill="1" indent="0" use-parent-layout="false">
-            <minimum-size width="5" height="-1"/>
-            <preferred-size width="6" height="-1"/>
+            <minimum-size width="6" height="-1"/>
+            <preferred-size width="12" height="-1"/>
           </grid>
         </constraints>
         <properties/>
@@ -80,11 +83,17 @@
       </component>
       <component id="38968" class="javax.swing.JButton" binding="loadConfigButton" default-binding="true">
         <constraints>
-          <grid row="2" column="4" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="0" fill="1" indent="0" use-parent-layout="false"/>
+          <grid row="2" column="4" row-span="2" col-span="1" vsize-policy="0" hsize-policy="3" anchor="0" fill="1" indent="0" use-parent-layout="false"/>
         </constraints>
         <properties>
           <text value="loadConfig"/>
         </properties>
+      </component>
+      <component id="b5625" class="javax.swing.JProgressBar" binding="progressBar1" default-binding="true">
+        <constraints>
+          <grid row="3" column="3" row-span="1" col-span="1" vsize-policy="0" hsize-policy="6" anchor="0" fill="1" indent="0" use-parent-layout="false"/>
+        </constraints>
+        <properties/>
       </component>
     </children>
   </grid>
