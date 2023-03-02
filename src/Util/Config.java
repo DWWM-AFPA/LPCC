@@ -2,7 +2,9 @@ package Util;
 
 import Export.FileException;
 
+import javax.swing.*;
 import java.io.File;
+import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -10,6 +12,7 @@ import java.util.Scanner;
 
 public class Config {
     protected static Config currentConfig;
+    protected static HashMap<String,Config> configList = new HashMap<>();
     protected String name;
     protected String language;
     protected File inputFolder;
@@ -24,42 +27,41 @@ public class Config {
     protected HashMap<String,String> LatexBindings = new HashMap<>();
     protected ArrayList<String> styleTagList = new ArrayList<>();
 
-    public Config() {
+/*    private Config() {
         setCurrentConfig(this);
         this.setName("default");
-        this.HTMLBindings=new HashMap<>();
         try{
-        this.loadConfig("DefaultConfig");
-        }
-        catch (IOException io){
+            loadConfig(this);
+        } catch (IOException io){
             System.err.println("config file problem");
             System.exit(-1);
         }
-        catch (FileException fe){
-            System.err.println("File Exception problem");
-        }
-
-    }    public Config(String name) {
+    }*/
+    private Config(String name) {
         setCurrentConfig(this);
         this.setName(name);
-        this.HTMLBindings=new HashMap<>();
-        this.HTMLBindings.put("title1","h1");
-        this.HTMLBindings.put("it","i");
-        this.HTMLBindings.put("bold","b");
-        // this.HTMLBindings.put("titre1","h1");
+        try {
+            loadConfig(this);
+        } catch (IOException io) {
+            io.printStackTrace();
+            System.err.println("config file problem");
+            System.exit(-1);
+        }
+    }
+
+    public static Config getConfigSingleton(String name){
+        if (!configList.containsKey(name)) {
+            Config config = new Config(name);
+            configList.put(name, config);
+            return config;
+        }
+
+        return configList.get(name);
     }
 
     public static Config getCurrentConfig() {
         if (currentConfig==null)
-            try{
-            Config.loadConfig("DefaultConfig"); }
-        catch (IOException| FileException exs) {
-            System.err.println("config non existante, création d'une config par défaut");
-            try{ Config.createEmptyConfig();
-            } catch (IOException ignored) {
-        }}
-        if (currentConfig==null)
-            System.err.println("errrrrrreur de config putain de merde");
+            return getConfigSingleton("DefaultConfig");
         return currentConfig;
     }
 
@@ -88,6 +90,8 @@ public class Config {
     }
 
     public void setInputFolder(File inputFolder) {
+        if (inputFolder.mkdirs())
+            JOptionPane.showMessageDialog(null,"Le chemin "+ inputFolder+" a été créé.");
         this.inputFolder = inputFolder;
     }
 
@@ -104,6 +108,9 @@ public class Config {
     }
 
     public void setOutputFolder(File outputFolder) {
+        if (outputFolder.mkdirs())
+            JOptionPane.showMessageDialog(null,"Le chemin "+ outputFolder+" a été créé.");
+
         this.outputFolder = outputFolder;
     }
 
@@ -171,9 +178,19 @@ public class Config {
         this.styleTagList = styleTagList;
     }
 
-    public static Config loadConfig(String fileConfigName) throws FileException, IOException {
-        Config currentConfig = new Config(fileConfigName);
-        Scanner scan = new Scanner(LPCFile.read(new File(LPCFile.getConfigDirectory().getPath()+"\\"+fileConfigName+".cfg")));
+    public static Config loadConfig(Config fileConfig) throws  IOException {
+    //    Config currentConfig = Config.getConfigSingleton(fileConfig.getName());
+        String contenu = null;
+        try {
+            File configFile = new File(LPCFile.getConfigDirectory().getPath()+"\\"+fileConfig.getName()+".cfg");
+        contenu = LPCFile.read(configFile);}
+        catch (FileNotFoundException fe) {
+            System.err.println("problem config");
+            fe.printStackTrace();
+
+        }
+        catch (FileException ignored) {}
+        Scanner scan = new Scanner(contenu);
         int line =0;
         boolean LPCTag =false;
         while (scan.hasNext()) {
@@ -187,61 +204,72 @@ public class Config {
                 }
                 else if (LPCTag&&!s.contains("//")) {
                     String[] tags = s.split(";");
-                    for (String st:tags){
-                        currentConfig.getStyleTagList().add(tags[0].trim());
-                        currentConfig.getHTMLBindings().put(tags[0].trim(),tags[1].trim());
-                        currentConfig.getLatexBindings().put(tags[0].trim(),tags[2].trim());
+                   // for (String st:tags){
+                        fileConfig.getStyleTagList().add(tags[0].trim());
+                        fileConfig.getHTMLBindings().put(tags[0].trim(),tags[1].trim());
+                        fileConfig.getLatexBindings().put(tags[0].trim(),tags[2].trim());
                     //TODO arrayList compiler à transferer dans la config
-                    }
+                    //}
                 }
                 else {
                      switch(line){
                          //Current Configuration else if higher
                          case 2:
-                             if(fileConfigName.equals("DefaultConfig")&&!s.equals("DefaultConfig")) {
+                             if(fileConfig.getName().equals("DefaultConfig")&&!s.equals("DefaultConfig")) {
                                  System.out.println("defaut chargement config :"+ s);
-                                 return loadConfig(s);
+                                 fileConfig=null;
+                                 return loadConfig(new Config(s));
                              }
                              break;
                              //language
                          case 5:
-                            currentConfig.setLanguage(s);
+                            fileConfig.setLanguage(s);
                              break;
                             //inputDir
                          case 8:
-                            currentConfig.setInputFolder(new File(s));
+                             if (!s.equals(""))
+                                 fileConfig.setInputFolder(new File(s));
+                             else
+                                 fileConfig.setInputFolder(new File(LPCFile.documentsPath+"\\LPCC\\Input"));
                              break;
                             //main Input File name
                          case 11:
-                             currentConfig.setMainInputFileName(s);
-                             break;
+                             if (!s.equals(""))
+                                fileConfig.setMainInputFileName(s);
+                             else
+                                fileConfig.setMainInputFileName("main");
+
+
                              //output Dir
                          case 14:
-                             currentConfig.setOutputFolder(new File(s));
+                             if (!s.equals(""))
+                                 fileConfig.setOutputFolder(new File(s));
+                             else
+                                fileConfig.setOutputFolder(new File(LPCFile.documentsPath+"\\LPCC\\Output"));
                              break;
                              //tags delimiters
                          case 17:
-                             currentConfig.setTagsDelimiter(s.split(";"));
+                             fileConfig.setTagsDelimiter(s.split(";"));
                              break;
                              //user and dev tags
                          case 20:
                              String[] tags = s.split(";");
-                             currentConfig.setUserTag(tags[0]);
-                             currentConfig.setDevTag(tags[1]);
+                             fileConfig.setUserTag(tags[0]);
+                             fileConfig.setDevTag(tags[1]);
                              break;
                              //tag closer +
                          case 23:
-                            currentConfig.setTagCloser(s.split(";"));
+                            fileConfig.setTagCloser(s.split(";"));
                             break;
                             //tag closer +
                          case 26:
-                            currentConfig.setEscapingString(s);
+                            fileConfig.setEscapingString(s);
                             break;
                      }
 
                 }
         }
-        return currentConfig;
+        return fileConfig;
         }
 
 
@@ -258,12 +286,12 @@ public class Config {
                        ".java\n" +
                        "\n" +
                        "//input directory (if null must be in my Documents)\n" +
-                       "path\n" +
+                       "\n" +
                        "\n" +
                        "//main input file name\n" +
-                       "main\n" +
                        "\n" +
-                       "//output directory (if null must be in my Docume\n" +
+                       "\n" +
+                       "//output directory (if null must be in my Documents)\n" +
                        "\n" +
                        "\n" +
                        "//Tags Delimiter\n" +

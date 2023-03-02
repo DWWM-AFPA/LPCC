@@ -90,6 +90,7 @@ public class HTMLExportVisitor implements Visitor {
             try {
                 File devFile = LPCFile.create(outputFolder, "Developer Documentation", "html", dev.toString());
             } catch (IOException io) {
+                System.err.println("impossible de créer le fichier dev\n"+io);
                 System.exit(-1);
             }
             dev = null;
@@ -137,13 +138,14 @@ public class HTMLExportVisitor implements Visitor {
             try {
                 File userFile = LPCFile.create(outputFolder, "User Documentation", "html", user.toString());
             } catch (IOException io) {
+                System.err.println("impossible de créer le fichier user\n"+io);
+
                 System.exit(-1);
             }
             user = null;
         }
         return null;
     }
-
     @Override
     public String visitCode(CodeNode codeNode) {
 
@@ -164,6 +166,7 @@ public class HTMLExportVisitor implements Visitor {
         try {
             File codeFile = LPCFile.create(Config.getCurrentConfig().getOutputFolder(), codeName, "html", code.toString());
         } catch (IOException io) {
+            System.err.println("impossible de créer le fichier code\n"+io);
             System.exit(-1);
         }
         return null;

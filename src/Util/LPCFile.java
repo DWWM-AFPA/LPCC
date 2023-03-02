@@ -69,8 +69,8 @@ public abstract class LPCFile extends File {
             return retour.toString();
         }
         else {
+            System.err.println("Le fichier "+file.getPath()+" semble avoir déjà été parcouru");
             throw new FileException();
-            //System.err.println("Le fichier "+this.getPath()+" semble avoir déjà été parcouru");
         }
     }
 

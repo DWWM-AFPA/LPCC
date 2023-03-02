@@ -12,7 +12,7 @@ import java.awt.event.ActionListener;
 import java.io.File;
 import java.io.IOException;
 
-public class GraphicMain {
+public class GraphicMain extends JFrame {
     public static void main(String[] args) {
 
 
@@ -51,7 +51,18 @@ public class GraphicMain {
 
     public GraphicMain() {
 
-        for (File config:LPCFile.getConfigDirectory().listFiles()) {
+        super("Literate Programing Code Compiler");
+        Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
+
+        setContentPane(this.panel);
+        this.setJMenuBar(this.menubar);
+        setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+
+        setLocation(screenSize.width/2-this.getWidth()/2,screenSize.height/2-this.getHeight()/2);
+
+        File[] fileList = LPCFile.getConfigDirectory().listFiles();
+        assert fileList!=null;
+        for (File config:fileList) {
             if (!config.getName().equals("DefaultConfig.cfg")) {
                 configComboBox.addItem(config.getName().split("\\.")[0]);
             }
@@ -98,18 +109,20 @@ public class GraphicMain {
             @Override
             public void actionPerformed(ActionEvent e) {
 
+                new GraphicConfig(Config.getConfigSingleton(""));
+
             }
         });
         readConfig.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-
+                new GraphicConfig(Config.getConfigSingleton(Config.getCurrentConfig().getName()));
             }
         });
         updateConfig.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-
+                new GraphicConfig(Config.getConfigSingleton(Config.getCurrentConfig().getName()));
             }
         });
         deleteConfig.addActionListener(new ActionListener() {
@@ -122,13 +135,10 @@ public class GraphicMain {
             @Override
             public void actionPerformed(ActionEvent e) {
                 String name = (String) configComboBox.getSelectedItem();
-                try{
-                Config.loadConfig(name);
-                JOptionPane.showMessageDialog(null,"Configuration de "+ name +" chargée.");
-                }
-                catch (IOException | FileException io){
 
-                }
+                Config.getConfigSingleton(name);
+                JOptionPane.showMessageDialog(null,"Configuration de "+ name +" chargée.");
+
                 //Config.getCurrentConfig().setInputFolder(Graphic.chooseDirectory(Graphic.ChooserType.OPEN));
             }
         });
@@ -161,6 +171,10 @@ public class GraphicMain {
                 new Compiler(mainFileContent).compile();
             }
         });
+
+        pack();
+        setVisible(true);
+
     }
 
     public static File chooseDirectory(Graphic.ChooserType chooseButtonType){
