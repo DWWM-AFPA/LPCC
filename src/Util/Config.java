@@ -13,6 +13,7 @@ import java.util.Scanner;
 public class Config {
     protected static Config currentConfig;
     protected static HashMap<String,Config> configList = new HashMap<>();
+    protected File configFile;
     protected String name;
     protected String language;
     protected File inputFolder;
@@ -39,6 +40,7 @@ public class Config {
     }*/
     private Config(String name) {
         setCurrentConfig(this);
+        setConfigFile(new File(LPCFile.getConfigDirectory(),"name"));
         this.setName(name);
         try {
             loadConfig(this);
@@ -75,6 +77,14 @@ public class Config {
 
     public void setName(String name) {
         this.name = name;
+    }
+
+    public File getConfigFile() {
+        return configFile;
+    }
+
+    public void setConfigFile(File configFile) {
+        this.configFile = configFile;
     }
 
     public String getLanguage() {
@@ -178,16 +188,20 @@ public class Config {
         this.styleTagList = styleTagList;
     }
 
-    public static Config loadConfig(Config fileConfig) throws  IOException {
+    public static Config loadConfig(Config config) throws  IOException {
     //    Config currentConfig = Config.getConfigSingleton(fileConfig.getName());
         String contenu = null;
         try {
-            File configFile = new File(LPCFile.getConfigDirectory().getPath()+"\\"+fileConfig.getName()+".cfg");
-        contenu = LPCFile.read(configFile);}
+            contenu = LPCFile.read(config.getConfigFile());}
         catch (FileNotFoundException fe) {
-            System.err.println("problem config");
-            fe.printStackTrace();
-
+            if (!config.getConfigFile().isFile())
+            contenu = Config.getEmptyConfig();
+            else
+            {
+                System.err.println("Loading config problem");
+                fe.printStackTrace();
+                System.exit(-1);
+            }
         }
         catch (FileException ignored) {}
         Scanner scan = new Scanner(contenu);
@@ -205,9 +219,9 @@ public class Config {
                 else if (LPCTag&&!s.contains("//")) {
                     String[] tags = s.split(";");
                    // for (String st:tags){
-                        fileConfig.getStyleTagList().add(tags[0].trim());
-                        fileConfig.getHTMLBindings().put(tags[0].trim(),tags[1].trim());
-                        fileConfig.getLatexBindings().put(tags[0].trim(),tags[2].trim());
+                        config.getStyleTagList().add(tags[0].trim());
+                        config.getHTMLBindings().put(tags[0].trim(),tags[1].trim());
+                        config.getLatexBindings().put(tags[0].trim(),tags[2].trim());
                     //TODO arrayList compiler à transferer dans la config
                     //}
                 }
@@ -215,116 +229,66 @@ public class Config {
                      switch(line){
                          //Current Configuration else if higher
                          case 2:
-                             if(fileConfig.getName().equals("DefaultConfig")&&!s.equals("DefaultConfig")) {
+                             if(config.getName().equals("DefaultConfig")&&!s.equals("DefaultConfig")) {
                                  System.out.println("defaut chargement config :"+ s);
-                                 fileConfig=null;
+                                 config=null;
                                  return loadConfig(new Config(s));
                              }
                              break;
                              //language
                          case 5:
-                            fileConfig.setLanguage(s);
+                            config.setLanguage(s);
                              break;
                             //inputDir
                          case 8:
                              if (!s.equals(""))
-                                 fileConfig.setInputFolder(new File(s));
+                                 config.setInputFolder(new File(s));
                              else
-                                 fileConfig.setInputFolder(new File(LPCFile.documentsPath+"\\LPCC\\Input"));
+                                 config.setInputFolder(new File(LPCFile.documentsPath+"\\LPCC\\Input"));
                              break;
                             //main Input File name
                          case 11:
                              if (!s.equals(""))
-                                fileConfig.setMainInputFileName(s);
+                                config.setMainInputFileName(s);
                              else
-                                fileConfig.setMainInputFileName("main");
+                                config.setMainInputFileName("main");
 
 
                              //output Dir
                          case 14:
                              if (!s.equals(""))
-                                 fileConfig.setOutputFolder(new File(s));
+                                 config.setOutputFolder(new File(s));
                              else
-                                fileConfig.setOutputFolder(new File(LPCFile.documentsPath+"\\LPCC\\Output"));
+                                config.setOutputFolder(new File(LPCFile.documentsPath+"\\LPCC\\Output"));
                              break;
                              //tags delimiters
                          case 17:
-                             fileConfig.setTagsDelimiter(s.split(";"));
+                             config.setTagsDelimiter(s.split(";"));
                              break;
                              //user and dev tags
                          case 20:
                              String[] tags = s.split(";");
-                             fileConfig.setUserTag(tags[0]);
-                             fileConfig.setDevTag(tags[1]);
+                             config.setUserTag(tags[0]);
+                             config.setDevTag(tags[1]);
                              break;
                              //tag closer +
                          case 23:
-                            fileConfig.setTagCloser(s.split(";"));
+                            config.setTagCloser(s.split(";"));
                             break;
                             //tag closer +
                          case 26:
-                            fileConfig.setEscapingString(s);
+                            config.setEscapingString(s);
                             break;
                      }
 
                 }
         }
-        return fileConfig;
+        return config;
         }
 
-
-
-    public void createConfig() throws IOException {
-        LPCFile.create(LPCFile.getConfigDirectory(),"DefaultConfig","cfg","");
-    }
-    public static void createEmptyConfig() throws IOException {
-        LPCFile.create(LPCFile.getConfigDirectory(),"DefaultConfig","cfg",
-               "//Current Configuration\n" +
-                       "DefaultConfig\n" +
-                       "\n" +
-                       "//language\n" +
-                       ".java\n" +
-                       "\n" +
-                       "//input directory (if null must be in my Documents)\n" +
-                       "\n" +
-                       "\n" +
-                       "//main input file name\n" +
-                       "\n" +
-                       "\n" +
-                       "//output directory (if null must be in my Documents)\n" +
-                       "\n" +
-                       "\n" +
-                       "//Tags Delimiter\n" +
-                       "<  ; >\n" +
-                       "\n" +
-                       "//user and developer documentation tags \n" +
-                       "user ; dev\n" +
-                       "\n" +
-                       "//LPC Tag closer + LPC Tag position (can be start:\"/it\" or end:\"it/\")\n" +
-                       "/ ; end\n" +
-                       "\n" +
-                       "//LPC character escaping\n" +
-                       "//\n" +
-                       "\n" +
-                       "//Tags must be in the end of the file\n" +
-                       "LPC    ;           HTML                      ;      LATEX\n" +
-                       "title1 ;            h1                       ;      \\title{ }\n" +
-                       "title2 ;            h2                       ;      \\chapter{chapter}\n" +
-                       "title3 ;            h3                       ;      \\section{section}\n" +
-                       "title4 ;            h4                       ;      \\subsection{subsection}\n" +
-                       "title5 ;            h5                       ;      \\subsubsection{subsubsection}\n" +
-                       "title6 ;            h6                       ;      \\paragraph{paragraph}\n" +
-                       "//title 7 ;       notInHTML                  ;      \\subparagraph{subparagraph}\n" +
-                       "it     ;            i                        ;      \\emph{accident}\n" +
-                       "//or \\textit for italic\n" +
-                       "bd     ;            b                        ;      \\textbf{greatest} \n" +
-                       "ul     ;            u                        ;      \\underline{science} \n" +
-                       "color  ;            #                        ;      \\color{blue}\n" +
-                       "image  ;        <img src=\"dinosaur.jpg\">     ;      \\includegraphics{universe}"
-        );
-    }
-
-    public void UpdateConfig() throws IOException {
+    public void updateConfig() throws IOException {
+        this.configFile.delete();
+        //new File("").delete();
         StringBuilder config = new StringBuilder();
         String ln = System.lineSeparator();
         config.append("//Current Configuration").append(ln)
@@ -357,7 +321,7 @@ public class Config {
             .append("//Tags must be in the end of the file").append(ln);
 
         HashMap<String, String> htmlMap=this.getHTMLBindings();
-        HashMap<String, String> latexMap=this.getHTMLBindings();
+        HashMap<String, String> latexMap=this.getLatexBindings();
 
         for (String style :this.getStyleTagList())
             config.append(style)
@@ -368,6 +332,54 @@ public class Config {
                     .append(System.lineSeparator());
 
         LPCFile.create(LPCFile.getConfigDirectory(),this.getName(),"cfg",config.toString());
+    }
+
+    public static String getEmptyConfig() {
+        return
+                """
+                        //Current Configuration
+                        DefaultConfig
+
+                        //language
+                        .java
+
+                        //input directory (if null must be in my Documents)
+
+
+                        //main input file name
+
+
+                        //output directory (if null must be in my Documents)
+
+
+                        //Tags Delimiter
+                        <  ; >
+
+                        //user and developer documentation tags\s
+                        user ; dev
+
+                        //LPC Tag closer + LPC Tag position (can be start:"/it" or end:"it/")
+                        / ; end
+
+                        //LPC character escaping
+                        //
+
+                        //Tags must be in the end of the file
+                        LPC    ;           HTML                      ;      LATEX
+                        title1 ;            h1                       ;      \\title{ }
+                        title2 ;            h2                       ;      \\chapter{chapter}
+                        title3 ;            h3                       ;      \\section{section}
+                        title4 ;            h4                       ;      \\subsection{subsection}
+                        title5 ;            h5                       ;      \\subsubsection{subsubsection}
+                        title6 ;            h6                       ;      \\paragraph{paragraph}
+                        //title 7 ;       notInHTML                  ;      \\subparagraph{subparagraph}
+                        it     ;            i                        ;      \\emph{accident}
+                        //or \\textit for italic
+                        bd     ;            b                        ;      \\textbf{greatest}\s
+                        ul     ;            u                        ;      \\underline{science}\s
+                        color  ;            #                        ;      \\color{blue}
+                        image  ;        <img src="dinosaur.jpg">     ;      \\includegraphics{universe}""";
+
     }
 
 

@@ -9,6 +9,8 @@ import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.ComponentAdapter;
+import java.awt.event.MouseAdapter;
 import java.io.File;
 import java.io.IOException;
 
@@ -47,6 +49,7 @@ public class GraphicMain extends JFrame {
     private JButton loadConfigButton;
     private JPanel panel;
     private JProgressBar progressBar1;
+    private JTable table1;
 
 
     public GraphicMain() {
@@ -175,6 +178,12 @@ public class GraphicMain extends JFrame {
         pack();
         setVisible(true);
 
+        table1.addComponentListener(new ComponentAdapter() {
+        });
+        table1.addMouseListener(new MouseAdapter() {
+        });
+        table1.addComponentListener(new ComponentAdapter() {
+        });
     }
 
     public static File chooseDirectory(Graphic.ChooserType chooseButtonType){
