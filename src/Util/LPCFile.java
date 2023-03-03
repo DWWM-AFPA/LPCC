@@ -49,9 +49,9 @@ public abstract class LPCFile extends File {
     public static File create(File parent, String name, String extension, String content) throws IOException {
         File file = new File(parent,name+"."+extension.toLowerCase());
         file.createNewFile();
-        FileOutputStream outFile = new FileOutputStream(file);
-        outFile.write(content.getBytes());
-        outFile.close();
+        try(
+                FileOutputStream outFile = new FileOutputStream(file))
+        {outFile.write(content.getBytes());  }
         return file;
     }
 
@@ -61,12 +61,12 @@ public abstract class LPCFile extends File {
         //evite de lire 2x le même File
         if (!alreadyReadFile.contains(file)) {
             alreadyReadFile.add(file);
-            FileReader fileReader= new FileReader(file);
-            int i;
+            try (FileReader fileReader= new FileReader(file);)
+            {int i;
             StringBuilder retour = new StringBuilder();
             while((i= fileReader.read()) != -1)
                 retour.append((char)i);
-            return retour.toString();
+            return retour.toString();}
         }
         else {
             System.err.println("Le fichier "+file.getPath()+" semble avoir déjà été parcouru");
@@ -85,8 +85,10 @@ public abstract class LPCFile extends File {
         else
             for (File s : fileList)
             {
-                if (s.getName().equals(Config.getCurrentConfig().getMainInputFileName()))
+                System.out.println(s.getName() + " "+Config.getCurrentConfig().getMainInputFileName()+".lpc");
+                if (s.getName().equals(Config.getCurrentConfig().getMainInputFileName()+".lpc"))
                     retour = s;
+                break;
             }
         if (retour == null) {
             JFileChooser choose = new JFileChooser(inputDirectory);

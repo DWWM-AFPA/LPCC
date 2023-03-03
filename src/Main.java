@@ -14,12 +14,6 @@ public class Main {
     public static void main(String[] args)  {
 
 new GraphicMain();
-           // Config config =  Config.getConfigSingleton("matt");
-          //  GraphicConfig test = new GraphicConfig(config);
-
-
-        //Config.updateConfig(choose.getSelectedFile(),null);
-
 
      /*   new Compilator(
                 "<dev> ceci est du code : " +

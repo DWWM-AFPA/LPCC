@@ -39,9 +39,9 @@ public class Config {
         }
     }*/
     private Config(String name) {
-        setCurrentConfig(this);
-        setConfigFile(new File(LPCFile.getConfigDirectory(),"name"));
         this.setName(name);
+        setCurrentConfig(this);
+        setConfigFile(new File(LPCFile.getConfigDirectory(),name+".cfg"));
         try {
             loadConfig(this);
         } catch (IOException io) {
@@ -62,13 +62,16 @@ public class Config {
     }
 
     public static Config getCurrentConfig() {
-        if (currentConfig==null)
-            return getConfigSingleton("DefaultConfig");
+     //   if (currentConfig==null)
+      //      return getConfigSingleton("DefaultConfig");
         return currentConfig;
     }
 
     public static void setCurrentConfig(Config currentConfig) {
         Config.currentConfig = currentConfig;
+    }
+    public static void setCurrentConfig(String currentConfigName) {
+        Config.currentConfig = getConfigSingleton(currentConfigName);
     }
 
     public String getName() {
@@ -76,6 +79,11 @@ public class Config {
     }
 
     public void setName(String name) {
+        if (configList.containsKey(this.getName())) {
+            configList.remove(this.getName());
+            configList.put(name,this);
+        }
+
         this.name = name;
     }
 
@@ -84,7 +92,7 @@ public class Config {
     }
 
     public void setConfigFile(File configFile) {
-        System.out.println(this);
+   //     System.out.println(this);
         this.configFile = configFile;
     }
 
@@ -216,7 +224,7 @@ public class Config {
         while (scan.hasNext()) {
                 String s = scan.nextLine().trim();
                 line++;
-                if (s.contains("LPC")&&!s.contains("//")) {
+                if (s.contains("LPC")&&!s.contains("//")&&!s.contains("\\")) {
                     LPCTag = !LPCTag;
                    // String[] tagTypes = s.split(";");
                     //for (String stype:tagTypes)
@@ -342,7 +350,13 @@ public class Config {
     public boolean delete(String name){
         configList.remove(name);
         Config.setCurrentConfig(getConfigSingleton("DefaultConfig"));
-        return this.configFile.delete();
+       // this.configFile.deleteOnExit();
+        boolean delete = this.configFile.delete();
+
+            System.err.println(delete);
+
+
+        return delete;
     }
 
     public static String getEmptyConfig() {
@@ -399,4 +413,5 @@ public class Config {
                 "name='" + name + '\'' +
                 '}';
     }
+
 }

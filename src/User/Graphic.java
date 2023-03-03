@@ -14,7 +14,7 @@ import java.io.IOException;
 import java.nio.file.Paths;
 
 public class Graphic {
-    public static void draw() {
+    /*public static void draw() {
         int frameWidth=500;
         int frameHeight=200;
 
@@ -128,7 +128,7 @@ public class Graphic {
     public static File chooseDirectory(ChooserType chooseButtonType){
         File outputName=new File("LPCC");
         String outputDir= LPCFile.desktopPath+"\\Projet\\LPCC";
-        JFileChooser choose=new JFileChooser(outputDir    /*.getHomeDirectory()/**/ );
+        JFileChooser choose=new JFileChooser(outputDir    *//*.getHomeDirectory()/**//* );
         choose.setBackground(Color.BLUE);
         choose.setDialogTitle("Choix fichier LPCC :");
         choose.setFileSelectionMode(JFileChooser.FILES_AND_DIRECTORIES);
@@ -149,6 +149,6 @@ public class Graphic {
             }
         }
         return choose.getSelectedFile();
-    }
+    }*/
 
 }

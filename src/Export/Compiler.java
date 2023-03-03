@@ -372,7 +372,7 @@ public class Compiler {
         int savePos=this.getPos();
         String end = getTagIfOpentag();
         if (end!=null) {
-            String beginEnd = end.substring(0, end.length() - 1);
+            String beginEnd = end.substring(0, (end.length() - 1));
             if (Config.getCurrentConfig().getStyleTagList().contains(beginEnd) ){ //|| end.contains("title/") || end.equals("bd/") || end.equals("ul/") || end.equals("img/") || end.equals("link/")) {
                 this.style = null;
                 return mainTagEnd(); //mainTagEnd(node);

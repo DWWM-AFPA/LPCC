@@ -2,15 +2,14 @@ package User;
 
 import Export.Compiler;
 import Export.FileException;
+import Export.HTMLExportVisitor;
+import Export.LATEXExportVisitor;
 import Util.Config;
 import Util.LPCFile;
 
 import javax.swing.*;
 import java.awt.*;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-import java.awt.event.ComponentAdapter;
-import java.awt.event.MouseAdapter;
+import java.awt.event.*;
 import java.io.File;
 import java.io.IOException;
 
@@ -49,14 +48,17 @@ public class GraphicMain extends JFrame {
     private JButton loadConfigButton;
     private JPanel panel;
     private JProgressBar progressBar1;
+    private JCheckBox HTMLCheckBox;
+    private JCheckBox latexCheckBox;
     private JTable table1;
+    private GraphicMain me;
 
 
     public GraphicMain() {
 
         super("Literate Programing Code Compiler");
         Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
-
+        me=this;
         setContentPane(this.panel);
         this.setJMenuBar(this.menubar);
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
@@ -64,6 +66,7 @@ public class GraphicMain extends JFrame {
         setLocation(screenSize.width/2-this.getWidth()/2,screenSize.height/2-this.getHeight()/2);
 
         updateChooseBox();
+        Config.setCurrentConfig((String) configComboBox.getSelectedItem());
 
         // Créer le menu
         this.menu = new JMenu("Menu");
@@ -89,6 +92,18 @@ public class GraphicMain extends JFrame {
         menubar.add(menu);
         // Ajouter la barre de menu au frame
     //    frame.setJMenuBar(menubar);
+        chooseFileButton.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                try {
+                    LPCFile.getMainFile();
+                } catch (FileException ex) {
+                    throw new RuntimeException(ex);
+                } catch (IOException ex) {
+                    throw new RuntimeException(ex);
+                }
+            }
+        });
 
         open.addActionListener(new ActionListener() {
             @Override
@@ -106,46 +121,72 @@ public class GraphicMain extends JFrame {
             @Override
             public void actionPerformed(ActionEvent e) {
 
-                new GraphicConfig(Config.getConfigSingleton(""));
+                Config config =Config.getConfigSingleton("");
+                new GraphicConfig(config,me);
+                configComboBox.addItem("nouvelle Config");
 
             }
         });
         readConfig.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                new GraphicConfig(Config.getConfigSingleton(Config.getCurrentConfig().getName()));
+                new GraphicConfig(Config.getConfigSingleton(Config.getCurrentConfig().getName()),me);
             }
         });
         updateConfig.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                new GraphicConfig(Config.getConfigSingleton(Config.getCurrentConfig().getName()));
+                new GraphicConfig(Config.getConfigSingleton(Config.getCurrentConfig().getName()),me);
             }
         });
         deleteConfig.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-           // configComboBox.removeItem(name);
-                System.out.println(Config.getCurrentConfig().delete((String) configComboBox.getSelectedItem()));
+                String name = (String) configComboBox.getSelectedItem();
+                if (Config.getCurrentConfig().delete(name)) {
+                    JOptionPane.showMessageDialog(panel,"Fichier de configuration "+ name +" supprimé.");
+                }
+                configComboBox.removeItem(name);
+
             }
         });
         configComboBox.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                updateChooseBox();
+
                 String name = (String) configComboBox.getSelectedItem();
-
-
+                if (name!=null){
                 Config.getConfigSingleton(name);
-                JOptionPane.showMessageDialog(null,"Configuration de "+ name +" chargée.");
+             //   JOptionPane.showMessageDialog(null,"Configuration de "+ name +" chargée.");
+                    }
+              //  updateChooseBox();
 
                 //Config.getCurrentConfig().setInputFolder(Graphic.chooseDirectory(Graphic.ChooserType.OPEN));
             }
         });
+       /* configComboBox.addItemListener(new ItemListener() {
+            @Override
+            public void itemStateChanged(ItemEvent e) {
+                int state = e.getStateChange();
+                System.out.println("\n");
+                System.out.println((state == ItemEvent.SELECTED) ? "Selected" : "Deselected");
+                System.out.println("Item: " + e.getItem());
+                ItemSelectable is = e.getItemSelectable();
+                System.out.println(", Selected: " + selectedString(is));
+            }
+            static private String selectedString(ItemSelectable is) {
+                Object selected[] = is.getSelectedObjects();
+                return ((selected.length == 0) ? "null" : (String) selected[0]);
+            }
+        });*/
+
         compileButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                Config config = Config.getCurrentConfig();
+                progressBar1.setValue(5);
+
+
+                        Config config = Config.getCurrentConfig();
                 String mainFileContent = null;
                 File mainFile=null;
                 try {
@@ -168,7 +209,25 @@ public class GraphicMain extends JFrame {
                     }
                 }
 
+                progressBar1.setValue(100);
                 new Compiler(mainFileContent).compile();
+                progressBar1.setValue(0);
+
+            }
+        });
+        exportButton.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                if (HTMLCheckBox.isSelected()){
+                    HTMLExportVisitor exportVisitor = new HTMLExportVisitor();
+                }
+                if (latexCheckBox.isSelected()){
+                     LATEXExportVisitor latexExportVisitor = new LATEXExportVisitor();
+                }
+               /* if (developerCheckBox.isSelected()){
+
+                }*/
+
             }
         });
 
@@ -177,7 +236,12 @@ public class GraphicMain extends JFrame {
         setVisible(true);
 
     }
-private void updateChooseBox() {
+
+    public JComboBox getConfigComboBox() {
+        return configComboBox;
+    }
+
+    public void updateChooseBox() {
     File[] fileList = LPCFile.getConfigDirectory().listFiles();
     assert fileList != null;
     configComboBox.removeAllItems();
@@ -187,7 +251,9 @@ private void updateChooseBox() {
         }
     }
 }
-    public static File chooseDirectory(Graphic.ChooserType chooseButtonType){
+
+    private enum ChooserType {SAVE,OPEN}
+    public static File chooseDirectory(ChooserType chooseButtonType){
         File outputName=new File("LPCC");
         String outputDir= LPCFile.desktopPath+"\\Projet\\LPCC";
         JFileChooser choose=new JFileChooser(outputDir    /*.getHomeDirectory()/**/ );
@@ -222,4 +288,6 @@ private void updateChooseBox() {
     public boolean isModified(GraphicMain data) {
         return false;
     }
+
 }
+

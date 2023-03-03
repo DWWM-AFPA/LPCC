@@ -26,8 +26,8 @@ public class GraphicConfig extends JFrame implements TableModelListener, TextLis
     private JButton ok;
 
     public static void main(String[] args) {
-        new GraphicConfig(Config.getConfigSingleton("matt"));    }
-    public GraphicConfig(Config config) {
+        new GraphicConfig(Config.getConfigSingleton("matt"),null);    }
+    public GraphicConfig(Config config,GraphicMain parent) {
 
         super("Configuration window");
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
@@ -158,7 +158,6 @@ public class GraphicConfig extends JFrame implements TableModelListener, TextLis
         nameTextField.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                System.out.println(config.getName());
                 config.setName(nameTextField.getText());
                 System.out.println(config.getName());
                 pack();
@@ -173,6 +172,7 @@ public class GraphicConfig extends JFrame implements TableModelListener, TextLis
                 } catch (IOException ex) {
                     throw new RuntimeException(ex);
                 }
+                parent.updateChooseBox();
                 dispose();
             }
         });
