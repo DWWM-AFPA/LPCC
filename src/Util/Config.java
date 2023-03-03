@@ -43,7 +43,7 @@ public class Config {
         setCurrentConfig(this);
         setConfigFile(new File(LPCFile.getConfigDirectory(),name+".cfg"));
         try {
-            loadConfig(this);
+            this.loadConfig();
         } catch (IOException io) {
             io.printStackTrace();
             System.err.println("config file problem");
@@ -197,14 +197,14 @@ public class Config {
         this.styleTagList = styleTagList;
     }
 
-    public static Config loadConfig(Config config) throws  IOException {
+    public Config loadConfig() throws  IOException {
     //    Config currentConfig = Config.getConfigSingleton(fileConfig.getName());
         String contenu = null;
         try {
-            LPCFile.getAlreadyReadFile().remove(config.getConfigFile());
-            contenu = LPCFile.read(config.getConfigFile());}
+            LPCFile.getAlreadyReadFile().remove(this.getConfigFile());
+            contenu = LPCFile.read(this.getConfigFile());}
         catch (FileNotFoundException fe) {
-            if (!config.getConfigFile().isFile())
+            if (!this.getConfigFile().isFile())
             contenu = Config.getEmptyConfig();
             else
             {
@@ -233,71 +233,73 @@ public class Config {
                 else if (LPCTag&&!s.contains("//")) {
                     String[] tags = s.split(";");
                    // for (String st:tags){
-                        config.getStyleTagList().add(tags[0].trim());
-                        config.getHTMLBindings().put(tags[0].trim(),tags[1].trim());
-                        config.getLatexBindings().put(tags[0].trim(),tags[2].trim());
-                    //TODO arrayList compiler à transferer dans la config
+                        this.getStyleTagList().add(tags[0].trim());
+                        this.getHTMLBindings().put(tags[0].trim(),tags[1].trim());
+                        this.getLatexBindings().put(tags[0].trim(),tags[2].trim());
+                    //TODO arrayList compiler à transferer dans la this
                     //}
                 }
                 else {
                      switch(line){
                          //Current Configuration else if higher
                          case 2:
-                             if(config.getName().equals("DefaultConfig")&&!s.equals("DefaultConfig")) {
+                             if(this.getName().equals("DefaultConfig")&&!s.equals("DefaultConfig")) {
                                  System.out.println("defaut chargement config :"+ s);
-                                 config=null;
-                                 return loadConfig(new Config(s));
+                                 //TODO attention au passage none static
+                                 return new Config(s);
+                                 /*this=null;
+                                 return loadConfig(new Config(s));*/
                              }
                              break;
                              //language
                          case 5:
-                            config.setLanguage(s);
+                            this.setLanguage(s);
                              break;
                             //inputDir
                          case 8:
                              if (!s.equals(""))
-                                 config.setInputFolder(new File(s));
+                                 this.setInputFolder(new File(s));
                              else
-                                 config.setInputFolder(new File(LPCFile.documentsPath+"\\LPCC\\Input"));
+                                 this.setInputFolder(new File(LPCFile.documentsPath+"\\LPCC\\Input"));
                              break;
                             //main Input File name
                          case 11:
                              if (!s.equals(""))
-                                config.setMainInputFileName(s);
+                                this.setMainInputFileName(s);
                              else
-                                config.setMainInputFileName("main");
+                                this.setMainInputFileName("main");
 
 
                              //output Dir
                          case 14:
                              if (!s.equals(""))
-                                 config.setOutputFolder(new File(s));
+                                 this.setOutputFolder(new File(s));
                              else
-                                config.setOutputFolder(new File(LPCFile.documentsPath+"\\LPCC\\Output"));
+                                this.setOutputFolder(new File(LPCFile.documentsPath+"\\LPCC\\Output"));
                              break;
                              //tags delimiters
                          case 17:
-                             config.setTagsDelimiter(s.split(";"));
+                             this.setTagsDelimiter(s.split(";"));
                              break;
                              //user and dev tags
                          case 20:
                              String[] tags = s.split(";");
-                             config.setUserTag(tags[0]);
-                             config.setDevTag(tags[1]);
+                             this.setUserTag(tags[0]);
+                             this.setDevTag(tags[1]);
                              break;
                              //tag closer +
                          case 23:
-                            config.setTagCloser(s.split(";"));
+                            this.setTagCloser(s.split(";"));
                             break;
                             //tag closer +
                          case 26:
-                            config.setEscapingString(s);
+                            this.setEscapingString(s);
                             break;
                      }
 
                 }
         }
-        return config;
+        return this;
         }
 
     public void updateConfig() throws IOException {
