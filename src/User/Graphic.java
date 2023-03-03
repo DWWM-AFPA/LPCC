@@ -208,17 +208,13 @@ public class Graphic {
         // Créer les éléments du menu et sous menu
         newconfig = new JMenuItem("Create Config");
         create=new CreateConfig(this);
-
-        newconfig.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
+        newconfig.addActionListener(e->  {
                 panelcompile.setVisible(false);
                 updatePanel.setVisible(false);
                 create.setVisible(true);
                 frame.pack();
                 frame.revalidate();
                 frame.repaint();
-            }
         });
         // Ajouter les éléments au menu
         menu.add(newconfig);
@@ -237,9 +233,9 @@ public class Graphic {
         panel.add(updatePanel);
         panel.add(create);
         panelcompile.add(choose);
-        panelcompile.add(exportCode);
-        panelcompile.add(exportLatEXDoc) ;
         panelcompile.add(compile);
+        panelcompile.add(exportCode);
+        panelcompile.add(exportLatEXDoc);
         panelcompile.add(exportHTMLDoc);
         panelcompile.setVisible(true);
         frame.pack();

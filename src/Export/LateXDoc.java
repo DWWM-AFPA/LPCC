@@ -53,7 +53,8 @@ public class LateXDoc implements Visitor{
 
         for (Node n: compilation) {
             if(n instanceof DocumentationNode){
-                //n.setText(n.getText().replaceAll("\n","\\\\newline    "));
+                if(!((DocumentationNode) n).isDiagram())
+                    n.setText(n.getText().replaceAll("\n","\\\\newline    "));
                 if(((DocumentationNode) n).getArgs().contains("dev")){
                     dev.add((DocumentationNode) n);
                 }
@@ -95,8 +96,6 @@ public class LateXDoc implements Visitor{
                         break;
                     default:
                         node=new StringBuilder(this.corresbalise.get(doc.getArgs().get(0))+node+"}");
-                        System.out.println(firstarg);
-                        System.out.println(node);
                         doc.remove(doc.getArgs().get(0));
                 }
             }
@@ -107,6 +106,8 @@ public class LateXDoc implements Visitor{
     private String nodeinterpret(ArrayList<DocumentationNode> n) throws LPCSyntaxException {
         StringBuilder retour= new StringBuilder();
         retour.append("\\begin{document}");
+        retour.append("\\usepackage{graphicx}");
+        retour.append("\\usepackage{hyperref}");
         for (int j=0;j<n.size();j++) {
             DocumentationNode doc=n.get(j);
             String node="";

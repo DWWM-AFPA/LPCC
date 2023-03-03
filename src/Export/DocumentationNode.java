@@ -77,6 +77,7 @@ public class DocumentationNode extends Node{
 
     public File readdiagramm(String diagramname){
         String source=this.text;
+        System.out.println("code plantuml: "+source);
         OutputStream out;
         try {
             out=new FileOutputStream(LPCFile.getOutputDirectory()+"\\"+diagramname+".png");

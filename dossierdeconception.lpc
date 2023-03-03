@@ -1,0 +1,57 @@
+<title1>Dossier de conception</title1>
+<bd>Spécification technique :</bd>
+
+* Support:Windows
+*Langage :Java
+*Framework :null
+
+
+Spécification fonctionnelles :
+
+Cahier des charges :
+
+<link> https://github.com/DWWM-AFPA/LPCC/tree/simon/docs </link>
+<diag>Use case :
+@startuml
+package Config{
+(Create Config) as (cconfig)
+(Load Config) as (lconfig)
+}
+(Compile) as (comp)
+
+:User: --> (cconfig)
+:User: --> (lconfig)
+:User: --> (comp)
+
+(cconfig) --> (Echap)
+(cconfig) --> (Language)
+(cconfig) --> (Path)
+(cconfig) --> (Tag)
+
+(comp) ..|> (Confirm)
+:User: -d-> (Confirm)
+(Confirm) ..|> (comp)
+
+(Export Settings) as (exp)
+(exp)\<|..(comp)
+(exp)---->:User:
+:User:---->(exp)
+@enduml
+<\diag>
+<bd>Diagramme de classe:<\bd>
+<link>https://app.genmymodel.com/personal/projects/_DxRhAJv1Ee2djP2Tlx6cfA<\link>
+<bd>Diagramme de séquence<bd>
+<diag>Diagramme de séquence:
+@startuml
+USER -> View : Affiche option Config
+View -> Controler : Demande de configuration
+Controler -> Config : Charge config
+Config -> Compilator : update config
+USER -> View : Affiche fichier à charger
+View -> Controler : Demande chargement de fichier
+Controler -> Compilator : Complie le fichier
+Compilator -> Controler : Transfert fichier compilé
+Controler -> View : Affiche le résultat de la compilation
+@enduml
+<\diag>
+<img>maquette.png<\img>

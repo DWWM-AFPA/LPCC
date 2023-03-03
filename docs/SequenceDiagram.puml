@@ -1,9 +1,4 @@
 @startuml
-'https://plantuml.com/use-case-diagram
-
-
-
-
 USER -> View : Affiche option Config
 View -> Controler : Demande de configuration
 Controler -> Config : Charge config

@@ -25,9 +25,9 @@ public class DeleteConfigItem extends JMenuItem {
                 int choix=JOptionPane.showConfirmDialog(null,"Voulez vous vraiment supprimer cette config?","Confirmation",JOptionPane.YES_NO_OPTION);
                 if (choix==0) {
                     if(configfile.delete())
-                        JOptionPane.showMessageDialog(null,"Config suprimée avec succés");
+                        JOptionPane.showMessageDialog(null,"Config supprimée avec succés");
                     else
-                        JOptionPane.showMessageDialog(null,"Echec de la supression de la config");
+                        JOptionPane.showMessageDialog(null,"Echec de la suppression de la config");
                 }
                 fenetre.getConfigsel().readconfignames();
                 fenetre.getConfigdelete().readconfignames();
