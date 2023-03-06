@@ -9,23 +9,38 @@ import java.util.ArrayList;
 import java.util.HashMap;
 
 public class LATEXExportVisitor implements Visitor {
-    public String export(ArrayList<Node> nodes) {
+    public String exportUser(ArrayList<Node> nodes) {
         StringBuilder retour = new StringBuilder();
         for (Node node : nodes) {
-            //  System.out.println(node.getClass());
             if (node instanceof DocumentationNode) {
                 String nodeName = node.accept(this);
-                //    System.out.println(nodeName );
+            }
+        }
+        return retour.toString();
+    }
+    public String exportDev(ArrayList<Node> nodes) {
+        StringBuilder retour = new StringBuilder();
+        for (Node node : nodes) {
+            if (node instanceof DocumentationNode) {
+                String nodeName = node.accept(this);
             } else if (node instanceof CodeNode) {
                 String nodeName = node.accept(this);
-                //System.out.println(nodeName );
+            }
+        }
+        return retour.toString();
+    }
+    public String exportCode(ArrayList<Node> nodes) {
+        StringBuilder retour = new StringBuilder();
+        for (Node node : nodes) {
+            if (node instanceof CodeNode) {
+                String nodeName = node.accept(this);
             }
         }
         return retour.toString();
     }
 
     private StringBuilder makeLATEXTag(StringBuilder stringBuilder, String stringToAppend) {
-        return stringBuilder.append('<').append(stringToAppend).append('>');
+        return stringBuilder.append('\\'); //.append(stringToAppend).append('>');
     }
 
     private StringBuilder makeLATEXTag(StringBuilder stringBuilder, char charToAppend) {
@@ -90,7 +105,7 @@ public class LATEXExportVisitor implements Visitor {
             try {
                 File LATEXOutputDirectory = new File(Config.getCurrentConfig().getOutputFolder().getPath()+"\\LATEX\\Dev");
                 LATEXOutputDirectory.mkdirs();
-                File devFile = LPCFile.create(LATEXOutputDirectory, "Developer Documentation", "html", dev.toString());
+                File devFile = LPCFile.create(LATEXOutputDirectory, "Developer Documentation", "tex", dev.toString());
             } catch (IOException io) {
                 System.err.println("impossible de créer le fichier dev\n"+io);
                 System.exit(-1);
@@ -140,7 +155,7 @@ public class LATEXExportVisitor implements Visitor {
             try {
                 File LATEXOutputDirectory = new File(Config.getCurrentConfig().getOutputFolder().getPath()+"\\LATEX\\User");
                 LATEXOutputDirectory.mkdirs();
-                File userFile = LPCFile.create(LATEXOutputDirectory, "User Documentation", "html", user.toString());
+                File userFile = LPCFile.create(LATEXOutputDirectory, "User Documentation", "tex", user.toString());
             } catch (IOException io) {
                 System.err.println("impossible de créer le fichier user\n"+io);
 
@@ -168,9 +183,9 @@ public class LATEXExportVisitor implements Visitor {
 
 
         try {
-            File LATEXOutputDirectory = new File(Config.getCurrentConfig().getOutputFolder().getPath()+"\\LATEX\\Code");
+            File LATEXOutputDirectory = new File(Config.getCurrentConfig().getOutputFolder().getPath()+"\\Code");
             LATEXOutputDirectory.mkdirs();
-            File codeFile = LPCFile.create(LATEXOutputDirectory, codeName, "html", code.toString());
+            File codeFile = LPCFile.create(LATEXOutputDirectory, codeName, Config.getCurrentConfig().getLanguage(), code.toString());
         } catch (IOException io) {
             System.err.println("impossible de créer le fichier code\n"+io);
             System.exit(-1);

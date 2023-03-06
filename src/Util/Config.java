@@ -335,7 +335,7 @@ public class Config {
             .append(this.getEscapingString())
             .append(ln).append(ln)
             .append("//Tags must be in the end of the file").append(ln)
-            .append("LPC    ;           HTML                      ;      LATEX\n").append(ln);
+            .append("LPC    ;           HTML                      ;      LATEX").append(ln);
 
         HashMap<String, String> htmlMap=this.getHTMLBindings();
         HashMap<String, String> latexMap=this.getLatexBindings();
@@ -369,7 +369,7 @@ public class Config {
                         DefaultConfig
 
                         //language
-                        .java
+                        java
 
                         //input directory (if null must be in my Documents)
 

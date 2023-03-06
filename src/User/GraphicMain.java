@@ -1,9 +1,7 @@
 package User;
 
+import Export.*;
 import Export.Compiler;
-import Export.FileException;
-import Export.HTMLExportVisitor;
-import Export.LATEXExportVisitor;
 import Util.Config;
 import Util.LPCFile;
 
@@ -220,9 +218,24 @@ public class GraphicMain extends JFrame {
             public void actionPerformed(ActionEvent e) {
                 if (HTMLCheckBox.isSelected()){
                     HTMLExportVisitor exportVisitor = new HTMLExportVisitor();
+                    if (userCheckBox.isSelected())
+                    System.out.println(exportVisitor.exportUser(Node.getNodeList()));
+                    if (developerCheckBox.isSelected())
+                        System.out.println(exportVisitor.exportDev(Node.getNodeList()));
+                    if (codeCheckBox.isSelected())
+                        System.out.println(exportVisitor.exportCode(Node.getNodeList()));
+
+                    //System.out.println(exportVisitor.export(Node.getNodeList()));
                 }
                 if (latexCheckBox.isSelected()){
-                     LATEXExportVisitor latexExportVisitor = new LATEXExportVisitor();
+                    LATEXExportVisitor latexExportVisitor = new LATEXExportVisitor();
+                    if (userCheckBox.isSelected())
+                        System.out.println(latexExportVisitor.exportUser(Node.getNodeList()));
+                    if (developerCheckBox.isSelected())
+                        System.out.println(latexExportVisitor.exportDev(Node.getNodeList()));
+                    //evite de créer 2x le code
+                    if (codeCheckBox.isSelected()&&!HTMLCheckBox.isSelected())
+                        System.out.println(latexExportVisitor.exportCode(Node.getNodeList()));
                 }
                /* if (developerCheckBox.isSelected()){
 
