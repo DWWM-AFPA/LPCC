@@ -334,7 +334,8 @@ public class Config {
             .append("//LPC character escaping" ).append(ln)
             .append(this.getEscapingString())
             .append(ln).append(ln)
-            .append("//Tags must be in the end of the file").append(ln);
+            .append("//Tags must be in the end of the file").append(ln)
+            .append("LPC    ;           HTML                      ;      LATEX\n").append(ln);
 
         HashMap<String, String> htmlMap=this.getHTMLBindings();
         HashMap<String, String> latexMap=this.getLatexBindings();
