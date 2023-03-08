@@ -68,7 +68,7 @@ public class GraphicConfig extends JFrame implements TableModelListener, TextLis
         for (int i = 0; i < tagList.size(); i++) {
             tags[i][0]=tagList.get(i);
             tags[i][1]=config.getHTMLBindings().get(tagList.get(i));
-            tags[i][2]=config.getHTMLBindings().get(tagList.get(i));
+            tags[i][2]=config.getLatexBindings().get(tagList.get(i));
         }
 
 

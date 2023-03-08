@@ -394,19 +394,19 @@ public class Config {
 
                         //Tags must be in the end of the file
                         LPC    ;           HTML                      ;      LATEX
-                        title1 ;            h1                       ;      \\title{ }
-                        title2 ;            h2                       ;      \\chapter{chapter}
-                        title3 ;            h3                       ;      \\section{section}
-                        title4 ;            h4                       ;      \\subsection{subsection}
-                        title5 ;            h5                       ;      \\subsubsection{subsubsection}
-                        title6 ;            h6                       ;      \\paragraph{paragraph}
-                        //title 7 ;       notInHTML                  ;      \\subparagraph{subparagraph}
-                        it     ;            i                        ;      \\emph{accident}
+                        title1 ;            h1                       ;      \\title
+                        title2 ;            h2                       ;      \\chapter
+                        title3 ;            h3                       ;      \\section
+                        title4 ;            h4                       ;      \\subsection
+                        title5 ;            h5                       ;      \\subsubsection
+                        title6 ;            h6                       ;      \\paragraph
+                        //title 7 ;       notInHTML                  ;      \\subparagraph
+                        it     ;            i                        ;      \\emph
                         //or \\textit for italic
-                        bd     ;            b                        ;      \\textbf{greatest}\s
-                        ul     ;            u                        ;      \\underline{science}\s
-                        color  ;            #                        ;      \\color{blue}
-                        image  ;        <img src="dinosaur.jpg">     ;      \\includegraphics{universe}""";
+                        bd     ;            b                        ;      \\textbf
+                        ul     ;            u                        ;      \\underline
+                        color  ;            #                        ;      \\color
+                        image  ;        <img src="dinosaur.jpg">     ;      \\includegraphics""";
 
     }
 

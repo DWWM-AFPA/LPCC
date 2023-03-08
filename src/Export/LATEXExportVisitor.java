@@ -12,7 +12,7 @@ public class LATEXExportVisitor implements Visitor {
     public String exportUser(ArrayList<Node> nodes) {
         StringBuilder retour = new StringBuilder();
         for (Node node : nodes) {
-            if (node instanceof DocumentationNode) {
+            if (node instanceof DocumentationNode  && node.getName().equals("user")) {
                 String nodeName = node.accept(this);
             }
         }
@@ -21,11 +21,12 @@ public class LATEXExportVisitor implements Visitor {
     public String exportDev(ArrayList<Node> nodes) {
         StringBuilder retour = new StringBuilder();
         for (Node node : nodes) {
-            if (node instanceof DocumentationNode) {
-                String nodeName = node.accept(this);
-            } else if (node instanceof CodeNode) {
-                String nodeName = node.accept(this);
-            }
+            if( node.getName().equals("dev"))
+                if (node instanceof DocumentationNode) {
+                    String nodeName = node.accept(this);
+                } else if (node instanceof CodeNode) {
+                    String nodeName = node.accept(this);
+                }
         }
         return retour.toString();
     }
@@ -39,69 +40,95 @@ public class LATEXExportVisitor implements Visitor {
         return retour.toString();
     }
 
-    private StringBuilder makeLATEXTag(StringBuilder stringBuilder, String stringToAppend) {
-        return stringBuilder.append('\\'); //.append(stringToAppend).append('>');
-    }
 
-    private StringBuilder makeLATEXTag(StringBuilder stringBuilder, char charToAppend) {
+
+/*    private StringBuilder makeLATEXTag(StringBuilder stringBuilder, char charToAppend) {
         return stringBuilder.append('<').append(charToAppend).append('>');
-    }
+    }*/
 
     @Override
     public String visitDocumentation(DocumentationNode documentationNode) {
-        HashMap<String, String> styleMap = Config.getCurrentConfig().getHTMLBindings();
+        HashMap<String,String> styleMap = Config.getCurrentConfig().getLatexBindings();
         File outputFolder =Config.getCurrentConfig().getOutputFolder();
-
+        Boolean devContainsMainTitle = null;
         if (documentationNode.getName().equals("dev")) {
+            StringBuilder dev = new StringBuilder("""
+                    \\documentclass{article}
+                    \\usepackage{graphicx} % Required for inserting images
+                    
+                    """);
 
-            StringBuilder dev = new StringBuilder();
             ArrayList<Node> nodes = documentationNode.getNodeContained();
+
             for (Node node : nodes) {
                 if (node instanceof DocumentationNode) {
-                    ArrayList<String> style = ((DocumentationNode) node).getStyle();
+                    ArrayList<String> styles = ((DocumentationNode) node).getStyle();
                     //looking for the title
                     String title = null;
-                    if (style != null) {
-                        for (String styles : style) {
-                            if (styles.contains("title")) {
-                                title = styleMap.get(styles);
-                                makeLATEXTag(dev, title);
-                                style.remove(styles);
-                                break;
+                    if (styles != null) {
+                        int count =0;
+                        if (styles.contains("title1")) {
+                            int s = styles.indexOf("title1");
+                            if (s!=0) {
+                                styles.add(0,styles.remove(s));
                             }
                         }
-                        //if no titles, defines <p>
-                        title = title == null ? "p" : title;
 
-                        //opens all the style tags
-                        for (String styles : style)
-                            makeLATEXTag(dev, styles);
+                        for (String style : styles) {
+                            if (style.contains("title")) {
+                                if (devContainsMainTitle==null && style.equals("title1"))
+                                    devContainsMainTitle=true;
 
+                                else if (devContainsMainTitle==null) {
+                                    dev.append("\n\\begin{document}\n");
+                                    devContainsMainTitle = false;
+                                }
+                                title = styleMap.get(style);
+
+                                dev.append(title).append('{');
+                                count++;
+                                styles.remove(style);
+                            }
+                            for (String otherStyle : styles) {
+                                dev.append(styleMap.get(otherStyle)).append('{');
+                                count++;
+                            }
+                        }
                         dev.append(node.getText());
+                        dev.append("}".repeat(Math.max(0, count)));
 
-                        //closes all the tag in the reverse order
-                        for (int i = style.size() - 1; i >= 0; i--)
-                            makeLATEXTag(dev, '/' + style.get(i));
+                        if (devContainsMainTitle!=null&&devContainsMainTitle) {
+                            dev.append("""
+                                    \n
+                                    \\begin{document}
+                                    \\maketitle
+                                    
+                                    """);
+                            devContainsMainTitle=false;
+                        }
 
-                        //closes title or standard <p>
-                        makeLATEXTag(dev, '/' + title);
-                        title = null;
                     } else {
-                        makeLATEXTag(dev, 'p');
+                        if (devContainsMainTitle==null) {
+                            dev.append("\n\\begin{document}\n");
+                            devContainsMainTitle = false;
+                        }
+                     //   makeLATEXTag(dev, 'p');
                         dev.append(node.getText());
-                        makeLATEXTag(dev, "/p");
+                      //  makeLATEXTag(dev, "/p");
                     }
                 }
-                if (node instanceof CodeNode) {
-                    makeLATEXTag(dev, 'p');
+                else if (node instanceof CodeNode) {
+                    //TODO penser à mettre un boolean si on veut le code via le nom ou le contenu
+                    dev.append("\n").append(node.getName()).append("\n");
+              /*      makeLATEXTag(dev, 'p');
                     makeLATEXTag(dev, 'i');
                     dev.append(node.getName());
                     makeLATEXTag(dev, "/i");
-                    makeLATEXTag(dev, "/p");
-                    //TODO comment afficher le code en HTML ? Juste comme ça ?
+                    makeLATEXTag(dev, "/p");*/
+
                 }
             }
-
+            dev.append("\n \\end{document}");
             try {
                 File LATEXOutputDirectory = new File(Config.getCurrentConfig().getOutputFolder().getPath()+"\\LATEX\\Dev");
                 LATEXOutputDirectory.mkdirs();
@@ -112,53 +139,76 @@ public class LATEXExportVisitor implements Visitor {
             }
             dev = null;
         } else if (documentationNode.getName().equals("user")) {
-            StringBuilder user = new StringBuilder();
+            StringBuilder user =new StringBuilder("""
+                    \\documentclass{article}
+                    \\usepackage{graphicx} % Required for inserting images
+                    """);
             ArrayList<Node> nodes = documentationNode.getNodeContained();
+
             for (Node node : nodes) {
                 if (node instanceof DocumentationNode) {
-                    ArrayList<String> style = ((DocumentationNode) node).getStyle();
+                    ArrayList<String> styles = ((DocumentationNode) node).getStyle();
                     //looking for the title
                     String title = null;
-                    if (style != null) {
-                        for (String styles : style) {
-                            if (styles.contains("title")) {
-                                title = styleMap.get(styles);
-                                makeLATEXTag(user, title);
-                                style.remove(styles);
-                                break;
+                    if (styles != null) {
+                        int count = 0;
+                        if (styles.contains("title1")) {
+                            int s = styles.indexOf("title1");
+                            if (s != 0) {
+                                styles.add(0, styles.remove(s));
                             }
                         }
-                        //if no titles, defines <p>
-                        title = title == null ? "p" : title;
 
-                        //opens all the style tags
-                        for (String styles : style)
-                            makeLATEXTag(user, styles);
+                        for (String style : styles) {
+                            if (style.contains("title")) {
+                                if (devContainsMainTitle == null && style.equals("title1"))
+                                    devContainsMainTitle = true;
 
+                                else if (devContainsMainTitle == null) {
+                                    user.append("\n\\begin{document}\n");
+                                    devContainsMainTitle = false;
+                                }
+                                title = styleMap.get(style);
+
+                                user.append(title).append('{');
+                                count++;
+                                styles.remove(style);
+                            }
+                            for (String otherStyle : styles) {
+                                user.append(styleMap.get(otherStyle)).append('{');
+                                count++;
+                            }
+                        }
                         user.append(node.getText());
+                        user.append("}".repeat(Math.max(0, count)));
 
-                        //closes all the tag in the reverse order
-                        for (int i = style.size() - 1; i >= 0; i--)
-                            makeLATEXTag(user, '/' + style.get(i));
+                        if (devContainsMainTitle != null && devContainsMainTitle) {
+                            user.append("""
+                                    \\begin{document}
+                                    \\maketitle
+                                                                        
+                                    """);
+                            devContainsMainTitle = false;
+                        }
 
-                        //closes title or standard <p>
-                        makeLATEXTag(user, '/' + title);
-                        title = null;
-                    } else {
-                        makeLATEXTag(user, 'p');
-                        user.append(node.getText());
-                        makeLATEXTag(user, "/p");
                     }
-                }
+                    else {
+                        if (devContainsMainTitle == null) {
+                            user.append("\n\\begin{document}\n");
+                            devContainsMainTitle = false;
+                        }
+                        user.append(node.getText());
+                    }
+                } else System.err.println("devrait pas arriver");
             }
 
+            user.append("\\end{document}");
             try {
                 File LATEXOutputDirectory = new File(Config.getCurrentConfig().getOutputFolder().getPath()+"\\LATEX\\User");
                 LATEXOutputDirectory.mkdirs();
                 File userFile = LPCFile.create(LATEXOutputDirectory, "User Documentation", "tex", user.toString());
             } catch (IOException io) {
                 System.err.println("impossible de créer le fichier user\n"+io);
-
                 System.exit(-1);
             }
             user = null;
@@ -173,9 +223,9 @@ public class LATEXExportVisitor implements Visitor {
         ArrayList<Node> nodes = codeNode.getNodeContained();
         for (Node node : nodes) {
             if (node.getName()==null) {
-                makeLATEXTag(code, 'p');
-                code.append(node.getText());
-                makeLATEXTag(code, "/p");
+               // makeLATEXTag(code, 'p');
+            //    code.append(node.getText());
+            //    makeLATEXTag(code, "/p");
             }
             else if (node.getNodeContained()!=null)
                 getContainedCode(node,code);
@@ -185,7 +235,7 @@ public class LATEXExportVisitor implements Visitor {
         try {
             File LATEXOutputDirectory = new File(Config.getCurrentConfig().getOutputFolder().getPath()+"\\Code");
             LATEXOutputDirectory.mkdirs();
-            File codeFile = LPCFile.create(LATEXOutputDirectory, codeName, Config.getCurrentConfig().getLanguage(), code.toString());
+            File codeFile = LPCFile.create(LATEXOutputDirectory, codeName, Config.getCurrentConfig().getLanguage(), code.toString()+"\\end{document}");
         } catch (IOException io) {
             System.err.println("impossible de créer le fichier code\n"+io);
             System.exit(-1);
@@ -196,9 +246,9 @@ public class LATEXExportVisitor implements Visitor {
     protected void getContainedCode(Node parentNode,StringBuilder sb) {
         for (Node node : parentNode.getNodeContained()) {
             if (node.getName()==null) {
-                makeLATEXTag(sb, 'p');
-                sb.append(node.getText());
-                makeLATEXTag(sb, "/p");
+              //  makeLATEXTag(sb, 'p');
+              //  sb.append(node.getText());
+              //  makeLATEXTag(sb, "/p");
             } else if (node.getNodeContained()!=null) {
                 getContainedCode(node,sb);
             }

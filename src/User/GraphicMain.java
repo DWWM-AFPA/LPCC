@@ -189,6 +189,7 @@ public class GraphicMain extends JFrame {
                 File mainFile=null;
                 try {
                     mainFile = LPCFile.getMainFile();
+                    chooseFileButton.setVisible(true);
                      mainFileContent = LPCFile.read(mainFile);
                 } catch (IOException io)  {
                     throw new RuntimeException(io);
@@ -210,6 +211,7 @@ public class GraphicMain extends JFrame {
                 progressBar1.setValue(100);
                 new Compiler(mainFileContent).compile();
                 progressBar1.setValue(0);
+                exportButton.setVisible(true);
 
             }
         });
@@ -219,7 +221,7 @@ public class GraphicMain extends JFrame {
                 if (HTMLCheckBox.isSelected()){
                     HTMLExportVisitor exportVisitor = new HTMLExportVisitor();
                     if (userCheckBox.isSelected())
-                    System.out.println(exportVisitor.exportUser(Node.getNodeList()));
+                        System.out.println(exportVisitor.exportUser(Node.getNodeList()));
                     if (developerCheckBox.isSelected())
                         System.out.println(exportVisitor.exportDev(Node.getNodeList()));
                     if (codeCheckBox.isSelected())
@@ -246,6 +248,8 @@ public class GraphicMain extends JFrame {
 
         pack();
         loadConfigButton.setVisible(false);
+        exportButton.setVisible(false);
+        chooseFileButton.setVisible(false);
         setVisible(true);
 
     }

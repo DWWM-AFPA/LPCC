@@ -12,7 +12,7 @@ public class HTMLExportVisitor implements Visitor {
     public String exportUser(ArrayList<Node> nodes) {
         StringBuilder retour = new StringBuilder();
         for (Node node : nodes) {
-            if (node instanceof DocumentationNode) {
+            if (node instanceof DocumentationNode && node.getName().equals("user")) {
                 String nodeName = node.accept(this);
             }
         }
@@ -21,11 +21,12 @@ public class HTMLExportVisitor implements Visitor {
     public String exportDev(ArrayList<Node> nodes) {
         StringBuilder retour = new StringBuilder();
         for (Node node : nodes) {
-            if (node instanceof DocumentationNode) {
-                String nodeName = node.accept(this);
-            } else if (node instanceof CodeNode) {
-                String nodeName = node.accept(this);
-            }
+            if  (node.getName().equals("user"))
+                if (node instanceof DocumentationNode) {
+                    String nodeName = node.accept(this);
+                } else if (node instanceof CodeNode) {
+                    String nodeName = node.accept(this);
+                }
         }
         return retour.toString();
     }
