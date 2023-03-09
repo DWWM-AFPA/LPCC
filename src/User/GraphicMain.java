@@ -12,21 +12,7 @@ import java.io.File;
 import java.io.IOException;
 
 public class GraphicMain extends JFrame {
-    public static void main(String[] args) {
 
-
-        Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
-        JFrame frame = new JFrame("Literate Programing Code Compiler");
-
-        GraphicMain graphicMain = new GraphicMain();
-        frame.setContentPane(graphicMain.panel);
-        frame.setJMenuBar(graphicMain.menubar);
-        frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-
-        frame.pack();
-        frame.setLocation(screenSize.width/2-frame.getWidth()/2,screenSize.height/2-frame.getHeight()/2);
-        frame.setVisible(true);
-    }
     private JMenu menu;
     private JMenu smenu;
     private JMenuBar menubar = new JMenuBar();
@@ -59,7 +45,7 @@ public class GraphicMain extends JFrame {
         me=this;
         setContentPane(this.panel);
         this.setJMenuBar(this.menubar);
-        setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        super.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 
         setLocation(screenSize.width/2-this.getWidth()/2,screenSize.height/2-this.getHeight()/2);
 
@@ -90,6 +76,7 @@ public class GraphicMain extends JFrame {
         menubar.add(menu);
         // Ajouter la barre de menu au frame
     //    frame.setJMenuBar(menubar);
+  //      super.dispatchEvent(new WindowEvent(this,WindowEvent.WINDOW_CLOSING));
         chooseFileButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
@@ -122,7 +109,6 @@ public class GraphicMain extends JFrame {
                 Config config =Config.getConfigSingleton("");
                 new GraphicConfig(config,me);
                 configComboBox.addItem("nouvelle Config");
-
             }
         });
         readConfig.addActionListener(new ActionListener() {
@@ -145,38 +131,18 @@ public class GraphicMain extends JFrame {
                     JOptionPane.showMessageDialog(panel,"Fichier de configuration "+ name +" supprimé.");
                 }
                 configComboBox.removeItem(name);
-
             }
         });
         configComboBox.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-
                 String name = (String) configComboBox.getSelectedItem();
                 if (name!=null){
                 Config.getConfigSingleton(name);
-             //   JOptionPane.showMessageDialog(null,"Configuration de "+ name +" chargée.");
                     }
-              //  updateChooseBox();
-
-                //Config.getCurrentConfig().setInputFolder(Graphic.chooseDirectory(Graphic.ChooserType.OPEN));
             }
         });
-       /* configComboBox.addItemListener(new ItemListener() {
-            @Override
-            public void itemStateChanged(ItemEvent e) {
-                int state = e.getStateChange();
-                System.out.println("\n");
-                System.out.println((state == ItemEvent.SELECTED) ? "Selected" : "Deselected");
-                System.out.println("Item: " + e.getItem());
-                ItemSelectable is = e.getItemSelectable();
-                System.out.println(", Selected: " + selectedString(is));
-            }
-            static private String selectedString(ItemSelectable is) {
-                Object selected[] = is.getSelectedObjects();
-                return ((selected.length == 0) ? "null" : (String) selected[0]);
-            }
-        });*/
+
 
         compileButton.addActionListener(new ActionListener() {
             @Override

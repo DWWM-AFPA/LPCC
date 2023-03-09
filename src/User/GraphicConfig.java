@@ -140,7 +140,13 @@ public class GraphicConfig extends JFrame implements TableModelListener, TextLis
         getContentPane().add(ok,c);
 
         // Création d'un objet de "WindowAdapter"
-        WindowListener winAdap = new WindowAdapter()
+        this.addWindowListener(new WindowAdapter() {
+            @Override
+            public void windowClosing(WindowEvent e) {
+                super.windowClosing(e);
+            }
+        });
+        WindowListener windowListener = new WindowAdapter()
         {
             public void windowClosing(WindowEvent e)
             {
@@ -150,7 +156,7 @@ public class GraphicConfig extends JFrame implements TableModelListener, TextLis
         };
 
         // ajouter le listener "windowlistener "
-        addWindowListener(winAdap);
+        addWindowListener(windowListener);
 
         pack();
        // setSize(400, 250);
